@@ -21,9 +21,12 @@ class StatisticsAdmin(admin.ModelAdmin):
     search_fields = ('fabric_code', 'model_number', 'movement_type')
     list_filter = ('dyehouse_name', 'movement_type', 'date')
 
+class UpdatesAdmin(admin.ModelAdmin):
+    list_display = ('date')
+
 # Register the models with the admin site
 admin.site.register(Fabric, FabricAdmin)
 admin.site.register(CutTransfer, CutTransferAdmin)
 admin.site.register(ReturnTransfer, ReturnTransferAdmin)
 admin.site.register(Statistics, StatisticsAdmin)
-admin.site.register(Updates)
+admin.site.register(Updates, UpdatesAdmin)
