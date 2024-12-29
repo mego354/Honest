@@ -29,11 +29,17 @@
                 </div>
                 <div id="navbar-menu-body" class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link active pe-3" aria-current="page" href="#">اساسي</a>
+                        <li class="p-2 nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'fabric_view' %}">رصيد القماش</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link pe-3" href="#">رابط</a>
+                        <li class="p-2 nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'cut_transfer_view' %}">تحويلات القص</a>
+                        </li>
+                        <li class="p-2 nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'return_transfer_view' %}">مرتجعات القص</a>
+                        </li>
+                        <li class="p-2 nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'statistics_view' %}">الاحصائيات</a>
                         </li>
                     </ul>
                 </div>
@@ -72,6 +78,7 @@
     <!-- Footer -->
     <footer class="footer bg-dark text-white text-center py-3">
         <p>جميع الحقوق محفوظة © HONEST PRODUCTION 2024</p>
+        <p>Latest update at: {{update.date}}</p>
     </footer>
 
     <!-- Bootstrap JS -->
