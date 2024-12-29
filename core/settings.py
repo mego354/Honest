@@ -11,7 +11,7 @@ ALLOWED_HOSTS = []
 STATIC_URL = 'static/'
 STATIC_ROOT = 'cloth/static'
 
-Hosted = True
+Hosted = False
 if Hosted:
     DEBUG = False
     ALLOWED_HOSTS = ['megahd.pythonanywhere.com']
@@ -99,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Etc/GMT-3'
 
 USE_I18N = True
 
