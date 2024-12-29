@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Fabric, CutTransfer, ReturnTransfer, Statistics
+from .models import Fabric, CutTransfer, ReturnTransfer, Statistics, Updates
 
 class FabricAdmin(admin.ModelAdmin):
     list_display = ('id', 'fabric_code', 'fabric_name', 'color', 'roll', 'weight', 'date', 'dyehouse_name')
@@ -26,3 +26,4 @@ admin.site.register(Fabric, FabricAdmin)
 admin.site.register(CutTransfer, CutTransferAdmin)
 admin.site.register(ReturnTransfer, ReturnTransferAdmin)
 admin.site.register(Statistics, StatisticsAdmin)
+admin.site.register(Updates)
