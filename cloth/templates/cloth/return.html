@@ -1,0 +1,38 @@
+{% extends "cloth/layout.html" %}
+{% block body %}
+    <h2 class="section-title pt-4">سجل مرتجعات القص</h2>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive mb-4">
+        <table class="table table-striped ">
+            <thead class="table-dark">
+                <tr>
+                    <th>الرمز</th>
+                    <th>التاريخ</th>
+                    <th>كود الخامة</th>
+                    <th>رقم الموديل</th>
+                    <th>اسم الخامة</th>
+                    <th>اللون</th>
+                    <th>الوزن</th>
+                    <th>عدد الاتواب</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in models %}
+                <tr>
+                    <td>{{ model.id }}</td>
+                    <td>{{ model.date }}</td>
+                    <td>{{ model.fabric_code }}</td>
+                    <td>{{ model.model_number }}</td>
+                    <td>{{ model.fabric_name }}</td>
+                    <td>{{ model.color }}</td>
+                    <td>{{ model.roll }}</td>
+                    <td>{{ model.weight }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+{% endblock body %}

@@ -1,0 +1,37 @@
+{% extends "cloth/layout.html" %}
+{% block body %}
+    <h2 class="section-title pt-4">سجل رصيد القماش</h2>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive mb-4">
+        <table class="table table-striped ">
+            <thead class="table-dark">
+                <tr>
+                    <th>التاريخ</th>
+                    <th>كود الخامة</th>
+                    <th>اسم الخامة</th>
+                    <th>اللون</th>
+                    <th>عدد الاتواب</th>
+                    <th>الوزن</th>
+                    <th>اسم المصبغة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in models %}
+                <tr>
+
+                    <td>{{ model.date }}</td>
+                    <td>{{ model.fabric_code }}</td>
+                    <td>{{ model.fabric_name }}</td>
+                    <td>{{ model.color }}</td>
+                    <td>{{ model.roll }}</td>
+                    <td>{{ model.weight }}</td>
+                    <td>{{ model.dyehouse_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+{% endblock body %}
