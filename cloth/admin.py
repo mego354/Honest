@@ -22,7 +22,7 @@ class StatisticsAdmin(admin.ModelAdmin):
     list_filter = ('dyehouse_name', 'movement_type', 'date')
 
 class UpdatesAdmin(admin.ModelAdmin):
-    list_display = ('date')
+    list_display = ('id','date')
 
 # Register the models with the admin site
 admin.site.register(Fabric, FabricAdmin)
