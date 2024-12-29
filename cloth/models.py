@@ -34,3 +34,6 @@ class Statistics(Base):
     dyehouse_name = models.CharField(max_length=200, verbose_name="اسم المصبغة", null=True, blank=True)
     model_number = models.CharField(max_length=100, verbose_name="رقم الموديل", null=True, blank=True)
     movement_type = models.CharField(max_length=100, verbose_name="نوع الحركه", null=True, blank=True)
+
+class Updates(models.Model):
+    date = models.DateTimeField(auto_now_add=True)

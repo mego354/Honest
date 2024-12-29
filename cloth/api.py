@@ -65,4 +65,6 @@ class PopulateModelsView(APIView):
         if errors:
             return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
 
+        Updates.objects.create()
+
         return Response({"results": results}, status=status.HTTP_201_CREATED)
