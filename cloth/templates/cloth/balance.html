@@ -2,20 +2,16 @@
 {% block body %}
     <h2 class="section-title pt-4">سجل رصيد القماش</h2>
     <form method="get" class="filter-form mb-4 p-4 rounded shadow-sm">
+        {% for filter_field in filter_fields %}
         <div class="form-group mb-3">
-            <label for="filter_field_1" class="form-label">{{ filter_field_1.verbose_name }}</label>
-            <input type="text" id="filter_field_1" name="{{ filter_field_1.field_name }}" 
-                   placeholder="فلتر ب {{ filter_field_1.verbose_name }}" 
+            <label for="filter_{{ forloop.counter }}" class="form-label">{{ filter_field.verbose_name }}</label>
+            <input type="text" id="filter_{{ forloop.counter }}" name="{{ filter_field.field_name }}" 
+                   placeholder="فلتر ب {{ filter_field.verbose_name }}" 
                    class="form-control" 
-                   value="{{ filter_field_1.value }}">
+                   value="{{ filter_field.value }}">
         </div>
-        <div class="form-group mb-3">
-            <label for="filter_field_2" class="form-label">{{ filter_field_2.verbose_name }}</label>
-            <input type="text" id="filter_field_2" name="{{ filter_field_2.field_name }}" 
-                   placeholder="فلتر ب {{ filter_field_2.verbose_name }}" 
-                   class="form-control" 
-                   value="{{ filter_field_2.value }}">
-        </div>
+        {% endfor %}
+        
         <div class="form-group mb-3">
             <label for="order" class="form-label">ترتيب</label>
             <select id="order" name="order" class="form-select">
