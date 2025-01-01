@@ -12,6 +12,7 @@ STATIC_URL = 'static/'
 STATIC_ROOT = 'cloth/static'
 
 Hosted = True
+# Hosted = False
 if Hosted:
     DEBUG = False
     ALLOWED_HOSTS = ['megahd.pythonanywhere.com']

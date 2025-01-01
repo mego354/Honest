@@ -154,3 +154,62 @@ body {
 .footer {
     margin-top: 20px;
 }
+
+/* Form Styling */
+.filter-form {
+    background-color: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filter-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.filter-form .form-label {
+    display: block;
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.filter-form .form-control {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.75rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.filter-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+.filter-form .form-select {
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+    appearance: none; 
+    /* background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="none" stroke="%233498db" stroke-width=".7" d="M2 0L0 2h4z"/></svg>'); */
+    background-repeat: no-repeat;
+    background-position: right 1rem center; /* Position the arrow */
+    background-size: 0.65rem;
+}
+.filter-form .form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+.filter-form .btn {
+    background-color: var(--primary-color);
+    border: none;
+    color: var(--white-color);
+    padding: 0.75rem;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.filter-form .btn:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.03);
+}

@@ -2,6 +2,31 @@
 {% block body %}
     <h2 class="section-title pt-4">سجل مرتجعات القص</h2>
 
+    <form method="get" class="filter-form mb-4 p-4 rounded shadow-sm">
+        <div class="form-group mb-3">
+            <label for="filter_field_1" class="form-label">{{ filter_field_1.verbose_name }}</label>
+            <input type="text" id="filter_field_1" name="{{ filter_field_1.field_name }}" 
+                   placeholder="فلتر ب {{ filter_field_1.verbose_name }}" 
+                   class="form-control" 
+                   value="{{ filter_field_1.value }}">
+        </div>
+        <div class="form-group mb-3">
+            <label for="filter_field_2" class="form-label">{{ filter_field_2.verbose_name }}</label>
+            <input type="text" id="filter_field_2" name="{{ filter_field_2.field_name }}" 
+                   placeholder="فلتر ب {{ filter_field_2.verbose_name }}" 
+                   class="form-control" 
+                   value="{{ filter_field_2.value }}">
+        </div>
+        <div class="form-group mb-3">
+            <label for="order" class="form-label">ترتيب</label>
+            <select id="order" name="order" class="form-select">
+                <option value="desc" {% if request.GET.order == "desc" %}selected{% endif %}>الأحدث اولا</option>
+                <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>الأقدم اولا</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">تنفيذ</button>
+    </form>
+            
     <!-- Responsive Table -->
     <div class="table-responsive mb-4">
         <table class="table table-striped ">
