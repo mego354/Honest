@@ -78,7 +78,11 @@
     <!-- Footer -->
     <footer class="footer bg-dark text-white text-center py-3">
         <p>جميع الحقوق محفوظة © HONEST PRODUCTION 2024</p>
-        <p>Latest update at: {{update.date}}</p>
+        {% if update %}
+            <p>Latest update at: {{update}}</p>
+        {% else %}
+            <p>No updates available</p>
+        {% endif %}
     </footer>
 
     <!-- Bootstrap JS -->

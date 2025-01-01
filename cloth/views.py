@@ -29,6 +29,10 @@ class FilterableListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # Format the date in the desired string format
+        update = Updates.objects.all().order_by('-date').first()
+        context['update'] = update.date.strftime("%d/%m %I:%M %p") if update and update.date else None
+        
         # Retrieve verbose names for the filter fields
         model_meta = self.model._meta
         context['filter_field_1'] = {
