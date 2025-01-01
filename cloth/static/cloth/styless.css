@@ -41,6 +41,9 @@ body {
     color: var(--light-text) !important;
 
 }
+.custom-toggler-icon {
+    background-color: #f0f0f0; /* Light color, you can use any color here */
+}
 
 #navbar-menu-body a:hover {
     color: var(--golden-text) !important;
