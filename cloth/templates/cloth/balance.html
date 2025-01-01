@@ -12,13 +12,6 @@
         </div>
         {% endfor %}
         
-        <div class="form-group mb-3">
-            <label for="order" class="form-label">ترتيب</label>
-            <select id="order" name="order" class="form-select">
-                <option value="desc" {% if request.GET.order == "desc" %}selected{% endif %}>الأحدث اولا</option>
-                <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>الأقدم اولا</option>
-            </select>
-        </div>
         <button type="submit" class="btn btn-primary w-100">تنفيذ</button>
     </form>
             
