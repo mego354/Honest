@@ -57,7 +57,7 @@ class CutTransferView(FilterableListView):
 class ReturnTransferView(FilterableListView):
     template_name = "cloth/return.html"
     model = ReturnTransfer
-    filter_fields = ['fabric_code', 'fabric_name']
+    filter_fields = ['fabric_code', 'model_number']
 
 class StatisticsView(FilterableListView):
     template_name = "cloth/statistics.html"
