@@ -16,7 +16,7 @@ Hosted = True
 if Hosted:
     DEBUG = False
     ALLOWED_HOSTS = ['honestfabrics.pythonanywhere.com']
-    STATIC_URL = '/static/'
+    STATIC_URL = 'static/'
     STATIC_ROOT = '/home/honestfabrics/Honest/cloth/static'
 
 # Application definition
