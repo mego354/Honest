@@ -7,15 +7,16 @@ import arabic_reshaper
 from bidi.algorithm import get_display
 
 class PDFTableGenerator:
-    def __init__(self, data, columns, footer, file_name="cloth/static/cloth/output.pdf"):
-    # def __init__(self, data, columns, footer, file_name="/home/honestfabrics/Honest/cloth/static/cloth/output.pdf"):
+    # def __init__(self, data, columns, footer, file_name="cloth/static/cloth/output.pdf"):
+    def __init__(self, data, columns, footer, file_name="/home/honestfabrics/Honest/cloth/static/cloth/output.pdf"):
         self.data = data
         self.columns = columns
         self.footer = footer
         self.file_name = file_name
 
         # Register an Arabic font
-        pdfmetrics.registerFont(TTFont('Arabic', 'arial.ttf'))
+        # pdfmetrics.registerFont(TTFont('Arabic', 'cloth/static/cloth/arial.ttf'))
+        pdfmetrics.registerFont(TTFont('Arabic', '/home/honestfabrics/Honest/cloth/static/cloth/arial.ttf'))
 
     def reshape_text(self, text):
         reshaped = arabic_reshaper.reshape(text)
