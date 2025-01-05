@@ -15,7 +15,7 @@ class PDFTableGenerator:
         self.file_name = file_name
 
         # Register an Arabic font
-        # pdfmetrics.registerFont(TTFont('Arabic', 'arial.ttf'))
+        pdfmetrics.registerFont(TTFont('Arabic', 'arial.ttf'))
 
     def reshape_text(self, text):
         reshaped = arabic_reshaper.reshape(text)
@@ -31,7 +31,7 @@ class PDFTableGenerator:
         title = "\u062C\u062F\u0648\u0644 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A"
         bidi_title = self.reshape_text(title)
         bidi_title = "Honest Fabrics"
-        # c.setFont("Arabic", 16)
+        c.setFont("Arabic", 16)
         c.drawCentredString(width / 2, height - (margin + 15 * mm), bidi_title)
 
         # Table setup
@@ -40,7 +40,7 @@ class PDFTableGenerator:
         reshaped_headers = [self.reshape_text(header) for header in self.columns]
 
         # Draw headers
-        # c.setFont("Arabic", 11)
+        c.setFont("Arabic", 11)
         x = margin
         y = table_start_y
         for i, header in enumerate(reshaped_headers):
@@ -48,7 +48,7 @@ class PDFTableGenerator:
             x += column_widths[i]
 
         # Draw data
-        # c.setFont("Arabic", 8)
+        c.setFont("Arabic", 8)
         y -= 15
         for row in self.data:
             x = margin
@@ -60,11 +60,11 @@ class PDFTableGenerator:
             if y < margin + 50:  # New page if space is insufficient
                 c.showPage()
                 y = table_start_y
-                # c.setFont("Arabic", 8)
+                c.setFont("Arabic", 8)
 
         # Footer
         bidi_footer = self.reshape_text(f"{self.footer} : تم تحديث هذه البيانات بتاريخ")
-        # c.setFont("Arabic", 12)
+        c.setFont("Arabic", 12)
         c.drawCentredString(width / 2, margin / 2, bidi_footer)
 
         # Save PDF
