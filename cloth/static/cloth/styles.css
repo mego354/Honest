@@ -14,6 +14,7 @@
     --border-color: #dee2e6;
     --white-color: #ffffff;
 }
+
 ul, div {
     padding: 0;
     margin: 0;
@@ -25,7 +26,9 @@ body {
     margin-inline: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
+    font-size: 16px;
 }
+
 .body-div {
     margin: 2%;
     max-width: 98%;
@@ -35,35 +38,36 @@ body {
 
 #navbar, #navbar-menu-body {
     background-color: var(--secondary-color) !important;
-
 }
-#navbar, #navbar a, #navbar-menu-body, #navbar-menu-body a{
+
+#navbar, #navbar a, #navbar-menu-body, #navbar-menu-body a {
     color: var(--light-text) !important;
-
 }
+
 .custom-toggler-icon {
     background-color: #f0f0f0; /* Light color, you can use any color here */
 }
 
 #navbar-menu-body a:hover {
     color: var(--golden-text) !important;
-    background-color: rgba(255,255,255,0.1);
-
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* section */
+/* Section */
 .content-section {
     display: none;
     animation: fadeIn 0.5s ease;
     padding: 2rem;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     margin-bottom: 2rem;
 }
+
 .content-section.active {
     display: block;
 }
+
 .section-title {
     color: var(--secondary-color);
     border-bottom: 2px solid var(--primary-color);
@@ -71,6 +75,7 @@ body {
     margin-bottom: 1.5rem;
     font-weight: bold;
 }
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -80,13 +85,14 @@ body {
 .table {
     border-collapse: separate;
     border-spacing: 0;
-    overflow: hidden;
     border-radius: 8px;
+    width: 100%; /* Ensure the table stretches to full width */
 }
 
 .table th, .table td {
     text-align: center;
     vertical-align: middle;
+    padding: 10px;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
@@ -125,6 +131,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
 }
 
 .card:hover {
@@ -153,9 +160,11 @@ body {
     transform: scale(1.05);
 }
 
-
 .footer {
     margin-top: 20px;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
 }
 
 /* Form Styling */
@@ -184,6 +193,7 @@ body {
     padding: 0.75rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
 .filter-form .form-control:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 5px var(--primary-color);
@@ -191,12 +201,12 @@ body {
 
 .filter-form .form-select {
     padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-    appearance: none; 
-    /* background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="none" stroke="%233498db" stroke-width=".7" d="M2 0L0 2h4z"/></svg>'); */
+    appearance: none;
     background-repeat: no-repeat;
-    background-position: right 1rem center; /* Position the arrow */
+    background-position: right 1rem center;
     background-size: 0.65rem;
 }
+
 .filter-form .form-select:focus {
     outline: none;
     border-color: var(--primary-color);
@@ -215,4 +225,59 @@ body {
 .filter-form .btn:hover {
     background-color: var(--secondary-color);
     transform: scale(1.03);
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    body {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    body {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 13px;
+    }
+
+    .body-div {
+        margin: 1%;
+        max-width: 100%;
+        min-height: 70vh;
+    }
+
+    .content-section {
+        padding: 1rem;
+    }
+
+    .table {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .table td {
+        padding: 0px;
+    }
+
+    .filter-form {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        font-size: 12px;
+    }
+
+    .filter-form {
+        padding: 0.5rem;
+    }
+
+    .filter-form .form-control {
+        padding: 0.5rem;
+    }
 }
