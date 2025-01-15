@@ -132,6 +132,6 @@ class ReturnTransferView(FilterableListView):
 class StatisticsView(FilterableListView):
     template_name = "cloth/statistics.html"
     model = Statistics
-    filter_fields = ['fabric_code', 'model_number']
+    filter_fields = ['fabric_code', 'model_number', 'fabric_name', 'color']
     columns = ["التاريخ","كود الخامة","اسم الخامة","اللون","عدد الاتواب","الوزن","اسم المصبغة","رقم الموديل","نوع الحركة","رمز الحركة"]
 
