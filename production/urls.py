@@ -4,6 +4,6 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('', Model_Creation.as_view(), name='model_creation_view'),
+    path('', ModelCreation.as_view(), name='model_creation_view'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
