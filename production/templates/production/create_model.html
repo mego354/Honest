@@ -1,0 +1,5 @@
+<form method="post">
+    {% csrf_token %}
+    {{ model_form.as_p }}
+    <button type="submit">Next</button>
+</form>

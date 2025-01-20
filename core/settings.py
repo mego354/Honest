@@ -12,7 +12,7 @@ STATIC_URL = 'static/'
 STATIC_ROOT = 'cloth/static'
 
 Hosted = True
-# Hosted = False 
+Hosted = False 
 if Hosted:
     DEBUG = False
     ALLOWED_HOSTS = ['honestfabrics.pythonanywhere.com']
@@ -22,6 +22,7 @@ if Hosted:
 # Application definition
 
 INSTALLED_APPS = [
+    'production',
     'cloth',
     'django.contrib.admin',
     'django.contrib.auth',

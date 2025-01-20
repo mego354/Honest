@@ -1,20 +1,20 @@
+/* Root Variables */
 :root {
     --primary-color: #3498db;
+    --light-blue: #3db1ff5e;
     --secondary-color: #2c3e50;
     --success-color: #2ecc71;
     --danger-color: #e74c3c;
     --warning-color: #f1c40f;
-
     --light-bg: #f8f9fa;
     --dark-bg: #343a40;
-
     --light-text: lightgoldenrodyellow;
     --golden-text: rgb(255, 255, 0);
-
     --border-color: #dee2e6;
     --white-color: #ffffff;
 }
 
+/* General Resets */
 ul, div {
     padding: 0;
     margin: 0;
@@ -29,6 +29,7 @@ body {
     font-size: 16px;
 }
 
+/* Containers and Layout */
 .body-div {
     margin: 2%;
     max-width: 98%;
@@ -36,6 +37,7 @@ body {
     min-height: 81vh;
 }
 
+/* Navbar */
 #navbar, #navbar-menu-body {
     background-color: var(--secondary-color) !important;
 }
@@ -45,7 +47,7 @@ body {
 }
 
 .custom-toggler-icon {
-    background-color: #f0f0f0; /* Light color, you can use any color here */
+    background-color: #f0f0f0;
 }
 
 #navbar-menu-body a:hover {
@@ -53,7 +55,7 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Section */
+/* Sections */
 .content-section {
     display: none;
     animation: fadeIn 0.5s ease;
@@ -75,18 +77,24 @@ body {
     margin-bottom: 1.5rem;
     font-weight: bold;
 }
+.border-bottom-5 {
+    border-bottom: 2px solid var(--light-blue); 
+    max-width: 500px;
+    margin-bottom: 1.5rem;
+}
+
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Table */
+/* Tables */
 .table {
     border-collapse: separate;
     border-spacing: 0;
     border-radius: 8px;
-    width: 100%; /* Ensure the table stretches to full width */
+    width: 100%;
 }
 
 .table th, .table td {
@@ -108,7 +116,7 @@ body {
     color: var(--light-text);
 }
 
-/* List Group */
+/* List Groups */
 .list-group-item {
     background-color: var(--light-bg);
     color: var(--secondary-color);
@@ -160,6 +168,7 @@ body {
     transform: scale(1.05);
 }
 
+/* Footer */
 .footer {
     margin-top: 20px;
     text-align: center;
@@ -167,7 +176,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* Form Styling */
+/* Forms */
 .filter-form {
     background-color: var(--white-color);
     border: 1px solid var(--border-color);
@@ -199,85 +208,31 @@ body {
     box-shadow: 0 0 5px var(--primary-color);
 }
 
-.filter-form .form-select {
-    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-    appearance: none;
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 0.65rem;
-}
-
-.filter-form .form-select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 5px var(--primary-color);
-}
-
-.filter-form .btn {
-    background-color: var(--primary-color);
-    border: none;
-    color: var(--white-color);
-    padding: 0.75rem;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.filter-form .btn:hover {
-    background-color: var(--secondary-color);
-    transform: scale(1.03);
+/* Scoped Styles for Order Form */
+#order-form-wrapper {
+    /* max-width: 1000px; */
+    margin: auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Styles */
 @media (max-width: 1200px) {
-    body {
-        font-size: 15px;
-    }
+    body { font-size: 15px; }
 }
 
 @media (max-width: 992px) {
-    body {
-        font-size: 14px;
-    }
+    body { font-size: 14px; }
 }
 
 @media (max-width: 768px) {
-    body {
-        font-size: 13px;
-    }
-
-    .body-div {
-        margin: 1%;
-        max-width: 100%;
-        min-height: 70vh;
-    }
-
-    .content-section {
-        padding: 1rem;
-    }
-
-    .table {
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-    .table td {
-        padding: 0px;
-    }
-
-    .filter-form {
-        padding: 1rem;
-    }
+    body { font-size: 13px; }
+    .body-div { margin: 1%; min-height: 70vh; }
 }
 
 @media (max-width: 576px) {
-    body {
-        font-size: 12px;
-    }
-
-    .filter-form {
-        padding: 0.5rem;
-    }
-
-    .filter-form .form-control {
-        padding: 0.5rem;
-    }
+    body { font-size: 12px; }
+    .body-div { margin: 1%; min-height: 70vh; }
 }

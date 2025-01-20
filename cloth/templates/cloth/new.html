@@ -1,0 +1,111 @@
+{% extends "cloth/layout.html" %}
+{% block body %}
+<h2 class="section-title pt-4">إنشاء طلب</h2>
+<div id="order-form-wrapper" class="container py-4">
+
+    <form method="post" id="order-form" class="mb-4 p-4 rounded ">
+        {% csrf_token %}
+        <section>
+            <h3 class="section-title border-bottom-5">تفاصيل الطلب</h3>
+            <div class="container border rounded p-3 mb-3">
+                <div class="row mb-2">
+                    <div class="col">
+                        {{ form.date.label_tag }}
+                        {{ form.date }}
+                    </div>
+                    <div class="col">
+                        {{ form.model_number.label_tag }}
+                        {{ form.model_number }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        {{ form.model_details.label_tag }}
+                        {{ form.model_details }}
+                    </div>
+                    <div class="col">
+                        {{ form.color.label_tag }}
+                        {{ form.color }}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <hr>
+        <section>
+            <h3 class="section-title border-bottom-5">تفاصيل الكرتون</h3>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="carton-count">عدد الكراتين</label>
+                    <input type="number" id="carton-count" name="carton-count" min="1" class="form-control" placeholder="عدد الكراتين">
+                </div>
+            </div>
+            <div id="carton-forms"></div>
+        </section>
+
+        <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
+    </form>
+</div>
+{% endblock body %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartonCountInput = document.getElementById('carton-count');
+        const cartonFormsDiv = document.getElementById('carton-forms');
+
+        cartonCountInput.addEventListener('change', function () {
+            const count = parseInt(this.value, 10);
+            const currentForms = cartonFormsDiv.querySelectorAll('.carton-form');
+
+            if (!isNaN(count)) {
+                if (count > currentForms.length) {
+                    // Add forms if count increased
+                    for (let i = currentForms.length; i < count; i++) {
+                        const formDiv = document.createElement('div');
+                        formDiv.classList.add('carton-form', 'border', 'rounded', 'p-3', 'mb-3');
+                        formDiv.innerHTML = `
+                            <h4 class="mb-3">كرتون ${i + 1}</h4>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <label for="size-${i}">المقاس</label>
+                                    <input type="text" id="size-${i}" name="carton[${i}][size]" class="form-control" placeholder="المقاس">
+                                </div>
+                                <div class="col">
+                                    <label for="type-${i}">النوع</label>
+                                    <input type="text" id="type-${i}" name="carton[${i}][type]" class="form-control" placeholder="النوع">    
+                                </div>
+                                <div class="col">
+                                    <label for="amount-${i}">الكمية</label>
+                                    <input type="number" min=0 id="amount-${i}" name="carton[${i}][amount]" class="form-control" placeholder="الكمية">
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <label for="length-${i}">الطول</label>
+                                    <input type="number" step="0.1" min="0" id="length-${i}" name="carton[${i}][length]" class="form-control" placeholder="الطول">
+                                </div>
+                                <div class="col">
+                                    <label for="width-${i}">العرض</label>
+                                    <input type="number" step="0.1" min="0" id="width-${i}" name="carton[${i}][width]" class="form-control" placeholder="العرض">
+                                </div>
+                                <div class="col">
+                                    <label for="height-${i}">الارتفاع</label>
+                                    <input type="number" step="0.1" min="0" id="height-${i}" name="carton[${i}][height]" class="form-control" placeholder="الارتفاع">
+                                </div>
+                            </div>
+                        `;
+                        cartonFormsDiv.appendChild(formDiv);
+                    }
+                } 
+                else if (count < currentForms.length) {
+                    // Remove forms if count decreased
+                    for (let i = currentForms.length - 1; i >= count; i--) {
+                        cartonFormsDiv.removeChild(currentForms[i]);
+                    }
+                }
+
+            }
+        });
+    });
+</script>
+{% endblock script %}

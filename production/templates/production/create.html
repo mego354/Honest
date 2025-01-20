@@ -1,0 +1,134 @@
+{% extends "cloth/layout.html" %}
+{% block body %}
+<h2 class="section-title pt-4">إضافة موديل جديد</h2>
+<div id="order-form-wrapper" class="container py-4">
+
+    <form method="post" id="order-form" class="mb-4 p-4 rounded ">
+        {% csrf_token %}
+        <section>
+            <h3 class="section-title border-bottom-5">تفاصيل الموديل</h3>
+            <div class="container border rounded p-3 mb-3">
+                <div class="row mb-2">
+                    <div class="col">
+                        {{ form.model_number.label_tag }}
+                        {{ form.model_number }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <label for="id_pieces_count">عدد قطع الموديل</label>
+                        <input class="form-control" type="number" min="1" id="id_pieces_count" value="0" required>
+                    </div>
+                    <div class="col">
+                        <label for="id_sizes_count">عدد المقاسات</label>
+                        <input class="form-control" type="number" min="1" id="id_sizes_count" value="0" required>
+                    </div>
+                </div>
+
+                <hr>
+                <h3 class="section-title border-bottom-5">قطع الموديل</h3>
+                <div id="pieces-container">
+                    <!-- Dynamic fields for pieces -->
+                </div>
+
+                <hr>
+                <h3 class="section-title border-bottom-5">مقاسات الموديل</h3>
+                <div id="sizes-container">
+                    <!-- Dynamic fields for sizes -->
+                </div>
+            </div>
+        </section>
+        <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
+    </form>
+</div>
+{% endblock body %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const piecesCountInput = document.getElementById('id_pieces_count');
+        const piecesContainer = document.getElementById('pieces-container');
+
+        const sizesCountInput = document.getElementById('id_sizes_count');
+        const sizesContainer = document.getElementById('sizes-container');
+
+        function updateFields(container, fieldTemplate, count) {
+            const currentFields = container.children.length;
+
+            // Add missing fields
+            if (count > currentFields) {
+                for (let i = currentFields + 1; i <= count; i++) {
+                    const field = fieldTemplate(i);
+                    container.appendChild(field);
+                }
+            }
+            // Remove excess fields
+            else if (count < currentFields) {
+                for (let i = currentFields; i > count; i--) {
+                    container.removeChild(container.lastChild);
+                }
+            }
+        }
+
+        // Template for piece fields
+        function pieceFieldTemplate(index) {
+            const field = document.createElement('div');
+            field.className = 'row mb-2';
+            field.id = `piece_${index}`;
+            field.innerHTML = `
+                <div class="col">
+                    <label for="piece_type_${index}">نوع القطعة ${index}</label>
+                    <input type="text" class="form-control" id="piece_type_${index}" name="piece_type_${index}">
+                </div>
+            `;
+            return field;
+        }
+
+        // Template for size fields
+        function sizeFieldTemplate(index) {
+            const field = document.createElement('div');
+            field.className = 'row mb-2';
+            field.id = `size_${index}`;
+            field.innerHTML = `
+                <div class="col">
+                    <label for="size_${index}">المقاس ${index}</label>
+                    <input type="text" class="form-control" id="size_${index}" name="size_${index}">
+                </div>
+                <div class="col">
+                    <label for="amount_${index}">الكمية ${index}</label>
+                    <input type="number" class="form-control" id="amount_${index}" name="amount_${index}">
+                </div>
+            `;
+            return field;
+        }
+
+        // Event listeners for count inputs
+        piecesCountInput.addEventListener('input', () => {
+            const count = parseInt(piecesCountInput.value) || 0;
+            updateFields(piecesContainer, pieceFieldTemplate, count);
+        });
+
+        sizesCountInput.addEventListener('input', () => {
+            const count = parseInt(sizesCountInput.value) || 0;
+            updateFields(sizesContainer, sizeFieldTemplate, count);
+        });
+        piecesCountInput.value = 1;        
+        sizesCountInput.value = 1;            
+        // Trigger input events to update fields
+        piecesCountInput.dispatchEvent(new Event('input'));
+        sizesCountInput.dispatchEvent(new Event('input'));
+    
+    });
+</script>
+{% endblock script %}
+
+{% comment %}
+    // Size field
+const sizeCol = document.createElement('div');
+sizeCol.className = 'col';
+sizeCol.innerHTML = `
+    <label for="piece_size_${i}">المقاس ${i}</label>
+    <input type="text" class="form-control" id="piece_size_${i}" name="piece_size_${i}">
+`;
+fieldGroup.appendChild(sizeCol);
+{% endcomment %}
