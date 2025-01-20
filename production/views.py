@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.forms import formset_factory
 from .models import Model, Piece, SizeAmount
-from .forms import ModelForm, DynamicPieceForm, SizeAmountForm
+from .forms import ModelForm
 from django.views.generic import FormView
 
 class Model_Creation(FormView):
@@ -11,9 +11,32 @@ class Model_Creation(FormView):
     success_url = "/orders/success/"     
 
     def form_valid(self, form):
-        # Save the main order
+        # Save the main model
         model = form.save()
 
+        # Extract sizes and quantities from POST data
+        sizes = []
+        index = 1
+        while True:
+            size_key = f"size_{index}"
+            amount_key = f"amount_{index}"
+            
+            size = self.request.POST.get(size_key)
+            amount = self.request.POST.get(amount_key)
+            
+            if not size or not amount:  # Stop if no more sizes are found
+                break
+            
+            sizes.append({"size": size, "amount": int(amount)})
+            index += 1
+
+        # Save sizes to the database
+        for size_data in sizes:
+            SizeAmount.objects.create(
+                model=model,
+                size=size_data["size"],
+                amount=size_data["amount"]
+            )
 
         # return redirect(self.success_url)
         return HttpResponse('ok')
