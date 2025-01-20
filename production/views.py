@@ -55,8 +55,8 @@ class ModelCreation(FormView):
         SizeAmount.objects.bulk_create(size_amounts_objects)
 
         # Save pieces to the database
-        for size_amount in size_amounts_objects:
-            for piece_data in pieces:
+        for piece_data in pieces:
+            for size_amount in size_amounts_objects:
                 Piece.objects.create(
                     model=model,
                     type=piece_data["type"],
