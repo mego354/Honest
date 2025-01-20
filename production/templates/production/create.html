@@ -121,14 +121,3 @@
     });
 </script>
 {% endblock script %}
-
-{% comment %}
-    // Size field
-const sizeCol = document.createElement('div');
-sizeCol.className = 'col';
-sizeCol.innerHTML = `
-    <label for="piece_size_${i}">المقاس ${i}</label>
-    <input type="text" class="form-control" id="piece_size_${i}" name="piece_size_${i}">
-`;
-fieldGroup.appendChild(sizeCol);
-{% endcomment %}

@@ -9,4 +9,3 @@ class ModelForm(forms.ModelForm):
         widgets = {
             'model_number': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
