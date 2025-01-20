@@ -56,13 +56,13 @@ class Model_Creation(FormView):
             )
             sizes_amounts_models.append(size_model)
         # Save pieces to the database
-        for size in sizes_amounts_models:
+        for size_amount in sizes_amounts_models:
             for piece_data in pieces:
                 Piece.objects.create(
                     model=model,
-                    piece_type=piece_data["type"],
-                    size=size.size,
-                    available_amount=size.amount,
+                    type=piece_data["type"],
+                    size=size_amount.size,
+                    available_amount=size_amount.amount,
                 )
 
         # return redirect(self.success_url)

@@ -17,7 +17,7 @@ class Piece(models.Model):
     used_amount = models.IntegerField(verbose_name="الكمية المستخدمة", default=0, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.model.model_number} - {self.type}"
+        return f"{self.model.model_number} - Size: {self.size} - Type: {self.type}"
 
 
 class SizeAmount(models.Model):
@@ -26,4 +26,4 @@ class SizeAmount(models.Model):
     amount = models.IntegerField(verbose_name="الكمية", null=True, blank=True)
 
     def __str__(self):
-        return f"{self.model.model_number} - {self.type} - Size: {self.size}, Amount: {self.amount}"
+        return f"{self.model.model_number} - Size: {self.size}, Amount: {self.amount}"
