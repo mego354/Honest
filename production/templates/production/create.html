@@ -2,12 +2,11 @@
 {% block body %}
 <h2 class="section-title pt-4">إضافة موديل جديد</h2>
 <div id="order-form-wrapper" class="container py-4">
-
-    <form method="post" id="order-form" class="mb-4 p-4 rounded ">
+    <form method="post" id="order-form" class="mb-4 p-4 pt-0 rounded ">
         {% csrf_token %}
         <section>
-            <h3 class="section-title border-bottom-5">تفاصيل الموديل</h3>
             <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">تفاصيل الموديل</h3>
                 <div class="row mb-2">
                     <div class="col">
                         {{ form.model_number.label_tag }}
@@ -24,15 +23,18 @@
                         <input class="form-control" type="number" min="1" id="id_sizes_count" value="1" required>
                     </div>
                 </div>
+            </div>
 
-                <hr>
-                <h3 class="section-title border-bottom-5">قطع الموديل</h3>
-                <div id="pieces-container"></div>
-
-                <hr>
-                <h3 class="section-title border-bottom-5">مقاسات الموديل</h3>
+            <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">قطع الموديل</h3>
+                <div id="pieces-container"></div>            
+            </div>
+            
+            <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">مقاسات الموديل</h3>
                 <div id="sizes-container"></div>
             </div>
+            
         </section>
         <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
     </form>

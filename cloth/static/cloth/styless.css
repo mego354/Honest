@@ -235,4 +235,6 @@ body {
 @media (max-width: 576px) {
     body { font-size: 12px; }
     .body-div { margin: 1%; min-height: 70vh; }
+    .container .col {padding-inline: 2px;}
+    h3.section-title  { font-size: 18px; }
 }
