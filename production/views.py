@@ -1,15 +1,17 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.forms import formset_factory
+from django.urls import reverse_lazy
+from django.views.generic import FormView
+from django.db import transaction
 from .models import Model, Piece, SizeAmount
 from .forms import ModelForm
-from django.views.generic import FormView
 
-class Model_Creation(FormView):
+class ModelCreation(FormView):
     template_name = "production/create.html"
     form_class = ModelForm
-    success_url = "/orders/success/"     
+    success_url = reverse_lazy("orders:success")
 
+    @transaction.atomic
     def form_valid(self, form):
         # Save the main model
         model = form.save()
@@ -45,18 +47,15 @@ class Model_Creation(FormView):
             sizes_amounts.append({"size": size, "amount": int(amount)})
             index += 1
 
-
         # Save sizes to the database
-        sizes_amounts_models = []
-        for size_amount in sizes_amounts:
-            size_model = SizeAmount.objects.create(
-                model=model,
-                size=size_amount["size"],
-                amount=size_amount["amount"]
-            )
-            sizes_amounts_models.append(size_model)
+        size_amounts_objects = [
+            SizeAmount(model=model, size=size_data["size"], amount=size_data["amount"])
+            for size_data in sizes_amounts
+        ]
+        SizeAmount.objects.bulk_create(size_amounts_objects)
+
         # Save pieces to the database
-        for size_amount in sizes_amounts_models:
+        for size_amount in size_amounts_objects:
             for piece_data in pieces:
                 Piece.objects.create(
                     model=model,
@@ -65,11 +64,8 @@ class Model_Creation(FormView):
                     available_amount=size_amount.amount,
                 )
 
-        # return redirect(self.success_url)
         return HttpResponse('ok')
 
     def form_invalid(self, form):
         print("Form errors:", form.errors)  # Log form errors for debugging
-
-        # Handle the case where the form is invalid
         return self.render_to_response(self.get_context_data(form=form))
