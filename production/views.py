@@ -14,29 +14,56 @@ class Model_Creation(FormView):
         # Save the main model
         model = form.save()
 
-        # Extract sizes and quantities from POST data
-        sizes = []
+        # Extract pieces and sizes data from POST
+        pieces = []
+        sizes_amounts = []
+        index = 1
+
+        # Extract piece fields
+        while True:
+            piece_type_key = f"piece_type_{index}"
+            piece_type = self.request.POST.get(piece_type_key)
+
+            if not piece_type:  # Stop if no more pieces are found
+                break
+
+            pieces.append({"type": piece_type})
+            index += 1
+
+        # Reset index for sizes
         index = 1
         while True:
             size_key = f"size_{index}"
             amount_key = f"amount_{index}"
-            
+
             size = self.request.POST.get(size_key)
             amount = self.request.POST.get(amount_key)
-            
+
             if not size or not amount:  # Stop if no more sizes are found
                 break
-            
-            sizes.append({"size": size, "amount": int(amount)})
+
+            sizes_amounts.append({"size": size, "amount": int(amount)})
             index += 1
 
+
         # Save sizes to the database
-        for size_data in sizes:
-            SizeAmount.objects.create(
+        sizes_amounts_models = []
+        for size_amount in sizes_amounts:
+            size_model = SizeAmount.objects.create(
                 model=model,
-                size=size_data["size"],
-                amount=size_data["amount"]
+                size=size_amount["size"],
+                amount=size_amount["amount"]
             )
+            sizes_amounts_models.append(size_model)
+        # Save pieces to the database
+        for size in sizes_amounts_models:
+            for piece_data in pieces:
+                Piece.objects.create(
+                    model=model,
+                    piece_type=piece_data["type"],
+                    size=size.size,
+                    available_amount=size.amount,
+                )
 
         # return redirect(self.success_url)
         return HttpResponse('ok')

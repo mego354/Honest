@@ -14,7 +14,7 @@ class Piece(models.Model):
     type = models.CharField(max_length=50, verbose_name="النوع", null=True, blank=True)
     size = models.CharField(max_length=50, verbose_name="المقاس", null=True, blank=True)
     available_amount = models.IntegerField(verbose_name="الكمية المتبقية", null=True, blank=True)
-    used_amount = models.IntegerField(verbose_name="الكمية المستخدمة", null=True, blank=True)
+    used_amount = models.IntegerField(verbose_name="الكمية المستخدمة", default=0, null=True, blank=True)
 
     def __str__(self):
         return f"{self.model.model_number} - {self.type}"
