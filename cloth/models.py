@@ -5,7 +5,7 @@ class Base(models.Model):
     fabric_code = models.CharField(max_length=100, verbose_name="كود الخامه", db_index=True, null=True, blank=True)
     fabric_name = models.CharField(max_length=200, verbose_name="اسم الخامه", null=True, blank=True)
     color = models.CharField(max_length=100, verbose_name="اللون", null=True, blank=True)
-    roll = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="عدد الاتواب", null=True, blank=True)
+    roll = models.PositiveIntegerField(verbose_name="عدد الاتواب", null=True, blank=True)
     weight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="الوزن", null=True, blank=True)
     date = models.CharField(max_length=100,verbose_name="التاريخ", null=True, blank=True)
 
