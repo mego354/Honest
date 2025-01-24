@@ -67,24 +67,19 @@ class ModelCreationView(FormView):
                 )
 
         # Add a success message
-        messages.success(self.request, f"Model '{model.model_number}' has been created successfully.")
+        messages.success(self.request, f"تم انشاء المودبل {model.model_number} بنجاح")
         return redirect(self.success_url)
 
     def form_invalid(self, form):
         # Add an error message
-        messages.error(self.request, "There were errors in your form submission. Please fix them and try again.")
+        messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
+
         return self.render_to_response(self.get_context_data(form=form))
 
 class ModelListingView(ListView):
     template_name = "production/list_model.html"
     model = Model
     paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Add an info message
-        # messages.info(self.request, "You are viewing the list of models.")
-        return context
     
 class ModelDetailView(DetailView):
     model = Model
@@ -97,5 +92,6 @@ class ModelDeleteView(DeleteView):
     success_url = reverse_lazy('model_list_view')
 
     def form_valid(self, form):
-        messages.success(self.request, "The model has been deleted successfully.")
+        messages.success(self.request, "تم حذف الموديل بنجاح")
+        messages.success(self.request, "")
         return super().form_valid(form)
