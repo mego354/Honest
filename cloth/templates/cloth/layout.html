@@ -11,9 +11,18 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href={% static "cloth/styless.css" %}>
+    <link rel="stylesheet" href={% static "cloth/stylexx.css" %}>
 </head>
 <body>
+    {% if messages %}
+        <ul class="messages">
+        {% for message in messages %}
+            <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+  
+
     <!-- Navbar -->
     <nav id="navbar"  class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
@@ -30,18 +39,8 @@
                 </div>
                 <div id="navbar-menu-body" class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1">
-                        <li class="p-2 nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'fabric_view' %}">رصيد القماش</a>
-                        </li>
-                        <li class="p-2 nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'cut_transfer_view' %}">تحويلات القص</a>
-                        </li>
-                        <li class="p-2 nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'return_transfer_view' %}">مرتجعات القص</a>
-                        </li>
-                        <li class="p-2 nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'statistics_view' %}">الاحصائيات</a>
-                        </li>
+                        {% block navbar_links_large %}
+                        {% endblock %}
                     </ul>
                 </div>
             </div>
@@ -49,21 +48,8 @@
             <!-- Normal navbar menu for large screens -->
             <div class="d-none d-lg-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
-                    <li class="p-2 nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'fabric_view' %}">رصيد القماش</a>
-                    </li>
-                    <li class="p-2 nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'cut_transfer_view' %}">تحويلات القص</a>
-                    </li>
-                    <li class="p-2 nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'return_transfer_view' %}">مرتجعات القص</a>
-                    </li>
-                    <li class="p-2 nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'statistics_view' %}">الاحصائيات</a>
-                    </li>
-                    {% comment %} <li class="p-2 nav-item">
-                        <a class="nav-link" href="#">رابط</a>
-                    </li> {% endcomment %}
+                    {% block navbar_links_small %}
+                    {% endblock %}
                 </ul>
             </div>
             <a class="navbar-brand" href="#">HONEST FABRICS</a>

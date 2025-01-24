@@ -1,5 +1,14 @@
 {% extends "cloth/layout.html" %}
 {% load static %}
+
+{% block navbar_links_large %}
+{% include "cloth/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "cloth/nav_links.html" %}
+{% endblock %}
+
 {% block body %}
     <h2 class="section-title pt-4">سجل رصيد القماش</h2>
     <form method="get" class="filter-form mb-4 p-4 rounded shadow-sm">

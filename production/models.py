@@ -15,7 +15,7 @@ class SizeAmount(models.Model):
 
     class Meta:
         unique_together = ('model', 'size')  # Ensure unique size per model
-
+        ordering = ['size']
     def __str__(self):
         return f"{self.model.model_number} - Size: {self.size}, Amount: {self.amount}"
 
@@ -27,5 +27,8 @@ class Piece(models.Model):
     available_amount = models.IntegerField(verbose_name="الكمية المتبقية", blank=True, default=0)
     used_amount = models.IntegerField(verbose_name="الكمية المستخدمة", default=0, blank=True)
 
+    class Meta:
+        ordering = ['size', 'type']
+        
     def __str__(self):
         return f"{self.model.model_number} - Size: {self.size} - Type: {self.type}"

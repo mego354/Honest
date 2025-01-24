@@ -1,13 +1,15 @@
+from django.contrib import messages  # Import the messages framework
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, ListView, DetailView, DeleteView
 from django.db import transaction
+
 from .models import Model, Piece, SizeAmount
 from .forms import ModelForm
 
-class ModelCreation(FormView):
-    template_name = "production/create.html"
+class ModelCreationView(FormView):
+    template_name = "production/create_model.html"
     form_class = ModelForm
     success_url = reverse_lazy("orders:success")
 
@@ -64,8 +66,46 @@ class ModelCreation(FormView):
                     available_amount=size_amount.amount,
                 )
 
-        return HttpResponse('ok')
+        # Add a success message
+        messages.success(self.request, f"Model '{model.name}' has been created successfully.")
+        return redirect(self.success_url)
 
     def form_invalid(self, form):
-        print("Form errors:", form.errors)  # Log form errors for debugging
+        # Add an error message
+        messages.error(self.request, "There were errors in your form submission. Please fix them and try again.")
         return self.render_to_response(self.get_context_data(form=form))
+
+class ModelListingView(ListView):
+    template_name = "production/list_model.html"
+    model = Model
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add an info message
+        messages.info(self.request, "You are viewing the list of models.")
+        return context
+    
+class ModelDetailView(DetailView):
+    model = Model
+    template_name = "production/detail_model.html" 
+    context_object_name = "model"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add a success message when viewing the detail
+        messages.success(self.request, f"Details for model '{self.object.name}' loaded successfully.")
+        return context
+
+class ModelDeleteView(DeleteView):
+    model = Model
+    template_name = "production/delete_model.html"
+    success_url = reverse_lazy('model_list_view')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        model_name = self.object.name  # Get the name of the model being deleted
+        self.object.delete()
+        # Add a success message after deletion
+        messages.success(request, f"Model '{model_name}' has been deleted successfully.")
+        return redirect(self.success_url)
