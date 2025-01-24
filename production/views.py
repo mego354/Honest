@@ -9,7 +9,7 @@ from .models import Model, Piece, SizeAmount
 from .forms import ModelForm
 
 class ModelCreationView(FormView):
-    template_name = "production/create.html"
+    template_name = "production/create_model.html"
     form_class = ModelForm
 
     @transaction.atomic
@@ -67,7 +67,7 @@ class ModelCreationView(FormView):
 
         # Add a success message
         messages.success(self.request, f"تم انشاء المودبل {model.model_number} بنجاح")
-        return redirect(reverse_lazy("model_detail_view", pk=model.pk))
+        return redirect(reverse_lazy("model_detail_view", args=[model.pk]))
         
 
     def form_invalid(self, form):
