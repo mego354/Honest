@@ -93,3 +93,4 @@ class ModelDeleteView(DeleteView):
     def form_valid(self, form):
         messages.success(self.request, "تم حذف الموديل بنجاح")
         return super().form_valid(form)
+ 
