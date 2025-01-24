@@ -102,10 +102,6 @@ class ModelDeleteView(DeleteView):
     template_name = "production/delete_model.html"
     success_url = reverse_lazy('model_list_view')
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        model_name = self.object.model_number 
-        self.object.delete()
-        # Add a success message after deletion
-        messages.success(request, f"Model '{model_name}' has been deleted successfully.")
+    def get_success_url(self, request, *args, **kwargs):
+        messages.success(request, f"The model has been deleted successfully.")
         return redirect(self.success_url)
