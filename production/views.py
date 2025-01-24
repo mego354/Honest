@@ -9,9 +9,8 @@ from .models import Model, Piece, SizeAmount
 from .forms import ModelForm
 
 class ModelCreationView(FormView):
-    template_name = "production/create_model.html"
+    template_name = "production/create.html"
     form_class = ModelForm
-    success_url = reverse_lazy("orders:success")
 
     @transaction.atomic
     def form_valid(self, form):
@@ -68,13 +67,13 @@ class ModelCreationView(FormView):
 
         # Add a success message
         messages.success(self.request, f"تم انشاء المودبل {model.model_number} بنجاح")
-        return redirect(self.success_url)
+        return redirect(reverse_lazy("model_detail_view", pk=model.pk))
+        
 
     def form_invalid(self, form):
-        # Add an error message
         messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
-
         return self.render_to_response(self.get_context_data(form=form))
+
 
 class ModelListingView(ListView):
     template_name = "production/list_model.html"
@@ -93,5 +92,4 @@ class ModelDeleteView(DeleteView):
 
     def form_valid(self, form):
         messages.success(self.request, "تم حذف الموديل بنجاح")
-        messages.success(self.request, "")
         return super().form_valid(form)
