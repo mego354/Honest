@@ -67,7 +67,7 @@ class ModelCreationView(FormView):
                 )
 
         # Add a success message
-        messages.success(self.request, f"Model '{model.name}' has been created successfully.")
+        messages.success(self.request, f"Model '{model.model_number}' has been created successfully.")
         return redirect(self.success_url)
 
     def form_invalid(self, form):
@@ -83,7 +83,7 @@ class ModelListingView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add an info message
-        messages.info(self.request, "You are viewing the list of models.")
+        # messages.info(self.request, "You are viewing the list of models.")
         return context
     
 class ModelDetailView(DetailView):
@@ -94,7 +94,7 @@ class ModelDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add a success message when viewing the detail
-        messages.success(self.request, f"Details for model '{self.object.name}' loaded successfully.")
+        # messages.success(self.request, f"Details for model '{self.object.model_number}' loaded successfully.")
         return context
 
 class ModelDeleteView(DeleteView):
@@ -104,7 +104,7 @@ class ModelDeleteView(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        model_name = self.object.name  # Get the name of the model being deleted
+        model_name = self.object.model_number 
         self.object.delete()
         # Add a success message after deletion
         messages.success(request, f"Model '{model_name}' has been deleted successfully.")
