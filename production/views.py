@@ -91,17 +91,11 @@ class ModelDetailView(DetailView):
     template_name = "production/detail_model.html" 
     context_object_name = "model"
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Add a success message when viewing the detail
-        # messages.success(self.request, f"Details for model '{self.object.model_number}' loaded successfully.")
-        return context
-
 class ModelDeleteView(DeleteView):
     model = Model
     template_name = "production/delete_model.html"
     success_url = reverse_lazy('model_list_view')
 
-    def get_success_url(self, request, *args, **kwargs):
-        messages.success(request, f"The model has been deleted successfully.")
-        return redirect(self.success_url)
+    def form_valid(self, form):
+        messages.success(self.request, "The model has been deleted successfully.")
+        return super().form_valid(form)
