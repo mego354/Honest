@@ -18,7 +18,7 @@ class SizeAmountInline(admin.TabularInline):  # Inline configuration for related
 
 @admin.register(Model)
 class ModelAdmin(admin.ModelAdmin):
-    list_display = ('id', 'model_number')  # Display these fields in the list view
+    list_display = ('id', 'model_number', 'created_at')  # Display these fields in the list view
     search_fields = ('model_number',)  # Enable search by model number
     list_filter = ('model_number',)  # Add filters for model number
     ordering = ('id',)  # Order models by ID

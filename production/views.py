@@ -75,10 +75,58 @@ class ModelCreationView(FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+from django.db.models import Q
+from django.utils.timezone import datetime
+from django.views.generic.list import ListView
+
+
 class ModelListingView(ListView):
     template_name = "production/list_model.html"
     model = Model
-    paginate_by = 20
+    paginate_by = 1
+    filter_fields = ["model_number", "start_date", "end_date"]
+
+    def parse_date(self, date_str):
+        """
+        Parse a date string into a datetime object.
+        If the format is invalid or the value is nonsensical, return datetime.min.
+        """
+        try:
+            normalized_date = date_str.replace("\\", "/")
+            return datetime.strptime(normalized_date, "%Y-%m-%d")
+        except (ValueError, AttributeError):
+            return None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        filters = Q()
+
+        # Filter by model_number (icontains)
+        model_number = self.request.GET.get("model_number")
+        if model_number:
+            filters &= Q(model_number__icontains=model_number)
+
+        # Filter by date range
+        start_date = self.parse_date(self.request.GET.get("start_date"))
+        end_date = self.parse_date(self.request.GET.get("end_date"))
+        if start_date:
+            filters &= Q(created_at__gte=start_date)
+        if end_date:
+            filters &= Q(created_at__lte=end_date)
+
+        return queryset.filter(filters)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Add filters to the context
+        context["filter_fields"] = [
+            {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
+            {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
+            {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
+        ]
+
+        return context
     
 class ModelDetailView(DetailView):
     model = Model

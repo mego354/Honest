@@ -1,12 +1,13 @@
 from django.db import models
+from django.utils.timezone import localtime, now
 
 class Model(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
 
     class Meta:
-        ordering = ['model_number']
+        ordering = ['-created_at']
         
     def __str__(self):
         return f"{self.model_number}"
