@@ -10,10 +10,11 @@
 {% endblock %}
 
 {% block body %}
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 class="w-75 section-title pt-4">عرض الموديلات</h2>
+    <div class="pt-4 section-title d-flex justify-content-between align-items-center">
+        <h2>عرض الموديلات</h2>
         <div class="ps-2">
             <a href="{% url 'model_creation_view' %}" class="px-2 btn btn-success">جديد</a>
+            <a href="{% url 'model_list_view' %}" class="px-2 btn btn-secondary">ضبط</a>
         </div>
     </div>
 

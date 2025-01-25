@@ -83,7 +83,7 @@ from django.views.generic.list import ListView
 class ModelListingView(ListView):
     template_name = "production/list_model.html"
     model = Model
-    paginate_by = 1
+    paginate_by = 20
     filter_fields = ["model_number", "start_date", "end_date"]
 
     def parse_date(self, date_str):
