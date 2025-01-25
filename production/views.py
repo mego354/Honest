@@ -1,4 +1,4 @@
-from django.views.generic import FormView, ListView, DetailView, DeleteView
+from django.views.generic import FormView, ListView, DetailView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.utils.timezone import datetime
@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.contrib import messages
 
 from .models import Model, Piece, SizeAmount
-from .forms import ModelForm
+from .forms import ModelForm, SizeAmountForm
 
 
 
@@ -151,4 +151,17 @@ class SizeAmountDeleteView(DeleteView):
         size_amount.delete()
 
         messages.success(self.request, "تم حذف المقاس وكل القطع الخاصه به بنجاح")
+        return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
+    
+class SizeAmountEditView(UpdateView):
+    model = SizeAmount
+    form_class = SizeAmountForm
+    template_name = "production/size_edit.html"  # The template you shared
+
+    def form_valid(self, form):
+        size_amount = self.get_object()
+        model_pk = size_amount.model.id
+        pieces = Piece.objects.filter(model=size_amount.model,size=size_amount.size)
+
+        messages.success(self.request, "تم تعديل المقاس بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model_pk]))

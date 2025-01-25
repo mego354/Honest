@@ -13,8 +13,10 @@
     <div class="pt-4 section-title d-flex justify-content-between align-items-center">
         <h2>تفاصيل الموديل</h2>
         <div class="ps-2">
-            <a href="#" class="px-2 btn btn-success">تعديل</a>
-            <a href="{% url 'model_delete_view' model.id %}" class="px-2 btn btn-danger">حذف</a>
+            {% comment %} <a href="#" class="px-2 btn btn-success">تعديل</a> {% endcomment %}
+            <a href="{% url 'model_delete_view' model.id %}" class="px-2 btn btn-danger">
+                حذف <i class="fa-solid fa-eraser fa-lg" style="color: #ffffff;"></i>
+            </a>
         </div>
     
     </div>
@@ -70,7 +72,7 @@
                         <td>{{ size.size }}</td>
                         <td>{{ size.amount }}</td>
                         <td>
-                            <a class="px-2 btn" href="#">
+                            <a class="px-2 btn" href="{% url 'SizeAmount_edit' size.id %}">
                                 <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
                             </a>
                             <a class="px-2 btn" href="{% url 'SizeAmount_delete_view' size.id %}">
@@ -97,7 +99,7 @@
                         <th style="position: sticky; top: 0;">المقاس</th>
                         <th style="position: sticky; top: 0;">المستخدم</th>
                         <th style="position: sticky; top: 0;">المتبقي</th>
-                        <th style="position: sticky; top: 0;">تحكم</th>
+                        <th style="position: sticky; top: 0;">انتاج</th>
 
                     </tr>
                 </thead>
@@ -110,11 +112,11 @@
                         <td>{{ piece.available_amount }}</td>
                         <td>
                             <a class="px-2 btn" href="#">
-                                <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
+                                <i class="fa-solid fa-shop fa-lg" style="color: #3498db;"></i>
                             </a>
-                            <a class="px-2 btn" href="{% url 'model_delete_view' model.id %}">
+                            {% comment %} <a class="px-2 btn" href="{% url 'model_delete_view' model.id %}">
                                 <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
-                            </a>
+                            </a> {% endcomment %}
                         </td>
     
                     </tr>

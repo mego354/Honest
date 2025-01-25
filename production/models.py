@@ -17,6 +17,7 @@ class SizeAmount(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="size_amounts")
     size = models.CharField(max_length=50, verbose_name="المقاس")
     amount = models.PositiveIntegerField(verbose_name="الكمية")
+    editable = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ('model', 'size')  # Ensure unique size per model
