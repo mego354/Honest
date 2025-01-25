@@ -3,7 +3,11 @@ from django.db import models
 class Model(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['model_number']
+        
     def __str__(self):
         return f"{self.model_number}"
 

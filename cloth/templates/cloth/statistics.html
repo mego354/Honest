@@ -57,6 +57,10 @@
                     <td>{{ model.movement_type }}</td>
                     <td>{{ model.id }}</td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center">لا يوجد عناصر</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
