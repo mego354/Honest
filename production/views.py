@@ -150,18 +150,24 @@ class SizeAmountDeleteView(DeleteView):
         pieces.delete()
         size_amount.delete()
 
-        messages.success(self.request, "تم حذف المقاس وكل القطع الخاصه به بنجاح")
+        messages.success(self.request, "تم حذف المقاس وكل القطع المرتبطة به بنجاح")
         return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
     
 class SizeAmountEditView(UpdateView):
     model = SizeAmount
     form_class = SizeAmountForm
-    template_name = "production/size_edit.html"  # The template you shared
+    template_name = "production/size_edit.html"
 
     def form_valid(self, form):
-        size_amount = self.get_object()
-        model_pk = size_amount.model.id
-        pieces = Piece.objects.filter(model=size_amount.model,size=size_amount.size)
+            size_amount = self.get_object()
+            model = size_amount.model
 
-        messages.success(self.request, "تم تعديل المقاس بنجاح.")
-        return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
+            old_size = size_amount.size
+            new_size = form.cleaned_data['size']
+            new_amount = form.cleaned_data['amount']
+
+            super().form_valid(form)
+            Piece.objects.filter(model=model, size=old_size).update(size=new_size).update(amount=new_amount)
+
+            messages.success(self.request, "تم تعديل المقاس وكل القطع المرتبطة به بنجاح.")
+            return redirect(reverse_lazy("model_detail_view", args=[size_amount.model.id]))
