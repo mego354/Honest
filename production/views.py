@@ -1,12 +1,15 @@
-from django.contrib import messages  # Import the messages framework
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
 from django.views.generic import FormView, ListView, DetailView, DeleteView
+from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.utils.timezone import datetime
 from django.db import transaction
+from django.db.models import Q
+from django.contrib import messages
 
 from .models import Model, Piece, SizeAmount
 from .forms import ModelForm
+
+
 
 class ModelCreationView(FormView):
     template_name = "production/create_model.html"
@@ -74,12 +77,6 @@ class ModelCreationView(FormView):
         messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
         return self.render_to_response(self.get_context_data(form=form))
 
-
-from django.db.models import Q
-from django.utils.timezone import datetime
-from django.views.generic.list import ListView
-
-
 class ModelListingView(ListView):
     template_name = "production/list_model.html"
     model = Model
@@ -142,3 +139,15 @@ class ModelDeleteView(DeleteView):
         messages.success(self.request, "تم حذف الموديل بنجاح")
         return super().form_valid(form)
  
+class SizeAmountDeleteView(DeleteView):
+    model = SizeAmount
+    template_name = "production/delete_size.html" 
+
+    def form_valid(self, form):
+        size_amount = self.get_object()
+        model_pk = size_amount.model.id
+        pieces = Piece.objects.filter(model=size_amount.model,size=size_amount.size)
+        pieces.delete()
+
+        messages.success(self.request, "تم حذف المقاس وكل القطع الخاصه به بنجاح")
+        redirect(reverse_lazy("model_detail_view", args=[model_pk.pk]))

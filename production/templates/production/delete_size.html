@@ -9,14 +9,14 @@
 
 {% block body %}
 <div class="confirmation-card text-center p-5 my-5 bg-light shadow-sm rounded">
-    <h2 class="section-title mb-4">هل أنت متأكد من حذف الموديل {{model.model_number}}؟</h2>
+    <h2 class="section-title mb-4">هل أنت متأكد من حذف المقاس {{sizeamount.size}}؟</h2>
     <p class="lead">لن يمكنك التراجع عن هذا الإجراء.</p>
     <div class="mt-4 d-flex justify-content-center">
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger px-4 mx-2">حذف</button>
         </form>
-        <a href="{% url 'model_detail_view' pk=model.pk %}" class="btn btn-secondary px-4 mx-2">إلغاء</a>
+        <a href="{% url 'model_detail_view' pk=sizeamount.model.pk %}" class="btn btn-secondary px-4 mx-2">إلغاء</a>
     </div>
 </div>
 {% endblock body %}

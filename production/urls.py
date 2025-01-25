@@ -8,5 +8,6 @@ urlpatterns = [
     path('create/', ModelCreationView.as_view(), name='model_creation_view'),
     path('model/<int:pk>/', ModelDetailView.as_view(), name='model_detail_view'),
     path('model/<int:pk>/delete/', ModelDeleteView.as_view(), name='model_delete_view'),
+    path('size/<int:pk>/delete/', SizeAmountDeleteView.as_view(), name='SizeAmount_delete_view'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
