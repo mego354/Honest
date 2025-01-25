@@ -148,6 +148,7 @@ class SizeAmountDeleteView(DeleteView):
         model_pk = size_amount.model.id
         pieces = Piece.objects.filter(model=size_amount.model,size=size_amount.size)
         pieces.delete()
+        size_amount.delete()
 
         messages.success(self.request, "تم حذف المقاس وكل القطع الخاصه به بنجاح")
-        redirect(reverse_lazy("model_detail_view", args=[model_pk.pk]))
+        return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
