@@ -1,4 +1,9 @@
 {% extends "cloth/layout.html" %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST FABRICS</a>
+{% endblock %}
+
 {% block navbar_links_large %}
 {% include "production/nav_links.html" %}
 {% endblock %}
