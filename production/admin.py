@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Model, Piece, SizeAmount
+from .models import Model, Piece, SizeAmount, ProductionPiece
 
 
 class PieceInline(admin.TabularInline):  # Use TabularInline for related Pieces
@@ -40,3 +40,30 @@ class SizeAmountAdmin(admin.ModelAdmin):
     list_filter = ('size', 'model')  # Filters for size and model
     ordering = ('model', 'size')  # Order by model and size
  
+@admin.register(ProductionPiece)
+class ProductionPieceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'piece', 'used_amount', 'created_at', 'available_amount', 'used_amount_piece')  # Fields to display in the list view
+    list_filter = ('created_at', 'piece__model', 'piece__size', 'piece__type')  # Filters for easy navigation
+    search_fields = ('piece__model__model_number', 'piece__size', 'piece__type')  # Search bar
+    ordering = ('-created_at',)  # Default ordering by creation date (descending)
+    autocomplete_fields = ('piece',)  # Autocomplete for the piece field, if needed
+    readonly_fields = ('available_amount', 'used_amount_piece')  # Make related fields read-only
+
+    def available_amount(self, obj):
+        """Display the available amount of the related piece."""
+        return obj.piece.available_amount
+    available_amount.short_description = "الكمية المتبقية"
+
+    def used_amount_piece(self, obj):
+        """Display the used amount of the related piece."""
+        return obj.piece.used_amount
+    used_amount_piece.short_description = "الكمية المستخدمة للقطعة"
+
+    def save_model(self, request, obj, form, change):
+        """Handle custom logic when saving an object."""
+        obj.save()
+
+    def delete_model(self, request, obj):
+        """Handle custom logic when deleting an object."""
+        obj.delete()
+

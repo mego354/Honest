@@ -196,7 +196,8 @@ class ProductionPieceCreateView(CreateView):
         piece_id = self.kwargs.get('piece_id')
         self.piece = get_object_or_404(Piece, pk=piece_id)
         form.instance.piece = self.piece
-        return super().form_valid(form)
+        form.save()
+        return self.get_success_url()
 
     def get_success_url(self):
         model = self.piece.model
@@ -208,6 +209,10 @@ class ProductionPieceUpdateView(UpdateView):
     form_class = ProductionPieceForm
     template_name = 'production/production_form.html'
 
+    def form_valid(self, form):
+        form.save()
+        return self.get_success_url()
+
     def get_success_url(self):
         production_piece = self.get_object()
         model = production_piece.piece.model
@@ -216,10 +221,17 @@ class ProductionPieceUpdateView(UpdateView):
 
 class ProductionPieceDeleteView(DeleteView):
     model = ProductionPiece
-    template_name = 'productionpiece_confirm_delete.html'
+    template_name = 'production/delete_production.html'
+
+    def delete(self, request, *args, **kwargs):
+        production_piece = self.get_object()
+        
+        print(f"Deleting ProductionPiece with ID: {production_piece.id}, used_amount: {production_piece.used_amount}")
+        
+        response = super().delete(request, *args, **kwargs)
+        messages.success(request, "تم حذف الكمية بنجاح.")
+        return response
 
     def get_success_url(self):
         production_piece = self.get_object()
-        model = production_piece.piece.model
-        messages.success(self.request, "تم حذف الكمية بنجاح.")
-        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+        return reverse_lazy("model_detail_view", args=[production_piece.piece.model.id])
