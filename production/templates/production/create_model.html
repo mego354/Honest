@@ -1,0 +1,113 @@
+{% extends "cloth/layout.html" %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+<h2 class="section-title pt-4">إضافة موديل جديد</h2>
+<div id="order-form-wrapper" class="container py-4">
+    <form method="post" id="order-form" class="mb-4 p-4 pt-0 rounded ">
+        {% csrf_token %}
+        <section>
+            <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">تفاصيل الموديل</h3>
+                <div class="row mb-2">
+                    <div class="col">
+                        {{ form.model_number.label_tag }}
+                        {{ form.model_number }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <label for="id_pieces_count">عدد قطع الموديل</label>
+                        <input class="form-control" type="number" min="1" id="id_pieces_count" value="1" required>
+                    </div>
+                    <div class="col">
+                        <label for="id_sizes_count">عدد المقاسات</label>
+                        <input class="form-control" type="number" min="1" id="id_sizes_count" value="1" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">قطع الموديل</h3>
+                <div id="pieces-container"></div>            
+            </div>
+            
+            <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">مقاسات الموديل</h3>
+                <div id="sizes-container"></div>
+            </div>
+            
+        </section>
+        <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
+    </form>
+</div>
+{% endblock body %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const piecesCountInput = document.getElementById('id_pieces_count');
+        const piecesContainer = document.getElementById('pieces-container');
+        const sizesCountInput = document.getElementById('id_sizes_count');
+        const sizesContainer = document.getElementById('sizes-container');
+
+        function updateFields(container, fieldTemplate, count) {
+            while (container.children.length < count) {
+                container.appendChild(fieldTemplate(container.children.length + 1));
+            }
+            while (container.children.length > count) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function pieceFieldTemplate(index) {
+            const div = document.createElement('div');
+            div.className = 'row mb-2';
+            div.innerHTML = `
+                <div class="col">
+                    <label for="piece_type_${index}">نوع القطعة ${index}</label>
+                    <input type="text" class="form-control" id="piece_type_${index}" name="piece_type_${index}">
+                </div>
+            `;
+            return div;
+        }
+
+        function sizeFieldTemplate(index) {
+            const div = document.createElement('div');
+            div.className = 'row mb-2';
+            div.innerHTML = `
+                <div class="col">
+                    <label for="size_${index}">المقاس ${index}</label>
+                    <input type="text" class="form-control" id="size_${index}" name="size_${index}">
+                </div>
+                <div class="col">
+                    <label for="amount_${index}">الكمية ${index}</label>
+                    <input type="number" class="form-control" id="amount_${index}" name="amount_${index}">
+                </div>
+            `;
+            return div;
+        }
+
+        piecesCountInput.addEventListener('input', () => {
+            updateFields(piecesContainer, pieceFieldTemplate, parseInt(piecesCountInput.value) || 0);
+        });
+
+        sizesCountInput.addEventListener('input', () => {
+            updateFields(sizesContainer, sizeFieldTemplate, parseInt(sizesCountInput.value) || 0);
+        });
+        piecesCountInput.dispatchEvent(new Event('input'));
+        sizesCountInput.dispatchEvent(new Event('input'));
+    });
+</script>
+{% endblock script %}

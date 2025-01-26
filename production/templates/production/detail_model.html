@@ -1,0 +1,144 @@
+{% extends "cloth/layout.html" %}
+{% load math_filters %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+    <div class="pt-4 section-title d-flex justify-content-between align-items-center">
+        <h2>تفاصيل الموديل</h2>
+        <div class="ps-2">
+            {% comment %} <a href="#" class="px-2 btn btn-success">تعديل</a> {% endcomment %}
+            <a href="{% url 'model_delete_view' model.id %}" class="px-2 btn btn-danger">
+                حذف <i class="fa-solid fa-eraser fa-lg" style="color: #ffffff;"></i>
+            </a>
+        </div>
+    
+    </div>
+        
+    <div class="model-details container my-4 p-4 border rounded shadow-sm bg-light">
+
+        <h3 class="section-title border-bottom-5 mb-4">معلومات عامة</h3>
+        
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="row info-card shadow-sm rounded">
+                    <h5 class="col text-center"><strong>رقم الموديل</strong></h5>
+                    <h5 class="col text-center">{{ model.model_number }}</h5>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="row info-card shadow-sm rounded">
+                    <h5 class="col text-center"><strong>التاريخ</strong></h5>
+                    <h5 class="col text-center" dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</h5>
+                    {% comment %} <p class="lead">{{ model.id }}</p> {% endcomment %}
+                </div>
+            </div>
+        </div>        
+        <div class="row mb-4">
+            <div class="col-md-6 col-sm-12">
+                <div class="row info-card shadow-sm rounded">
+                    <h5 class="col text-center"><strong>عدد المقاسات</strong></h5>
+                    <h5 class="col text-center">{{ model.size_amounts.count }}</h5>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="row info-card shadow-sm rounded">
+                    <h5 class="col text-center"><strong>عدد القطع</strong></h5>
+                    <h5 class="col text-center">{{ model.pieces.count|divide:model.size_amounts.count }}</h5>
+                </div>
+            </div>
+        </div>
+                        
+        <!-- Table for Size Amounts -->
+        <h3 class="section-title border-bottom-5 mb-2">تفاصيل المقاسات</h3>
+        <div style="overflow-x: auto; max-height: 70vh; position: relative;" class="table-responsive mb-4">
+            <table id="size-table" class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="position: sticky; top: 0;">المقاس</th>
+                        <th style="position: sticky; top: 0;">الكمية</th>
+                        <th style="position: sticky; top: 0;">تحكم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for size in model.size_amounts.all %}
+                    <tr>
+                        <td>{{ size.size }}</td>
+                        <td>{{ size.amount }}</td>
+                        <td>
+                            {% if size.editable %}
+                                <a class="px-2 btn" href="{% url 'SizeAmount_edit' size.id %}">
+                                    <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
+                                </a>
+                            {% endif %}
+                            <a class="px-2 btn" href="{% url 'SizeAmount_delete_view' size.id %}">
+                                <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center">لا توجد مقاسات مسجلة</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table for Pieces -->
+        <h3 class="section-title border-bottom-5 mb-2">تفاصيل القطع</h3>
+        <div style="overflow-x: auto; max-height: 70vh; position: relative;" class="table-responsive mb-4">
+            <table id="pieces-table" class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="position: sticky; top: 0;">القطعة</th>
+                        <th style="position: sticky; top: 0;">المقاس</th>
+                        <th style="position: sticky; top: 0;">المستخدم</th>
+                        <th style="position: sticky; top: 0;">المتبقي</th>
+                        <th style="position: sticky; top: 0;">انتاج</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for piece in model.pieces.all %}
+                    <tr>
+                        <td>{{ piece.type }}</td>
+                        <td>{{ piece.size }}</td>
+                        <td>{{ piece.used_amount }}</td>
+                        <td>{{ piece.available_amount }}</td>
+                        <td>
+                            <a class="px-2 btn" href="#">
+                                <i class="fa-solid fa-shop fa-lg" style="color: #3498db;"></i>
+                            </a>
+                            {% comment %} <a class="px-2 btn" href="{% url 'model_delete_view' model.id %}">
+                                <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
+                            </a> {% endcomment %}
+                        </td>
+    
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">لا توجد قطع مسجلة</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+
+        <div class="mt-4 text-center">
+            <a href="{% url 'model_list_view' %}" class="btn btn-primary px-4">عودة إلى القائمة</a>
+        </div>
+    </div>
+    
+{% endblock body %}

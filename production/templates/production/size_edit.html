@@ -1,0 +1,38 @@
+{% extends "cloth/layout.html" %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+<h2 class="section-title pt-4">تعديل مقاس</h2>
+<div id="order-form-wrapper" class="container py-4">
+    <form method="post" id="order-form" class="mb-4 p-4 pt-0 rounded">
+        {% csrf_token %}
+        <section>
+            <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">التفاصيل</h3>
+                <div class="row mb-2">
+                    <div class="col">
+                        {{ form.size.label_tag }}
+                        {{ form.size }}
+                    </div>
+                    <div class="col">
+                        {{ form.amount.label_tag }}
+                        {{ form.amount }}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <button type="submit" class="btn btn-primary w-100">حفظ التعديل</button>
+    </form>
+</div>
+{% endblock body %}
