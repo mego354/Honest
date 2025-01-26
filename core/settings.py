@@ -20,7 +20,6 @@ if Hosted:
     STATIC_ROOT = '/home/honestfabrics/Honest/cloth/static'
 
 # Application definition
-
 INSTALLED_APPS = [
     'production',
     'cloth',

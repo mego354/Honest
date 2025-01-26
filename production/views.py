@@ -239,7 +239,7 @@ class ProductionListingView(ListView):
     template_name = "production/list_production.html"
     model = ProductionPiece
     paginate_by = 30
-    filter_fields = ["model_number", "start_date", "end_date"]
+    filter_fields = ["model_number", "type", "size", "start_date", "end_date"]
 
     def parse_date(self, date_str):
         """
@@ -261,6 +261,16 @@ class ProductionListingView(ListView):
         if model_number:
             filters &= Q(piece__model__model_number__icontains=model_number)
 
+        # Filter by size (icontains)
+        size = self.request.GET.get("size")
+        if size:
+            filters &= Q(piece__size__icontains=size)
+
+        # Filter by type (icontains)
+        type = self.request.GET.get("type")
+        if type:
+            filters &= Q(piece__type__icontains=type)
+
         # Filter by date range
         start_date = self.parse_date(self.request.GET.get("start_date"))
         end_date = self.parse_date(self.request.GET.get("end_date"))
@@ -277,6 +287,7 @@ class ProductionListingView(ListView):
         # Add filters to the context
         context["filter_fields"] = [
             {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
+            {"field_name": "size", "verbose_name": "المقاس", "value": self.request.GET.get("size", "")},
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
             {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
         ]
