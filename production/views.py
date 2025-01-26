@@ -1,13 +1,13 @@
-from django.views.generic import FormView, ListView, DetailView, DeleteView, UpdateView
-from django.urls import reverse_lazy
-from django.shortcuts import redirect
+from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView
+from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect, get_object_or_404
 from django.utils.timezone import datetime
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Sum, F
 from django.contrib import messages
 
-from .models import Model, Piece, SizeAmount
-from .forms import ModelForm, SizeAmountForm
+from .models import Model, Piece, SizeAmount, ProductionPiece
+from .forms import ModelForm, SizeAmountForm, ProductionPieceForm
 
 
 
@@ -129,6 +129,15 @@ class ModelDetailView(DetailView):
     model = Model
     template_name = "production/detail_model.html" 
     context_object_name = "model"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        model = self.get_object()
+
+        total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
+
+        context['total_sizes_pieces'] = total_sizes_pieces
+        return context
     
 class ModelDeleteView(DeleteView):
     model = Model
@@ -165,10 +174,52 @@ class SizeAmountEditView(UpdateView):
 
         old_size = size_amount.size
         new_size = form.cleaned_data['size']
-        new_amount = form.cleaned_data['amount']
+        new_amount = form.cleaned_data['amount'] - size_amount.amount
 
         form.save()
-        Piece.objects.filter(model=model, size=old_size).update(size=new_size, available_amount=new_amount)
+
+        Piece.objects.filter(model=model, size=old_size).update(
+            size=new_size,
+            available_amount=F('available_amount') + new_amount
+        )
 
         messages.success(self.request, "تم تعديل المقاس وكل القطع المرتبطة به بنجاح.")
+        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+
+
+class ProductionPieceCreateView(CreateView):
+    model = ProductionPiece
+    form_class = ProductionPieceForm
+    template_name = 'production/production_form.html'
+
+    def form_valid(self, form):
+        piece_id = self.kwargs.get('piece_id')
+        self.piece = get_object_or_404(Piece, pk=piece_id)
+        form.instance.piece = self.piece
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        model = self.piece.model
+        messages.success(self.request, "تمت إضافة الكمية بنجاح.")
+        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+
+class ProductionPieceUpdateView(UpdateView):
+    model = ProductionPiece
+    form_class = ProductionPieceForm
+    template_name = 'production/production_form.html'
+
+    def get_success_url(self):
+        production_piece = self.get_object()
+        model = production_piece.piece.model
+        messages.success(self.request, "تم تعديل الكمية بنجاح.")
+        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+
+class ProductionPieceDeleteView(DeleteView):
+    model = ProductionPiece
+    template_name = 'productionpiece_confirm_delete.html'
+
+    def get_success_url(self):
+        production_piece = self.get_object()
+        model = production_piece.piece.model
+        messages.success(self.request, "تم حذف الكمية بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))

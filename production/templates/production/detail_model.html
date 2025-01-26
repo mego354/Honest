@@ -27,7 +27,7 @@
         
     <div class="model-details container my-4 p-4 border rounded shadow-sm bg-light">
 
-        <h3 class="section-title border-bottom-5 mb-4">معلومات عامة</h3>
+        <h3 class="section-title border-bottom-5 mb-4">معلومات الموديل</h3>
         
         <div class="row">
             <div class="col-md-6 col-sm-12">
@@ -55,6 +55,12 @@
                 <div class="row info-card shadow-sm rounded">
                     <h5 class="col text-center"><strong>عدد القطع</strong></h5>
                     <h5 class="col text-center">{{ model.pieces.count|divide:model.size_amounts.count }}</h5>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="row info-card shadow-sm rounded">
+                    <h5 class="col text-center"><strong>اجمالي الاطقم</strong></h5>
+                    <h5 class="col text-center">{{ total_sizes_pieces }}</h5>
                 </div>
             </div>
         </div>

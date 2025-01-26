@@ -1,5 +1,5 @@
 from django import forms
-from .models import Model, Piece, SizeAmount
+from .models import Model, SizeAmount, ProductionPiece
 
 
 class ModelForm(forms.ModelForm):
@@ -17,4 +17,12 @@ class SizeAmountForm(forms.ModelForm):
         widgets = {
             'size': forms.TextInput(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}), 
+        }
+        
+class ProductionPieceForm(forms.ModelForm):
+    class Meta:
+        model = ProductionPiece
+        fields = ['used_amount']
+        widgets = {
+            'used_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}), 
         }
