@@ -8,9 +8,7 @@ from django.contrib import messages
 
 from .models import Model, Piece, SizeAmount, ProductionPiece
 from .forms import ModelForm, SizeAmountForm, ProductionPieceForm
-
-
-
+###############################################################################################################################
 class ModelCreationView(FormView):
     template_name = "production/create_model.html"
     form_class = ModelForm
@@ -147,7 +145,8 @@ class ModelDeleteView(DeleteView):
     def form_valid(self, form):
         messages.success(self.request, "تم حذف الموديل بنجاح")
         return super().form_valid(form)
- 
+
+###############################################################################################################################
 class SizeAmountDeleteView(DeleteView):
     model = SizeAmount
     template_name = "production/delete_size.html" 
@@ -186,7 +185,7 @@ class SizeAmountEditView(UpdateView):
         messages.success(self.request, "تم تعديل المقاس وكل القطع المرتبطة به بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
 
-
+###############################################################################################################################
 class ProductionPieceCreateView(CreateView):
     model = ProductionPiece
     form_class = ProductionPieceForm
@@ -235,3 +234,53 @@ class ProductionPieceDeleteView(DeleteView):
     def get_success_url(self):
         production_piece = self.get_object()
         return reverse_lazy("model_detail_view", args=[production_piece.piece.model.id])
+
+class ProductionListingView(ListView):
+    template_name = "production/list_production.html"
+    model = ProductionPiece
+    paginate_by = 30
+    filter_fields = ["model_number", "start_date", "end_date"]
+
+    def parse_date(self, date_str):
+        """
+        Parse a date string into a datetime object.
+        If the format is invalid or the value is nonsensical, return datetime.min.
+        """
+        try:
+            normalized_date = date_str.replace("\\", "/")
+            return datetime.strptime(normalized_date, "%Y-%m-%d")
+        except (ValueError, AttributeError):
+            return None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        filters = Q()
+
+        # Filter by model_number (icontains)
+        model_number = self.request.GET.get("model_number")
+        if model_number:
+            filters &= Q(piece__model__model_number__icontains=model_number)
+
+        # Filter by date range
+        start_date = self.parse_date(self.request.GET.get("start_date"))
+        end_date = self.parse_date(self.request.GET.get("end_date"))
+        if start_date:
+            filters &= Q(created_at__gte=start_date)
+        if end_date:
+            filters &= Q(created_at__lte=end_date)
+
+        return queryset.filter(filters)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Add filters to the context
+        context["filter_fields"] = [
+            {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
+            {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
+            {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
+        ]
+
+        return context
+
+###############################################################################################################################

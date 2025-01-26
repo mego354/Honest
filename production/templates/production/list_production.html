@@ -15,10 +15,9 @@
 
 {% block body %}
     <div class="pt-4 section-title d-flex justify-content-between align-items-center">
-        <h2>عرض الموديلات</h2>
+        <h2>عرض الانتاج</h2>
         <div class="ps-2">
-            <a href="{% url 'model_creation_view' %}" class="px-2 btn btn-success">جديد</a>
-            <a href="{% url 'model_list_view' %}" class="px-2 btn btn-secondary">ضبط</a>
+            <a href="{% url 'production_list_view' %}" class="px-2 btn btn-secondary">ضبط</a>
         </div>
     </div>
 
@@ -43,32 +42,35 @@
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>الرمز</th>
+                    <th>رمز الموديل</th>
                     <th>رقم الموديل</th>
-                    <th>المقاسات والكميات</th>
-                    <th>قطع الموديل</th>
+                    <th>القطعة</th>
+                    <th>المقاس</th>
+                    <th>الكمية</th>
                     <th>التاريخ</th>
                     <th>تحكم</th>
                 </tr>
             </thead>
             <tbody>
-                {% for model in object_list %}
-                <tr class="clickable-row" data-detail_url="{% url 'model_detail_view' model.id %}">
+                {% for production_item in object_list %}
+                <tr class="clickable-row" data-detail_url="{% url 'model_detail_view' production_item.piece.model.id %}">
                     <td>
-                        <a href="{% url 'model_detail_view' model.id %}">{{ model.id }}</a>
+                        <a href="{% url 'model_detail_view' production_item.piece.model.id %}">{{ production_item.piece.model.id }}</a>
                     </td>
-                    <td class="text-end">{{ model.model_number }}</td>
-                    <td>{{ model.size_amounts.count }}</td>
-                    <td>{{ model.pieces.count|divide:model.size_amounts.count }}</td>
-                    <td dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</td>
+                    <td class="text-end">{{ production_item.piece.model.model_number }}</td>
+                    <td>{{ production_item.piece.type }}</td>
+                    <td>{{ production_item.piece.size }}</td>
+                    <td>{{ production_item.used_amount }}</td>
+                    <td dir="ltr">{{ production_item.created_at|date:"d/m/Y h:i A" }}</td>
                     <td>
-                        {% comment %} <a class="px-2 btn" href="#">
+                        <a class="px-2 btn" href="{% url 'productionpiece_edit' production_item.id %}">
                             <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
-                        </a> {% endcomment %}
-                        <a class="px-2 btn" href="{% url 'model_delete_view' model.id %}">
+                        </a>
+                        <a class="px-2 btn" href="{% url 'productionpiece_delete' production_item.id %}">
                             <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
                         </a>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>
@@ -140,18 +142,3 @@
 </nav>
     
 {% endblock body %}
-
-{% block script %}
-{% comment %} <script>
-    // Select all rows with the class "clickable-row"
-    const rows = document.querySelectorAll('.clickable-row');
-    
-    // Add click event listener to each row
-    rows.forEach(row => {
-        row.addEventListener('click', () => {
-            // Redirect to the URL stored in the data-id attribute
-            window.location.href = row.dataset.detail_url;
-        });
-    });
-</script> {% endcomment %}
-{% endblock script %}

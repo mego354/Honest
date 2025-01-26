@@ -8,8 +8,11 @@ urlpatterns = [
     path('create/', ModelCreationView.as_view(), name='model_creation_view'),
     path('model/<int:pk>/', ModelDetailView.as_view(), name='model_detail_view'),
     path('model/<int:pk>/delete/', ModelDeleteView.as_view(), name='model_delete_view'),
+    
     path('size/<int:pk>/edit/', SizeAmountEditView.as_view(), name='SizeAmount_edit'),
     path('size/<int:pk>/delete/', SizeAmountDeleteView.as_view(), name='SizeAmount_delete_view'),
+
+    path('production-list', ProductionListingView.as_view(), name='production_list_view'),
     path('production/add/<int:piece_id>/', ProductionPieceCreateView.as_view(), name='productionpiece_add'),
     path('production/<int:pk>/edit/', ProductionPieceUpdateView.as_view(), name='productionpiece_edit'),
     path('production/<int:pk>/delete/', ProductionPieceDeleteView.as_view(), name='productionpiece_delete'),
