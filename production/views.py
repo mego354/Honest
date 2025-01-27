@@ -157,11 +157,9 @@ class SizeAmountCreateView(CreateView):
         model = get_object_or_404(Model, pk=model_id)
         form.instance.model = model
 
-        # Save the new SizeAmount instance
         size_amount = form.save()
 
-        # Create new Piece objects if they do not already exist
-        for piece in model.pieces.all():  # Correctly iterate through related objects
+        for piece in model.pieces.all():
             if not Piece.objects.filter(model=model, type=piece.type, size=size_amount.size).exists():
                 Piece.objects.create(
                     model=model,
@@ -170,7 +168,6 @@ class SizeAmountCreateView(CreateView):
                     available_amount=size_amount.amount
                 )
 
-        # Success message and redirect
         messages.success(self.request, "تم اضافة المقاس وكل القطع المرتبطة به بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model_id]))
     
