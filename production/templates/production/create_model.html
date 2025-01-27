@@ -77,7 +77,7 @@
             div.innerHTML = `
                 <div class="col">
                     <label for="piece_type_${index}">نوع القطعة ${index}</label>
-                    <input type="text" class="form-control" id="piece_type_${index}" name="piece_type_${index}">
+                    <input type="text" class="form-control" id="piece_type_${index}" name="piece_type_${index}" required>
                 </div>
             `;
             return div;
@@ -89,11 +89,11 @@
             div.innerHTML = `
                 <div class="col">
                     <label for="size_${index}">المقاس ${index}</label>
-                    <input type="text" class="form-control" id="size_${index}" name="size_${index}">
+                    <input type="text" class="form-control" id="size_${index}" name="size_${index}" required>
                 </div>
                 <div class="col">
                     <label for="amount_${index}">الكمية ${index}</label>
-                    <input type="number" class="form-control" id="amount_${index}" name="amount_${index}">
+                    <input type="number" class="form-control" id="amount_${index}" name="amount_${index}" required>
                 </div>
             `;
             return div;
