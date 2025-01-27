@@ -210,10 +210,11 @@ class SizeAmountDeleteView(DeleteView):
 
         messages.success(self.request, "تم حذف المقاس وكل القطع المرتبطة به بنجاح")
 
-        if model.size_amounts.all().count > 0:
+        if model.size_amounts.all().count() > 0:
             return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
         else:
-            messages.error(self.request, f"لعدم توافر مقاسات اخري {model.model_number} تم حذف موديل ")
+            messages.error(self.request, f"تم حذف موديل {model.model_number} لعدم توافر مقاسات اخري")
+            model.delete()
             return redirect(reverse_lazy("model_list_view"))
             
     
