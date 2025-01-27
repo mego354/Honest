@@ -202,12 +202,20 @@ class SizeAmountDeleteView(DeleteView):
     def form_valid(self, form):
         size_amount = self.get_object()
         model_pk = size_amount.model.id
+        model = get_object_or_404(Model, pk=model_pk)
+
         pieces = Piece.objects.filter(model=size_amount.model,size=size_amount.size)
         pieces.delete()
         size_amount.delete()
 
         messages.success(self.request, "تم حذف المقاس وكل القطع المرتبطة به بنجاح")
-        return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
+
+        if model.size_amounts.all().count > 0:
+            return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
+        else:
+            messages.error(self.request, f"لعدم توافر مقاسات اخري {model.model_number} تم حذف موديل ")
+            return redirect(reverse_lazy("model_list_view"))
+            
     
 ###############################################################################################################################
 class ProductionPieceCreateView(CreateView):
