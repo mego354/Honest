@@ -17,12 +17,10 @@
     <div class="pt-4 section-title d-flex justify-content-between align-items-center">
         <h2>تفاصيل الموديل</h2>
         <div class="ps-2">
-            {% comment %} <a href="#" class="px-2 btn btn-success">تعديل</a> {% endcomment %}
             <a href="{% url 'model_delete_view' model.id %}" class="px-2 btn btn-danger">
                 حذف <i class="fa-solid fa-eraser fa-lg" style="color: #ffffff;"></i>
             </a>
         </div>
-    
     </div>
         
     <div class="model-details container my-4 p-4 border rounded shadow-sm bg-light">
@@ -66,7 +64,17 @@
         </div>
                         
         <!-- Table for Size Amounts -->
-        <h3 class="section-title border-bottom-5 mb-2">تفاصيل المقاسات</h3>
+        <div class="section-title border-bottom-5 mb-2 d-flex justify-content-between align-items-center">
+            <h2>تفاصيل المقاسات</h2>
+            <div class="ps-2">
+                <a href="{% url 'sizeamount_add' model.id%}" class="px-2 btn">
+                    <i class="fa-solid fa-plus fa-xl" style="color: #0bda3f;"></i>
+                </a>
+            </div>
+        </div>
+    
+        {% comment %} <h3 class="section-title border-bottom-5 mb-2">تفاصيل المقاسات</h3> {% endcomment %}
+
         <div style="overflow-x: auto; max-height: 70vh; position: relative;" class="table-responsive mb-4">
             <table id="size-table" class="table table-striped">
                 <thead class="table-dark">
@@ -127,7 +135,6 @@
                                 <i class="fa-solid fa-shop fa-lg" style="color: #3498db;"></i>
                             </a>
                             <a class="px-2 btn" href="{% url 'production_list_view' %}?model_number={{model.model_number}}&type={{piece.type}}&size={{piece.size}}">
-                                {% comment %} <i class="fa-solid fa-plus fa-lg" style="color: #0bda3f;"></i> {% endcomment %}
                                 <i class="fa-regular fa-eye fa-lg" style="color: #0784e4"></i>
                             </a>
                         </td>

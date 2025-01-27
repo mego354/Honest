@@ -62,9 +62,6 @@
                     <td>{{ model.pieces.count|divide:model.size_amounts.count }}</td>
                     <td dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</td>
                     <td>
-                        {% comment %} <a class="px-2 btn" href="#">
-                            <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
-                        </a> {% endcomment %}
                         <a class="px-2 btn" href="{% url 'model_delete_view' model.id %}">
                             <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
                         </a>

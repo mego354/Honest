@@ -20,7 +20,7 @@ class SizeAmount(models.Model):
     editable = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ('model', 'size')  # Ensure unique size per model
+        unique_together = ('model', 'size')
         ordering = ['size']
     def __str__(self):
         return f"{self.model.model_number} - Size: {self.size}, Amount: {self.amount}"

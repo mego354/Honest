@@ -9,6 +9,7 @@ urlpatterns = [
     path('model/<int:pk>/', ModelDetailView.as_view(), name='model_detail_view'),
     path('model/<int:pk>/delete/', ModelDeleteView.as_view(), name='model_delete_view'),
     
+    path('size/add/<int:model_id>/', SizeAmountCreateView.as_view(), name='sizeamount_add'),
     path('size/<int:pk>/edit/', SizeAmountEditView.as_view(), name='SizeAmount_edit'),
     path('size/<int:pk>/delete/', SizeAmountDeleteView.as_view(), name='SizeAmount_delete_view'),
 

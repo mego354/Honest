@@ -75,6 +75,29 @@ class ModelCreationView(FormView):
         messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
         return self.render_to_response(self.get_context_data(form=form))
 
+class ModelDetailView(DetailView):
+    model = Model
+    template_name = "production/detail_model.html" 
+    context_object_name = "model"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        model = self.get_object()
+
+        total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
+
+        context['total_sizes_pieces'] = total_sizes_pieces
+        return context
+    
+class ModelDeleteView(DeleteView):
+    model = Model
+    template_name = "production/delete_model.html"
+    success_url = reverse_lazy('model_list_view')
+
+    def form_valid(self, form):
+        messages.success(self.request, "تم حذف الموديل بنجاح")
+        return super().form_valid(form)
+
 class ModelListingView(ListView):
     template_name = "production/list_model.html"
     model = Model
@@ -123,43 +146,31 @@ class ModelListingView(ListView):
 
         return context
     
-class ModelDetailView(DetailView):
-    model = Model
-    template_name = "production/detail_model.html" 
-    context_object_name = "model"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        model = self.get_object()
-
-        total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
-
-        context['total_sizes_pieces'] = total_sizes_pieces
-        return context
-    
-class ModelDeleteView(DeleteView):
-    model = Model
-    template_name = "production/delete_model.html"
-    success_url = reverse_lazy('model_list_view')
-
-    def form_valid(self, form):
-        messages.success(self.request, "تم حذف الموديل بنجاح")
-        return super().form_valid(form)
-
 ###############################################################################################################################
-class SizeAmountDeleteView(DeleteView):
+class SizeAmountCreateView(CreateView):
     model = SizeAmount
-    template_name = "production/delete_size.html" 
+    form_class = SizeAmountForm
+    template_name = "production/size_edit.html"
 
+    
     def form_valid(self, form):
-        size_amount = self.get_object()
-        model_pk = size_amount.model.id
-        pieces = Piece.objects.filter(model=size_amount.model,size=size_amount.size)
-        pieces.delete()
-        size_amount.delete()
+        model_id = self.kwargs.get('model_id')
+        model = get_object_or_404(Model, pk=model_id)
+        form.instance.model = model
+        size_amount = form.save()
+        pieces = []
+        for piece in model.pieces:
+            if piece.type not in pieces:
+                Piece.objects.create(
+                    model = model,
+                    type = piece.type,
+                    size = size_amount.size,
+                    available_amount = size_amount.amount
+                )
+                pieces.append(piece.type)
 
-        messages.success(self.request, "تم حذف المقاس وكل القطع المرتبطة به بنجاح")
-        return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
+        messages.success(self.request, "تم تعديل المقاس وكل القطع المرتبطة به بنجاح.")
+        return redirect(reverse_lazy("model_detail_view", args=[model_id]))
     
 class SizeAmountEditView(UpdateView):
     model = SizeAmount
@@ -184,7 +195,21 @@ class SizeAmountEditView(UpdateView):
 
         messages.success(self.request, "تم تعديل المقاس وكل القطع المرتبطة به بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+    
+class SizeAmountDeleteView(DeleteView):
+    model = SizeAmount
+    template_name = "production/delete_size.html" 
 
+    def form_valid(self, form):
+        size_amount = self.get_object()
+        model_pk = size_amount.model.id
+        pieces = Piece.objects.filter(model=size_amount.model,size=size_amount.size)
+        pieces.delete()
+        size_amount.delete()
+
+        messages.success(self.request, "تم حذف المقاس وكل القطع المرتبطة به بنجاح")
+        return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
+    
 ###############################################################################################################################
 class ProductionPieceCreateView(CreateView):
     model = ProductionPiece
