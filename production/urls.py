@@ -18,5 +18,8 @@ urlpatterns = [
     path('production/<int:pk>/edit/', ProductionPieceUpdateView.as_view(), name='productionpiece_edit'),
     path('production/<int:pk>/delete/', ProductionPieceDeleteView.as_view(), name='productionpiece_delete'),
 
+    path('production/', production_view, name='production_form'),
+    path('load-sizes/', load_sizes, name='load_sizes'),
+    path('load-pieces/', load_pieces, name='load_pieces'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

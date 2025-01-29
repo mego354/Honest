@@ -29,7 +29,7 @@
                 type="{% if filter_field.field_name in 'start_date end_date' %}date{% else %}text{% endif %}" 
                 id="filter_{{ forloop.counter }}" 
                 name="{{ filter_field.field_name }}" 
-                placeholder="فلتر ب {{ filter_field.verbose_name }}" 
+                placeholder="بحث ب {{ filter_field.verbose_name }}" 
                 class="form-control" 
                 value="{{ filter_field.value }}">
         </div>

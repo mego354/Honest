@@ -1,4 +1,5 @@
 {% extends "cloth/layout.html" %}
+{% load math_filters %}
 
 {% block home_page %}
 <a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
@@ -13,22 +14,70 @@
 {% endblock %}
 
 {% block body %}
-<h2 class="section-title pt-4">تحويل للانتاج</h2>
-<div id="order-form-wrapper" class="container py-4">
-    <form method="post" id="order-form" class="mb-4 p-4 pt-0 rounded">
-        {% csrf_token %}
-        <section>
-            <div class="container border rounded p-3 mb-3">
-                <h3 class="section-title border-bottom-5 mb-2">التفاصيل</h3>
-                <div class="row mb-2">
-                    <div class="col">
-                        {{ form.used_amount.label_tag }}
-                        {{ form.used_amount }}
-                    </div>
-                </div>
-            </div>
-        </section>
-        <button type="submit" class="btn btn-primary w-100">حفظ</button>
-    </form>
-</div>
+<form method="post" id="productionForm">
+    {% csrf_token %}
+    <label for="id_model">اختر الموديل:</label>
+    <select id="id_model" name="model">
+        <option value="">-- اختر الموديل --</option>
+        {% for model in form.fields.model.queryset %}
+        <option value="{{ model.id }}">{{ model }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="id_size_amount">اختر المقاس والكمية:</label>
+    <select id="id_size_amount" name="size_amount">
+        <option value="">-- اختر المقاس --</option>
+    </select>
+
+    <label for="id_piece">اختر القطعة:</label>
+    <select id="id_piece" name="piece">
+        <option value="">-- اختر القطعة --</option>
+    </select>
+
+    <label for="id_used_amount">الكمية المراد استخدامها:</label>
+    <input type="number" id="id_used_amount" name="used_amount" min="1">
+
+    <button type="submit">إرسال</button>
+</form>
+    
 {% endblock body %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#id_model").change(function () {
+            let modelId = $(this).val();
+            if (modelId) {
+                $.ajax({
+                    url: "{% url 'load_sizes' %}",
+                    data: { model_id: modelId },
+                    success: function (data) {
+                        $("#id_size_amount").empty().append('<option value="">-- اختر المقاس --</option>');
+                        $.each(data.sizes, function (index, item) {
+                            $("#id_size_amount").append('<option value="' + item.id + '">' + item.size + ' (' + item.amount + ' متاحة)</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        $("#id_size_amount").change(function () {
+            let sizeAmountId = $(this).val();
+            if (sizeAmountId) {
+                $.ajax({
+                    url: "{% url 'load_pieces' %}",
+                    data: { size_amount_id: sizeAmountId },
+                    success: function (data) {
+                        $("#id_piece").empty().append('<option value="">-- اختر القطعة --</option>');
+                        $.each(data.pieces, function (index, item) {
+                            $("#id_piece").append('<option value="' + item.id + '">' + item.type + ' (' + item.available_amount + ' متاحة)</option>');
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock script %}

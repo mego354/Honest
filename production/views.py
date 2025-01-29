@@ -1,13 +1,14 @@
+from django.http import JsonResponse
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.utils.timezone import datetime
 from django.db import transaction
 from django.db.models import Q, Sum, F
 from django.contrib import messages
 
 from .models import Model, Piece, SizeAmount, ProductionPiece
-from .forms import ModelForm, SizeAmountForm, ProductionPieceForm
+from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm
 ###############################################################################################################################
 class ModelCreationView(FormView):
     template_name = "production/create_model.html"
@@ -222,7 +223,7 @@ class SizeAmountDeleteView(DeleteView):
 class ProductionPieceCreateView(CreateView):
     model = ProductionPiece
     form_class = ProductionPieceForm
-    template_name = 'production/production_form.html'
+    template_name = 'production/production_piece_form.html'
 
     def form_valid(self, form):
         piece_id = self.kwargs.get('piece_id')
@@ -239,7 +240,7 @@ class ProductionPieceCreateView(CreateView):
 class ProductionPieceUpdateView(UpdateView):
     model = ProductionPiece
     form_class = ProductionPieceForm
-    template_name = 'production/production_form.html'
+    template_name = 'production/production_piece_form.html'
 
     def form_valid(self, form):
         form.save()
@@ -328,3 +329,18 @@ class ProductionListingView(ListView):
         return context
 
 ###############################################################################################################################
+
+def load_sizes(request):
+    model_id = request.GET.get('model_id')
+    sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount')
+    return JsonResponse({'sizes': list(sizes)})
+
+def load_pieces(request):
+    size_amount_id = request.GET.get('size_amount_id')
+    size_amount = SizeAmount.objects.get(id=size_amount_id)
+    pieces = Piece.objects.filter(model=size_amount.model, size=size_amount.size).values('id', 'type', 'available_amount')
+    return JsonResponse({'pieces': list(pieces)})
+
+def production_view(request):
+    form = ProductionForm()
+    return render(request, 'production/production_form.html', {'form': form})

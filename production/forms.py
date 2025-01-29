@@ -26,3 +26,13 @@ class ProductionPieceForm(forms.ModelForm):
         widgets = {
             'used_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}), 
         }
+
+class ProductionForm(forms.ModelForm):
+    model = forms.ModelChoiceField(queryset=Model.objects.all(), label="اختر الموديل")
+    size_amount = forms.ChoiceField(label="اختر المقاس والكمية", choices=[])
+    piece = forms.ChoiceField(label="اختر القطعة", choices=[])
+    used_amount = forms.IntegerField(label="الكمية المراد استخدامها", min_value=1)
+
+    class Meta:
+        model = ProductionPiece
+        fields = ['model', 'size_amount', 'piece', 'used_amount']

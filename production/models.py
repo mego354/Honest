@@ -12,6 +12,11 @@ class Model(models.Model):
     def __str__(self):
         return f"{self.model_number}"
 
+    def is_active(self):
+        available_pieces = sum(piece.available_amount for piece in self.pieces.all() or 0)
+        print(available_pieces)
+        return available_pieces > 0
+
 
 class SizeAmount(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="size_amounts")

@@ -30,7 +30,7 @@
                 type="{% if filter_field.field_name in 'start_date end_date' %}date{% else %}text{% endif %}" 
                 id="filter_{{ forloop.counter }}" 
                 name="{{ filter_field.field_name }}" 
-                placeholder="فلتر ب {{ filter_field.verbose_name }}" 
+                placeholder="بحث ب {{ filter_field.verbose_name }}" 
                 class="form-control" 
                 value="{{ filter_field.value }}">
         </div>
@@ -39,41 +39,74 @@
         <button type="submit" class="btn btn-primary w-100">تنفيذ</button>
     </form>
     
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>الرمز</th>
-                    <th>رقم الموديل</th>
-                    <th>المقاسات والكميات</th>
-                    <th>قطع الموديل</th>
-                    <th>التاريخ</th>
-                    <th>تحكم</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for model in object_list %}
-                <tr class="clickable-row" data-detail_url="{% url 'model_detail_view' model.id %}">
-                    <td>
-                        <a href="{% url 'model_detail_view' model.id %}">{{ model.id }}</a>
-                    </td>
-                    <td class="text-end">{{ model.model_number }}</td>
-                    <td>{{ model.size_amounts.count }}</td>
-                    <td>{{ model.pieces.count|divide:model.size_amounts.count }}</td>
-                    <td dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</td>
-                    <td>
-                        <a class="px-2 btn" href="{% url 'model_delete_view' model.id %}">
-                            <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center">لا يوجد عناصر</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        {% for model in object_list %}
+        <div class="model-card">
+            <div class="d-flex justify-content-between align-items-center pb-3">
+                <h5 class="mb-0">
+                    {{ model.model_number }}
+                    <span class="badge {% if model.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                        {% if model.is_active %} نشط {% else %} غير نشط {% endif %}
+                    </span>
+                </h5>
+                <button class="btn btn-sm btn-primary oped_details_btn" onclick="toggleDetails('{{ model.id }}')">
+                    عرض التفاصيل <i id="chevron-icon-{{ model.id }}" class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                {% comment %} <p><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</span></p> {% endcomment %}
+                <p class="mb-0"><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y" }}</span></p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ model.id }}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <a class="me-2 btn btn-sm" style="background-color: #0784e4; color: #ffffff" href="{% url 'model_detail_view' model.id %}">
+                        <i class="fa-regular fa-eye" ></i>
+                    </a>
+                </div>
+            </div>
+
+            
+            <!-- تفاصيل الموديل -->
+            <div id="details-{{ model.id }}" class="model-details-toggle mt-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center pb-3">
+                            <h6 class="text-dark mb-0">تفاصيل الموديل</h6>
+                            <a href="{% url 'production_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn"> عرض الانتاج </a>
+            
+
+                        </div>
+            
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>نوع القطعة</th>
+                                        <th>المقاس</th>
+                                        <th>المنتج</th>
+                                        <th>المتبقي</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for part in model.pieces.all %}
+                                    <tr>
+                                        <td>{{ part.type }}</td>
+                                        <td>{{ part.size }}</td>
+                                        <td>{{ part.used_amount }}</td>
+                                        <td>{{ part.available_amount }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 
     <!-- Pagination -->
@@ -151,4 +184,24 @@
         });
     });
 </script> {% endcomment %}
+<script>
+    function toggleDetails(modelId) {
+        let details = document.getElementById('details-' + modelId);
+        let icon = document.getElementById('chevron-icon-' + modelId);
+        if (details.style.display === 'none' || details.style.display === '') {
+            details.style.display = 'block';
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        } else {
+            details.style.display = 'none';
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        }        
+    }
+    function confirmDelete(modelId) {
+        if (confirm('هل أنت متأكد من حذف هذا الموديل؟')) {
+            window.location.href = `/delete/${modelId}`;
+        }
+    }
+</script>
 {% endblock script %}
