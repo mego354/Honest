@@ -59,9 +59,9 @@
                 {% comment %} <p><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</span></p> {% endcomment %}
                 <p class="mb-0"><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y" }}</span></p>
                 <div class="d-flex justify-content-between align-items-center">
-                    <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ model.id }}')">
+                    <a class="btn btn-sm btn-danger" href="{% url 'model_delete_view' model.id %}">
                         <i class="fas fa-trash"></i>
-                    </button>
+                    </a>
                     <a class="me-2 btn btn-sm" style="background-color: #0784e4; color: #ffffff" href="{% url 'model_detail_view' model.id %}">
                         <i class="fa-regular fa-eye" ></i>
                     </a>
