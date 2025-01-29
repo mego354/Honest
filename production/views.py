@@ -1,3 +1,4 @@
+from urllib.parse import urlencode
 from django.http import JsonResponse
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView
 from django.urls import reverse, reverse_lazy
@@ -254,18 +255,17 @@ class ProductionPieceDeleteView(DeleteView):
     model = ProductionPiece
     template_name = 'production/delete_production.html'
 
-    def delete(self, request, *args, **kwargs):
-        production_piece = self.get_object()
-        
-        print(f"Deleting ProductionPiece with ID: {production_piece.id}, used_amount: {production_piece.used_amount}")
-        
-        response = super().delete(request, *args, **kwargs)
-        messages.success(request, "تم حذف الكمية بنجاح.")
-        return response
-
     def get_success_url(self):
+        # production_piece = self.get_object()
+        # return reverse_lazy("model_detail_view", args=[production_piece.piece.model.id])
         production_piece = self.get_object()
-        return reverse_lazy("model_detail_view", args=[production_piece.piece.model.id])
+        url = reverse('production_list_view')
+        query_params = {'model_number': production_piece.piece.model.model_number}
+        query_string = urlencode(query_params)
+        full_url = f"{url}?{query_string}"
+        messages.success(self.request, "تم حذف الكمية بنجاح.")
+
+        return full_url
 
 class ProductionListingView(ListView):
     template_name = "production/list_production.html"
@@ -327,20 +327,23 @@ class ProductionListingView(ListView):
 class ProductionFormView(FormView):
     template_name = "production/production_form.html"
     form_class = ProductionForm
-    success_url = "/success/"  # Change to your success URL
 
+            
     def form_valid(self, form):
         piece_id = form.cleaned_data['piece']
         used_amount = form.cleaned_data['used_amount']
 
         self.piece_instance = Piece.objects.get(id=piece_id)
-
         ProductionPiece.objects.create(
             piece=self.piece_instance,
             used_amount=used_amount
         )
 
         return self.get_success_url()
+
+    def form_invalid(self, form):
+        messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
+        return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
         model = self.piece_instance.model

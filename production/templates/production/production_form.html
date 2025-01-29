@@ -60,9 +60,9 @@
             fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
                 .then(response => response.json())
                 .then(data => {
-                    sizeAmountField.innerHTML = '<option value="">اختر المقاس والكمية</option>';
+                    sizeAmountField.innerHTML = '<option value="">اختر المقاس</option>';
                     data.sizes.forEach(size => {
-                        sizeAmountField.innerHTML += `<option value="${size.id}">${size.size} - ${size.amount}</option>`;
+                        sizeAmountField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
                     });
                 });
         });
@@ -74,7 +74,7 @@
                 .then(data => {
                     pieceField.innerHTML = '<option value="">اختر القطعة</option>';
                     data.pieces.forEach(piece => {
-                        pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - ${piece.available_amount}</option>`;
+                        pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - متبقي (${piece.available_amount})</option>`;
                     });
                 });
         });
