@@ -27,12 +27,27 @@ class ProductionPieceForm(forms.ModelForm):
             'used_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}), 
         }
 
-class ProductionForm(forms.ModelForm):
-    model = forms.ModelChoiceField(queryset=Model.objects.all(), label="اختر الموديل")
-    size_amount = forms.ChoiceField(label="اختر المقاس والكمية", choices=[])
-    piece = forms.ChoiceField(label="اختر القطعة", choices=[])
-    used_amount = forms.IntegerField(label="الكمية المراد استخدامها", min_value=1)
+class ProductionForm(forms.Form):
+    model = forms.ModelChoiceField(
+        queryset=Model.objects.all(),
+        label="اختر الموديل",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
 
-    class Meta:
-        model = ProductionPiece
-        fields = ['model', 'size_amount', 'piece', 'used_amount']
+    size_amount = forms.ChoiceField(
+        label="اختر المقاس",
+        choices=[("", "اختر المقاس")],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    piece = forms.ChoiceField(
+        label="اختر القطعة",
+        choices=[("", "اختر القطعة")],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    used_amount = forms.IntegerField(
+        label="الكمية المراد استخدامها",
+        min_value=1,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
+    )

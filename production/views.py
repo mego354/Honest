@@ -120,12 +120,10 @@ class ModelListingView(ListView):
         queryset = super().get_queryset()
         filters = Q()
 
-        # Filter by model_number (icontains)
         model_number = self.request.GET.get("model_number")
         if model_number:
             filters &= Q(model_number__icontains=model_number)
 
-        # Filter by date range
         start_date = self.parse_date(self.request.GET.get("start_date"))
         end_date = self.parse_date(self.request.GET.get("end_date"))
         if start_date:
@@ -290,22 +288,18 @@ class ProductionListingView(ListView):
         queryset = super().get_queryset()
         filters = Q()
 
-        # Filter by model_number (icontains)
         model_number = self.request.GET.get("model_number")
         if model_number:
             filters &= Q(piece__model__model_number__icontains=model_number)
 
-        # Filter by size (icontains)
         size = self.request.GET.get("size")
         if size:
             filters &= Q(piece__size__icontains=size)
 
-        # Filter by type (icontains)
         type = self.request.GET.get("type")
         if type:
             filters &= Q(piece__type__icontains=type)
 
-        # Filter by date range
         start_date = self.parse_date(self.request.GET.get("start_date"))
         end_date = self.parse_date(self.request.GET.get("end_date"))
         if start_date:
@@ -330,6 +324,30 @@ class ProductionListingView(ListView):
 
 ###############################################################################################################################
 
+class ProductionFormView(FormView):
+    template_name = "production/production_form.html"
+    form_class = ProductionForm
+    success_url = "/success/"  # Change to your success URL
+
+    def form_valid(self, form):
+        piece_id = form.cleaned_data['piece']
+        used_amount = form.cleaned_data['used_amount']
+
+        self.piece_instance = Piece.objects.get(id=piece_id)
+
+        ProductionPiece.objects.create(
+            piece=self.piece_instance,
+            used_amount=used_amount
+        )
+
+        return self.get_success_url()
+
+    def get_success_url(self):
+        model = self.piece_instance.model
+        messages.success(self.request, "تمت إضافة الكمية بنجاح.")
+        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+
+
 def load_sizes(request):
     model_id = request.GET.get('model_id')
     sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount')
@@ -337,10 +355,6 @@ def load_sizes(request):
 
 def load_pieces(request):
     size_amount_id = request.GET.get('size_amount_id')
-    size_amount = SizeAmount.objects.get(id=size_amount_id)
-    pieces = Piece.objects.filter(model=size_amount.model, size=size_amount.size).values('id', 'type', 'available_amount')
+    size = SizeAmount.objects.get(pk=size_amount_id)
+    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount')
     return JsonResponse({'pieces': list(pieces)})
-
-def production_view(request):
-    form = ProductionForm()
-    return render(request, 'production/production_form.html', {'form': form})
