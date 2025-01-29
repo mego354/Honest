@@ -13,8 +13,7 @@ class Model(models.Model):
         return f"{self.model_number}"
 
     def is_active(self):
-        available_pieces = sum(piece.available_amount for piece in self.pieces.all() or 0)
-        print(available_pieces)
+        available_pieces = sum(piece.available_amount for piece in self.pieces.filter(available_amount__gt=0))  # using the Django ORM filter condition
         return available_pieces > 0
 
 
