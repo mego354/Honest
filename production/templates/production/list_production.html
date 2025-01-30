@@ -47,6 +47,7 @@
                     <th>القطعة</th>
                     <th>المقاس</th>
                     <th>الكمية</th>
+                    <th>المصنع</th>
                     <th>التاريخ</th>
                     <th>تحكم</th>
                 </tr>
@@ -57,10 +58,11 @@
                     <td>
                         <a href="{% url 'model_detail_view' production_item.piece.model.id %}">{{ production_item.piece.model.id }}</a>
                     </td>
-                    <td class="text-end">{{ production_item.piece.model.model_number }}</td>
+                    <td>{{ production_item.piece.model.model_number }}</td>
                     <td>{{ production_item.piece.type }}</td>
                     <td>{{ production_item.piece.size }}</td>
                     <td>{{ production_item.used_amount }}</td>
+                    <td>{{ production_item.factory }}</td>
                     <td dir="ltr">{{ production_item.created_at|date:"d/m/Y h:i A" }}</td>
                     <td>
                         <a class="px-2 btn" href="{% url 'productionpiece_edit' production_item.id %}">

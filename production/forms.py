@@ -22,9 +22,10 @@ class SizeAmountForm(forms.ModelForm):
 class ProductionPieceForm(forms.ModelForm):
     class Meta:
         model = ProductionPiece
-        fields = ['used_amount']
+        fields = ['used_amount', 'factory']
         widgets = {
             'used_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}), 
+            'factory': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class ProductionForm(forms.Form):
