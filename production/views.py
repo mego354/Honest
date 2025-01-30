@@ -340,9 +340,8 @@ class ProductionFormView(FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
-        model = self.piece_instance.model
         messages.success(self.request, "تمت إضافة الكمية بنجاح.")
-        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+        return redirect(reverse_lazy("production_form"))
 
 
 def load_sizes(request):
