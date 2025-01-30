@@ -37,13 +37,13 @@ class ProductionForm(forms.Form):
 
     size_amount = forms.ChoiceField(
         label="اختر المقاس",
-        required=True,  # The field is required
+        required=True,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     piece = forms.ChoiceField(
         label="اختر القطعة",
-        required=True,  # The field is required
+        required=True,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
@@ -51,6 +51,11 @@ class ProductionForm(forms.Form):
         label="الكمية المراد استخدامها",
         min_value=1,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
+    )
+    factory = forms.CharField(
+        label="اسم المصنع",
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
     def __init__(self, *args, **kwargs):

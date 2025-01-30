@@ -256,16 +256,8 @@ class ProductionPieceDeleteView(DeleteView):
     template_name = 'production/delete_production.html'
 
     def get_success_url(self):
-        # # production_piece = self.get_object()
-        # return reverse_lazy("model_detail_view", args=[production_piece.piece.model.id])
-        # production_piece = self.get_object()
-        # url = reverse('production_list_view')
-        # query_params = {'model_number': production_piece.piece.model.model_number}
-        # query_string = urlencode(query_params)
-        # full_url = f"{url}?{query_string}"
         messages.success(self.request, "تم حذف الكمية بنجاح.")
-
-        return redirect(reverse_lazy("production_form"))
+        return reverse_lazy("production_form")
 
 class ProductionListingView(ListView):
     template_name = "production/list_production.html"
@@ -332,11 +324,13 @@ class ProductionFormView(FormView):
     def form_valid(self, form):
         piece_id = form.cleaned_data['piece']
         used_amount = form.cleaned_data['used_amount']
+        factory = form.cleaned_data['factory']
 
         self.piece_instance = Piece.objects.get(id=piece_id)
         ProductionPiece.objects.create(
             piece=self.piece_instance,
-            used_amount=used_amount
+            used_amount=used_amount,
+            factory=factory
         )
 
         return self.get_success_url()
