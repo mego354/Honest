@@ -15,6 +15,35 @@ class Model(models.Model):
     def is_active(self):
         available_pieces = sum(piece.available_amount for piece in self.pieces.filter(available_amount__gt=0))  # using the Django ORM filter condition
         return available_pieces > 0
+    
+    def get_usage_percentage(self):
+        sizes = self.size_amounts.all()
+        pieces = self.pieces.all()
+        pieces_count = pieces.count() / sizes.count()
+
+        total_amount = sum( size.amount * pieces_count for size in sizes )
+        available_amount = sum(piece.available_amount for piece in pieces.filter(available_amount__gte=0))
+        used_amount = total_amount - available_amount
+        # used_amount = total_amount * 0.81
+        percent = (used_amount / total_amount) * 100
+
+        if percent > 80:
+            percent_style = "bg-danger"
+        elif percent > 60:
+            percent_style = "bg-warning"
+        elif percent > 40:
+            percent_style = "bg-info"
+        elif percent > 20:
+            percent_style = "bg-success"
+        else:
+            percent_style = ""
+        print(int(total_amount))
+        return {
+            "total_amount": int(total_amount),
+            "used_amount": int(used_amount),
+            "percent": int(percent),
+            "percent_style": percent_style,
+        }
 
 
 class SizeAmount(models.Model):

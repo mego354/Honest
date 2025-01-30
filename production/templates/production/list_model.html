@@ -44,6 +44,29 @@
     <div class="container mt-4">
         {% for model in object_list %}
         <div class="model-card">
+            
+            {% with usage=model.get_usage_percentage %}
+            <div dir="ltr" class="progress mb-2">
+                <div class="progress-bar progress-bar-striped {{ usage.percent_style }}" 
+                     role="progressbar" 
+                     style="width: {{ usage.percent }}%" 
+                     aria-valuenow="{{ usage.used_amount }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="{{ usage.total_amount }}">
+                    <div class="d-flex justify-content-between align-items-center px-3">
+                        <div>
+                            {{ usage.used_amount }} / {{ usage.total_amount }}
+                        </div>
+                        <div>
+                            {{ usage.percent }}%
+                        </div>
+                     </div>
+
+
+                </div>
+            </div>
+            {% endwith %}            
+
             <div class="d-flex justify-content-between align-items-center pb-3">
                 <h5 class="mb-0">
                     {{ model.model_number }}
