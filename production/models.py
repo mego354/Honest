@@ -50,6 +50,8 @@ class ProductionPiece(models.Model):
     used_amount = models.IntegerField(verbose_name="الكمية للانتاج", default=0, blank=True)
     factory = models.CharField(max_length=50, verbose_name="المصنع", blank=True)
 
+    class Meta:
+        ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
         if self.pk:
