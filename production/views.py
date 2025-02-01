@@ -90,7 +90,8 @@ class ModelDetailView(DetailView):
         total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
 
         context['total_sizes_pieces'] = total_sizes_pieces
-        context['total_Dozens'] = round(total_sizes_pieces / 12, 2)
+        # context['total_Dozens'] = round(total_sizes_pieces / 12, 2)
+        context['total_Dozens'] = int(total_sizes_pieces / 12)
         return context
     
 class ModelDeleteView(DeleteView):
