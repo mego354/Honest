@@ -277,6 +277,7 @@ body {
     display: flex;
     justify-content: flex-end; /* Align the button to the left */
     width: 100%;
+    
 }
 
 /* Style for the submit button */
