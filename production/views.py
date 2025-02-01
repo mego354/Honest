@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 from django.http import JsonResponse
+from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404, render
@@ -89,6 +90,7 @@ class ModelDetailView(DetailView):
         total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
 
         context['total_sizes_pieces'] = total_sizes_pieces
+        context['total_Dozens'] = round(total_sizes_pieces / 12, 2)
         return context
     
 class ModelDeleteView(DeleteView):
@@ -146,6 +148,14 @@ class ModelListingView(ListView):
 
         return context
     
+class ToggleArchiveView(View):
+    def get(self, request, pk, *args, **kwargs):
+        model_instance = get_object_or_404(Model, pk=pk)
+        
+        model_instance.is_archive = not model_instance.is_archive
+        model_instance.save()
+
+        return redirect(reverse_lazy("model_detail_view", args=[model_instance.id]))
 ###############################################################################################################################
 class SizeAmountCreateView(CreateView):
     model = SizeAmount
@@ -263,7 +273,7 @@ class ProductionListingView(ListView):
     template_name = "production/list_production.html"
     model = ProductionPiece
     paginate_by = 30
-    filter_fields = ["model_number", "type", "size", "start_date", "end_date"]
+    filter_fields = ["model_number", "type", "size", "start_date", "end_date", "factory"]
 
     def parse_date(self, date_str):
         """
@@ -292,6 +302,10 @@ class ProductionListingView(ListView):
         if type:
             filters &= Q(piece__type__icontains=type)
 
+        factory = self.request.GET.get("factory")
+        if factory:
+            filters &= Q(factory__icontains=factory)
+
         start_date = self.parse_date(self.request.GET.get("start_date"))
         end_date = self.parse_date(self.request.GET.get("end_date"))
         if start_date:
@@ -310,6 +324,7 @@ class ProductionListingView(ListView):
             {"field_name": "size", "verbose_name": "المقاس", "value": self.request.GET.get("size", "")},
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
             {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
+            {"field_name": "factory", "verbose_name": "المصنع", "value": self.request.GET.get("factory", "")},
         ]
 
         return context

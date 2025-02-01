@@ -30,7 +30,7 @@ class ProductionPieceForm(forms.ModelForm):
 
 class ProductionForm(forms.Form):
     model = forms.ModelChoiceField(
-        queryset=Model.objects.all(),
+        queryset=Model.objects.filter(is_archive=False),
         label="اختر الموديل",
         widget=forms.Select(attrs={'class': 'form-control'})
     )

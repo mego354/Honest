@@ -5,6 +5,7 @@ class Model(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
+    is_archive = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_at']
