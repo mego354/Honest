@@ -23,8 +23,10 @@ class Model(models.Model):
         pieces_count = pieces.count() / sizes.count()
 
         total_amount = sum( size.amount * pieces_count for size in sizes )
-        available_amount = sum(piece.available_amount for piece in pieces.filter(available_amount__gte=0))
-        used_amount = total_amount - available_amount
+        used_amount = sum(piece.used_amount for piece in pieces)
+        available_amount = total_amount - used_amount
+        # available_amount = sum(piece.available_amount for piece in pieces.filter(available_amount__gte=0))
+        # used_amount = total_amount - available_amount
         # used_amount = total_amount * 0.81
         percent = (used_amount / total_amount) * 100
 
