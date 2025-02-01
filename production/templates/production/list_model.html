@@ -22,23 +22,26 @@
         </div>
     </div>
 
-    <form method="get" class="filter-form mb-4 p-4 rounded shadow-sm">
+    <form method="get" class="filter-form-flex">
         {% for filter_field in filter_fields %}
-        <div class="form-group mb-3">
-            <label for="filter_{{ forloop.counter }}" class="form-label">{{ filter_field.verbose_name }}</label>
+          <div class="form-group">
+            <label for="filter_{{ forloop.counter }}" class="form-label">
+              {{ filter_field.verbose_name }}
+            </label>
             <input 
-                type="{% if filter_field.field_name in 'start_date end_date' %}date{% else %}text{% endif %}" 
-                id="filter_{{ forloop.counter }}" 
-                name="{{ filter_field.field_name }}" 
-                placeholder="بحث ب {{ filter_field.verbose_name }}" 
-                class="form-control" 
-                value="{{ filter_field.value }}">
-        </div>
+              type="{% if filter_field.field_name in 'start_date end_date' %}date{% elif filter_field.field_name in 'quantity price' %}number{% else %}text{% endif %}" 
+              id="filter_{{ forloop.counter }}" 
+              name="{{ filter_field.field_name }}" 
+              placeholder="بحث ب {{ filter_field.verbose_name }}" 
+              class="form-control">
+          </div>
         {% endfor %}
-    
-        <button type="submit" class="btn btn-primary w-100">تنفيذ</button>
-    </form>
-    
+        <div class="submit-container">
+            <button type="submit" class="btn btn-primary submit-btn">تنفيذ</button>
+        </div>
+
+      </form>
+          
 </head>
 <body class="bg-light">
     <div class="container mt-4">
@@ -46,25 +49,25 @@
         <div class="model-card">
             
             {% with usage=model.get_usage_percentage %}
-            <div dir="ltr" class="progress mb-2">
+            <div dir="ltr" class="progress mb-2 position-relative">
                 <div class="progress-bar progress-bar-striped {{ usage.percent_style }}" 
                      role="progressbar" 
                      style="width: {{ usage.percent }}%" 
                      aria-valuenow="{{ usage.used_amount }}" 
                      aria-valuemin="0" 
                      aria-valuemax="{{ usage.total_amount }}">
-                    <div class="d-flex justify-content-between align-items-center px-3">
-                        <div>
-                            {{ usage.used_amount }} / {{ usage.total_amount }}
-                        </div>
-                        <div>
-                            {{ usage.percent }}%
-                        </div>
-                     </div>
-
-
+                </div>
+                <div class="progress-data d-flex justify-content-between align-items-center px-3 position-absolute w-100 h-100" 
+                     style="top: 0; left: 0; color: #000000;">
+                    <div>
+                        {{ usage.used_amount }} / {{ usage.total_amount }}
+                    </div>
+                    <div>
+                        {{ usage.percent }}%
+                    </div>
                 </div>
             </div>
+
             {% endwith %}            
 
             <div class="d-flex justify-content-between align-items-center pb-3">
@@ -82,10 +85,15 @@
                 {% comment %} <p><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</span></p> {% endcomment %}
                 <p class="mb-0"><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y" }}</span></p>
                 <div class="d-flex justify-content-between align-items-center">
-                    <a class="btn btn-sm btn-danger" href="{% url 'model_delete_view' model.id %}">
+                    {% if not model.is_archive %}
+                    <a class="btn btn-sm btn-secondary" href="{% url 'toggle_archive' model.id %}">
+                        <i class="fa-solid fa-box-archive"></i>
+                    </a>
+                    {% endif %}
+                    <a class="me-1 btn btn-sm btn-danger" href="{% url 'model_delete_view' model.id %}">
                         <i class="fas fa-trash"></i>
                     </a>
-                    <a class="me-2 btn btn-sm" style="background-color: #0784e4; color: #ffffff" href="{% url 'model_detail_view' model.id %}">
+                    <a class="me-1 btn btn-sm" style="background-color: #0784e4; color: #ffffff" href="{% url 'model_detail_view' model.id %}">
                         <i class="fa-regular fa-eye" ></i>
                     </a>
                 </div>
