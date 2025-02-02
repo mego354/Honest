@@ -126,8 +126,6 @@
                         resetDependentFields(); // Reset dependent fields
                     }
     
-                    // Trigger change event for the hidden input
-                    hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             });
     
@@ -162,32 +160,52 @@
             fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
                 .then(response => response.json())
                 .then(data => {
+                    {% comment %} console.log("Sizes Data:", data); // Debugging: Log the response {% endcomment %}
                     const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
                     sizeField.innerHTML = '<option value="">اختر المقاس</option>';
-                    data.sizes.forEach(size => {
-                        sizeField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
-                    });
+                    if (data.sizes && data.sizes.length > 0) {
+                        data.sizes.forEach(size => {
+                            sizeField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
+                        });
+                    } else {
+                        console.warn("No sizes found for the selected model."); // Debugging: Log a warning
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching sizes:", error); // Debugging: Log any errors
                 });
         });
     
         document.getElementById('{{ form.size_amount.auto_id }}').addEventListener('change', function () {
-            if (!this.value) {
+            const selectedSizeId = this.value; // Get the selected size ID
+            const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
+    
+            if (!selectedSizeId) {
                 // If the size is invalid, reset the piece field
                 const pieceField = document.getElementById('{{ form.piece.auto_id }}');
                 pieceField.innerHTML = '<option value="">---------</option>';
                 return;
             }
     
-            fetch(`{% url 'load_pieces' %}?size_amount_id=${this.value}`)
+            fetch(`{% url 'load_pieces' %}?size_amount_id=${selectedSizeId}`)
                 .then(response => response.json())
                 .then(data => {
+                    {% comment %} console.log("Pieces Data:", data); // Debugging: Log the response {% endcomment %}
                     const pieceField = document.getElementById('{{ form.piece.auto_id }}');
                     pieceField.innerHTML = '<option value="">اختر القطعة</option>';
-                    data.pieces.forEach(piece => {
-                        pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - متبقي (${piece.available_amount})</option>`;
-                    });
+                    if (data.pieces && data.pieces.length > 0) {
+                        data.pieces.forEach(piece => {
+                            pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - متبقي (${piece.available_amount})</option>`;
+                        });
+                    } else {
+                        console.warn("No pieces found for the selected size."); // Debugging: Log a warning
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching pieces:", error); // Debugging: Log any errors
                 });
         });
     });
+    
 </script>
 {% endblock script %}
