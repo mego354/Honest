@@ -76,6 +76,7 @@ class Model(models.Model):
             "percent_style": percent_style,
             "type_usage": type_usage,
         }
+        
 class SizeAmount(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="size_amounts")
     size = models.CharField(max_length=50, verbose_name="المقاس")

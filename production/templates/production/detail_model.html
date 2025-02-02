@@ -37,7 +37,7 @@
             <div class="col-md-6 col-sm-12">
                 <div class="row info-card shadow-sm rounded">
                     <h5 class="col text-center"><strong>تاريخ الانشاء</strong></h5>
-                    <h5 class="col text-center" dir="ltr">{{ model.created_at|date:"Y/m/d h:i A" }}</h5>
+                    <h5 class="col text-center">{{ model.created_at|date:"Y/m/d h:i A" }}</h5>
                     {% comment %} <p class="lead">{{ model.id }}</p> {% endcomment %}
                 </div>
             </div>
@@ -73,7 +73,7 @@
                 <div class="col-md-6 col-sm-12">
                     <div class="row info-card shadow-sm rounded">
                         <h5 class="col text-center"><strong>تاريخ الانتهاء</strong></h5>
-                        <h5 class="col text-center" dir="ltr">{{ model.ended_at|date:"Y/m/d h:i A" }}</h5>
+                        <h5 class="col text-center">{{ model.ended_at|date:"Y/m/d h:i A" }}</h5>
                         {% comment %} <p class="lead">{{ model.id }}</p> {% endcomment %}
                     </div>
                 </div>
