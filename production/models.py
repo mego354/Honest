@@ -7,6 +7,7 @@ class Model(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
+    ended_at = models.DateTimeField(verbose_name="تاريخ الانتهاء", blank=True, null=True)
     is_archive = models.BooleanField(default=False)
 
     class Meta:

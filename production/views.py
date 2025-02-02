@@ -4,7 +4,7 @@ from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404, render
-from django.utils.timezone import datetime
+from django.utils.timezone import datetime, now
 from django.db import transaction
 from django.db.models import Q, Sum, F
 from django.contrib import messages
@@ -266,6 +266,10 @@ class ProductionFormView(FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
+        model = self.piece_instance.model
+        model.ended_at = now
+        model.save()
+
         messages.success(self.request, "تمت إضافة الانتاج بنجاح.")
         return redirect(reverse_lazy("production_form"))
 
@@ -296,6 +300,8 @@ class ProductionPieceCreateView(CreateView):
 
     def get_success_url(self):
         model = self.piece.model
+        model.ended_at = now
+        model.save()
         messages.success(self.request, "تمت إضافة الانتاج بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
 
