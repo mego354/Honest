@@ -33,8 +33,8 @@ class ProductionForm(forms.Form):
     model = forms.ModelChoiceField(
         queryset=Model.objects.filter(is_archive=False),
         label="اختر الموديل",
-        widget=forms.Select(attrs={'class': 'form-control'})
-        # widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
+        # widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
     )
 
     size_amount = forms.ChoiceField(
