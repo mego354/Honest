@@ -68,17 +68,6 @@
                 </div>
             </div>
         </div>
-        {% if model.ended_at %}
-            <div class="row">
-                <div class="col-md-6 col-sm-12">
-                    <div class="row info-card shadow-sm rounded">
-                        <h5 class="col text-center"><strong>تاريخ الانتهاء</strong></h5>
-                        <h5 class="col text-center">{{ model.ended_at|date:"Y/m/d h:i A" }}</h5>
-                        {% comment %} <p class="lead">{{ model.id }}</p> {% endcomment %}
-                    </div>
-                </div>
-            </div>        
-        {% endif %}
 
         <div class="mb-4"></div>       
         <!-- Table for Size Amounts -->
