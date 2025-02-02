@@ -122,7 +122,7 @@ class ModelListingView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filters = Q()
+        filters = Q(is_archive=False)
 
         model_number = self.request.GET.get("model_number")
         if model_number:
@@ -141,6 +141,7 @@ class ModelListingView(ListView):
         context = super().get_context_data(**kwargs)
 
         # Add filters to the context
+        context["is_archive"] = False
         context["filter_fields"] = [
             {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
@@ -148,7 +149,17 @@ class ModelListingView(ListView):
         ]
 
         return context
-    
+
+class ArchivedModelListingView(ModelListingView):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(is_archive=True)  # Filter only archived models
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_archive"] = True  # Indicate this is the archived models list
+        return context
+
 class ToggleArchiveView(View):
     def get(self, request, pk, *args, **kwargs):
         model_instance = get_object_or_404(Model, pk=pk)

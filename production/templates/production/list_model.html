@@ -17,7 +17,10 @@
     <div class="pt-4 section-title d-flex justify-content-between align-items-center">
         <h2>عرض الموديلات</h2>
         <div class="ps-2">
+            {% if not is_archive %}
             <a href="{% url 'model_creation_view' %}" class="px-2 btn btn-success">جديد</a>
+            {% endif %}
+
             <a href="{% url 'model_list_view' %}" class="px-2 btn btn-secondary">ضبط</a>
         </div>
     </div>
@@ -85,14 +88,17 @@
                 {% comment %} <p><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</span></p> {% endcomment %}
                 <p class="mb-0"><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"Y/m/d" }}</span></p>
                 <div class="d-flex justify-content-between align-items-center">
-                    {% if not model.is_archive %}
+                    {% if model.is_archive == is_archive %}
                     <a class="btn btn-sm btn-secondary" href="{% url 'toggle_archive' model.id %}">
                         <i class="fa-solid fa-box-archive"></i>
                     </a>
                     {% endif %}
+                    {% if is_archive %}
                     <a class="me-1 btn btn-sm btn-danger" href="{% url 'model_delete_view' model.id %}">
                         <i class="fas fa-trash"></i>
                     </a>
+                    {% endif %}
+        
                     <a class="me-1 btn btn-sm" style="background-color: #0784e4; color: #ffffff" href="{% url 'model_detail_view' model.id %}">
                         <i class="fa-regular fa-eye" ></i>
                     </a>

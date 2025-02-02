@@ -5,6 +5,7 @@ from .views import *
 
 urlpatterns = [
     path('', ModelListingView.as_view(), name='model_list_view'),
+    path('archive-models/', ArchivedModelListingView.as_view(), name='archived_model_list_view'),
     path('create/', ModelCreationView.as_view(), name='model_creation_view'),
     path('model/<int:pk>/', ModelDetailView.as_view(), name='model_detail_view'),
     path('model/<int:pk>/delete/', ModelDeleteView.as_view(), name='model_delete_view'),
