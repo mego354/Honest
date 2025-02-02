@@ -403,3 +403,30 @@ body {
 .model-details-toggle {
     display: none;
 }
+
+.dropdown-container {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-list {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+    
+}
+
+.dropdown-list div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-list div:hover {
+    background: #f0f0f0;
+}

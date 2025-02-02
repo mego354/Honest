@@ -22,10 +22,11 @@ class SizeAmountForm(forms.ModelForm):
 class ProductionPieceForm(forms.ModelForm):
     class Meta:
         model = ProductionPiece
-        fields = ['used_amount', 'factory']
+        fields = ['used_amount', 'factory', 'comment']
         widgets = {
             'used_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}), 
             'factory': forms.TextInput(attrs={'class': 'form-control'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
 class ProductionForm(forms.Form):
@@ -33,6 +34,7 @@ class ProductionForm(forms.Form):
         queryset=Model.objects.filter(is_archive=False),
         label="اختر الموديل",
         widget=forms.Select(attrs={'class': 'form-control'})
+        # widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
     )
 
     size_amount = forms.ChoiceField(
@@ -52,10 +54,17 @@ class ProductionForm(forms.Form):
         min_value=1,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
     )
+    
     factory = forms.CharField(
         label="اسم المصنع",
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    comment = forms.CharField(
+        label="اسم المصنع",
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control'})
     )
 
     def __init__(self, *args, **kwargs):

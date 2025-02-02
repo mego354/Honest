@@ -341,12 +341,14 @@ class ProductionFormView(FormView):
         piece_id = form.cleaned_data['piece']
         used_amount = form.cleaned_data['used_amount']
         factory = form.cleaned_data['factory']
+        comment = form.cleaned_data['comment']
 
         self.piece_instance = Piece.objects.get(id=piece_id)
         ProductionPiece.objects.create(
             piece=self.piece_instance,
             used_amount=used_amount,
-            factory=factory
+            factory=factory,
+            comment=comment
         )
 
         return self.get_success_url()

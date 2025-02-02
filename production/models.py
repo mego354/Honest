@@ -24,7 +24,8 @@ class Model(models.Model):
 
         total_amount = sum( size.amount * pieces_count for size in sizes )
         used_amount = sum(piece.used_amount for piece in pieces)
-        available_amount = total_amount - used_amount
+        # available_amount = total_amount - used_amount
+
         # available_amount = sum(piece.available_amount for piece in pieces.filter(available_amount__gte=0))
         # used_amount = total_amount - available_amount
         # used_amount = total_amount * 0.81
@@ -81,6 +82,7 @@ class ProductionPiece(models.Model):
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
     used_amount = models.IntegerField(verbose_name="الكمية للانتاج", default=0, blank=True)
     factory = models.CharField(max_length=50, verbose_name="المصنع", blank=True)
+    comment = models.CharField(max_length=100, verbose_name="الملاحظات", blank=True)
 
     class Meta:
         ordering = ['-created_at']

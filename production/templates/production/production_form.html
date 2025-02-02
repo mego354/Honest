@@ -17,39 +17,49 @@
 <div id="order-form-wrapper" class="container py-4">
     <form method="post" id="order-form" class="mb-4 p-4 pt-0">
         {% csrf_token %}
-            <div class="container border rounded p-3 mb-3">
-                <h3 class="section-title border-bottom-5 mb-2">اختر القطعة والكمية</h3>
-                <div class="row mb-2">
-                    <div class="col">
-                        {{ form.model.label_tag }}
+        <div class="container border rounded p-3 mb-3">
+            <h3 class="section-title border-bottom-5 mb-2">اختر القطعة والكمية</h3>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.model.label_tag }}
+                    <div class="dropdown-container">
+                        <input type="text" id="model-search" placeholder="ابحث عن الموديل..." class="form-control">
+                        <div class="dropdown-list" id="model-dropdown"></div>
                         {{ form.model }}
                     </div>
                 </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        {{ form.size_amount.label_tag }}
-                        {{ form.size_amount }}
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        {{ form.piece.label_tag }}
-                        {{ form.piece }}
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        {{ form.used_amount.label_tag }}
-                        {{ form.used_amount }}
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        {{ form.factory.label_tag }}
-                        {{ form.factory }}
-                    </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.size_amount.label_tag }}
+                    {{ form.size_amount }}
                 </div>
             </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.piece.label_tag }}
+                    {{ form.piece }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.used_amount.label_tag }}
+                    {{ form.used_amount }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.factory.label_tag }}
+                    {{ form.factory }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.comment.label_tag }}
+                    {{ form.comment }}
+                </div>
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
     </form>
 </div>
@@ -58,26 +68,120 @@
 {% block script %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const modelField = document.getElementById('{{ form.model.auto_id }}');
-        const sizeAmountField = document.getElementById('{{ form.size_amount.auto_id }}');
-        const pieceField = document.getElementById('{{ form.piece.auto_id }}');
-        
-        modelField.addEventListener('change', function () {
+        // Function to create a searchable dropdown for the model field
+        function createSearchableDropdown(inputId, dropdownId, hiddenFieldId) {
+            const searchInput = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            const hiddenInput = document.getElementById(hiddenFieldId);
+    
+            // Extract options from the hidden select field
+            const options = Array.from(hiddenInput.options).map(option => ({
+                text: option.text,
+                value: option.value
+            }));
+    
+            function showDropdown() {
+                dropdown.innerHTML = "";
+                const searchValue = searchInput.value.toLowerCase();
+                const filteredOptions = options.filter(option => option.text.toLowerCase().includes(searchValue) && option.text !== '---------');
+    
+                if (filteredOptions.length === 0) {
+                    dropdown.innerHTML = "<div>لا توجد نتائج</div>";
+                } else {
+                    filteredOptions.forEach(option => {
+                        const div = document.createElement("div");
+                        div.textContent = option.text;
+                        div.onclick = () => {
+                            searchInput.value = option.text;
+                            hiddenInput.value = option.value;
+                            dropdown.style.display = "none";
+                            // Trigger change event for the hidden input
+                            hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        };
+                        dropdown.appendChild(div);
+                    });
+                }
+    
+                dropdown.style.display = "block";
+            }
+    
+            // Clear the hidden input and reset dependent fields if the search input is manually changed
+            searchInput.addEventListener("input", () => {
+                if (!options.some(option => option.text === searchInput.value)) {
+                    hiddenInput.value = ""; // Clear the hidden input
+                    resetDependentFields(); // Reset dependent fields
+                }
+                showDropdown();
+            });
+    
+            searchInput.addEventListener("focus", showDropdown);
+    
+            document.addEventListener("click", (e) => {
+                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = "none";
+    
+                    // If the search input doesn't match any option, clear the hidden input and reset dependent fields
+                    if (!options.some(option => option.text === searchInput.value)) {
+                        hiddenInput.value = "";
+                        resetDependentFields(); // Reset dependent fields
+                    }
+    
+                    // Trigger change event for the hidden input
+                    hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+    
+            // Function to reset dependent fields
+            function resetDependentFields() {
+                const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
+                const pieceField = document.getElementById('{{ form.piece.auto_id }}');
+    
+                // Reset size field
+                sizeField.innerHTML = '<option value="">---------</option>';
+    
+                // Reset piece field
+                pieceField.innerHTML = '<option value="">---------</option>';
+            }
+        }
+    
+        // Initialize the searchable dropdown for the model field
+        createSearchableDropdown('model-search', 'model-dropdown', '{{ form.model.auto_id }}');
+    
+        // Dynamic loading of sizes and pieces based on model and size selection
+        document.getElementById('{{ form.model.auto_id }}').addEventListener('change', function () {
+            if (!this.value) {
+                // If the model is invalid, reset dependent fields
+                const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
+                const pieceField = document.getElementById('{{ form.piece.auto_id }}');
+    
+                sizeField.innerHTML = '<option value="">---------</option>';
+                pieceField.innerHTML = '<option value="">---------</option>';
+                return;
+            }
+    
             fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
                 .then(response => response.json())
                 .then(data => {
-                    sizeAmountField.innerHTML = '<option value="">اختر المقاس</option>';
+                    const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
+                    sizeField.innerHTML = '<option value="">اختر المقاس</option>';
                     data.sizes.forEach(size => {
-                        sizeAmountField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
+                        sizeField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
                     });
                 });
         });
-
-        sizeAmountField.addEventListener('change', function () {
+    
+        document.getElementById('{{ form.size_amount.auto_id }}').addEventListener('change', function () {
+            if (!this.value) {
+                // If the size is invalid, reset the piece field
+                const pieceField = document.getElementById('{{ form.piece.auto_id }}');
+                pieceField.innerHTML = '<option value="">---------</option>';
+                return;
+            }
+    
             fetch(`{% url 'load_pieces' %}?size_amount_id=${this.value}`)
-
                 .then(response => response.json())
                 .then(data => {
+                    const pieceField = document.getElementById('{{ form.piece.auto_id }}');
                     pieceField.innerHTML = '<option value="">اختر القطعة</option>';
                     data.pieces.forEach(piece => {
                         pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - متبقي (${piece.available_amount})</option>`;
