@@ -22,7 +22,9 @@
             {% csrf_token %}
             <button type="submit" class="btn btn-danger px-4 mx-2">حذف</button>
         </form>
-        <a href="{% url 'model_detail_view' pk=productionpiece.piece.model.pk %}" class="btn btn-secondary px-4 mx-2">إلغاء</a>
+        {% comment %} <a href="{% url 'model_detail_view' pk=productionpiece.piece.model.pk %}" class="btn btn-secondary px-4 mx-2">إلغاء</a> {% endcomment %}
+        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary px-4 mx-2">إلغاء</a>
+
     </div>
 </div>
 {% endblock body %}

@@ -103,17 +103,15 @@ class ModelDeleteView(DeleteView):
         messages.success(self.request, "تم حذف الموديل بنجاح")
         return super().form_valid(form)
 
-class ModelListingView(ListView):
+class BaseModelListingView(ListView):
     template_name = "production/list_model.html"
     model = Model
     paginate_by = 20
     filter_fields = ["model_number", "start_date", "end_date"]
+    is_archive = False  # Default to non-archived models
 
     def parse_date(self, date_str):
-        """
-        Parse a date string into a datetime object.
-        If the format is invalid or the value is nonsensical, return datetime.min.
-        """
+        """Parse a date string into a datetime object."""
         try:
             normalized_date = date_str.replace("\\", "/")
             return datetime.strptime(normalized_date, "%Y-%m-%d")
@@ -122,7 +120,7 @@ class ModelListingView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        filters = Q(is_archive=False)
+        filters = Q(is_archive=self.is_archive)  # Use dynamic is_archive flag
 
         model_number = self.request.GET.get("model_number")
         if model_number:
@@ -139,35 +137,36 @@ class ModelListingView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Add filters to the context
-        context["is_archive"] = False
+        context["is_archive"] = self.is_archive  # Pass archive status to template
         context["filter_fields"] = [
             {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
             {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
         ]
-
         return context
 
-class ArchivedModelListingView(ModelListingView):
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(is_archive=True)  # Filter only archived models
+class ModelListingView(BaseModelListingView):
+    is_archive = False
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["is_archive"] = True  # Indicate this is the archived models list
-        return context
-
+class ArchivedModelListingView(BaseModelListingView):
+    is_archive = True
+    
+    
 class ToggleArchiveView(View):
     def get(self, request, pk, *args, **kwargs):
         model_instance = get_object_or_404(Model, pk=pk)
-        
-        model_instance.is_archive = not model_instance.is_archive
+        archive_mode = not model_instance.is_archive
+        model_instance.is_archive = archive_mode
         model_instance.save()
+        if archive_mode:
+            messages.success(self.request, f"تم اضافة المودبل {model_instance.model_number} للارشيف بنجاح")
+            return redirect(reverse_lazy("archived_model_list_view"))
 
-        return redirect(reverse_lazy("model_detail_view", args=[model_instance.id]))
+        else:
+            messages.success(self.request, f"تم ازالة المودبل {model_instance.model_number} من الارشيف بنجاح")
+            return redirect(reverse_lazy("model_list_view"))
+
+
 ###############################################################################################################################
 class SizeAmountCreateView(CreateView):
     model = SizeAmount
