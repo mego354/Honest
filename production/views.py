@@ -240,6 +240,48 @@ class SizeAmountDeleteView(DeleteView):
             
     
 ###############################################################################################################################
+class ProductionFormView(FormView):
+    template_name = "production/production_form.html"
+    form_class = ProductionForm
+
+            
+    def form_valid(self, form):
+        piece_id = form.cleaned_data['piece']
+        used_amount = form.cleaned_data['used_amount']
+        factory = form.cleaned_data['factory']
+        comment = form.cleaned_data['comment']
+
+        self.piece_instance = Piece.objects.get(id=piece_id)
+        ProductionPiece.objects.create(
+            piece=self.piece_instance,
+            used_amount=used_amount,
+            factory=factory,
+            comment=comment
+        )
+
+        return self.get_success_url()
+
+    def form_invalid(self, form):
+        messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_success_url(self):
+        messages.success(self.request, "تمت إضافة الانتاج بنجاح.")
+        return redirect(reverse_lazy("production_form"))
+
+
+def load_sizes(request):
+    model_id = request.GET.get('model_id')
+    sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount')
+    return JsonResponse({'sizes': list(sizes)})
+
+def load_pieces(request):
+    size_amount_id = request.GET.get('size_amount_id')
+    size = SizeAmount.objects.get(pk=size_amount_id)
+    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount')
+    return JsonResponse({'pieces': list(pieces)})
+
+
 class ProductionPieceCreateView(CreateView):
     model = ProductionPiece
     form_class = ProductionPieceForm
@@ -254,8 +296,9 @@ class ProductionPieceCreateView(CreateView):
 
     def get_success_url(self):
         model = self.piece.model
-        messages.success(self.request, "تمت إضافة الكمية بنجاح.")
+        messages.success(self.request, "تمت إضافة الانتاج بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+
 
 class ProductionPieceUpdateView(UpdateView):
     model = ProductionPiece
@@ -269,7 +312,7 @@ class ProductionPieceUpdateView(UpdateView):
     def get_success_url(self):
         production_piece = self.get_object()
         model = production_piece.piece.model
-        messages.success(self.request, "تم تعديل الكمية بنجاح.")
+        messages.success(self.request, "تم تعديل الانتاج بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
 
 class ProductionPieceDeleteView(DeleteView):
@@ -277,8 +320,8 @@ class ProductionPieceDeleteView(DeleteView):
     template_name = 'production/delete_production.html'
 
     def get_success_url(self):
-        messages.success(self.request, "تم حذف الكمية بنجاح.")
-        return reverse_lazy("production_form")
+        messages.success(self.request, "تم حذف الانتاج بنجاح.")
+        return reverse_lazy("production_list_view")
 
 class ProductionListingView(ListView):
     template_name = "production/list_production.html"
@@ -342,43 +385,3 @@ class ProductionListingView(ListView):
 
 ###############################################################################################################################
 
-class ProductionFormView(FormView):
-    template_name = "production/production_form.html"
-    form_class = ProductionForm
-
-            
-    def form_valid(self, form):
-        piece_id = form.cleaned_data['piece']
-        used_amount = form.cleaned_data['used_amount']
-        factory = form.cleaned_data['factory']
-        comment = form.cleaned_data['comment']
-
-        self.piece_instance = Piece.objects.get(id=piece_id)
-        ProductionPiece.objects.create(
-            piece=self.piece_instance,
-            used_amount=used_amount,
-            factory=factory,
-            comment=comment
-        )
-
-        return self.get_success_url()
-
-    def form_invalid(self, form):
-        messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def get_success_url(self):
-        messages.success(self.request, "تمت إضافة الكمية بنجاح.")
-        return redirect(reverse_lazy("production_form"))
-
-
-def load_sizes(request):
-    model_id = request.GET.get('model_id')
-    sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount')
-    return JsonResponse({'sizes': list(sizes)})
-
-def load_pieces(request):
-    size_amount_id = request.GET.get('size_amount_id')
-    size = SizeAmount.objects.get(pk=size_amount_id)
-    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount')
-    return JsonResponse({'pieces': list(pieces)})

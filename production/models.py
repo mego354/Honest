@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import F, Value
+from django.db.models.functions import Trim
 from django.utils.timezone import localtime, now
 
 class Model(models.Model):
@@ -22,13 +24,9 @@ class Model(models.Model):
         pieces = self.pieces.all()
         pieces_count = pieces.count() / sizes.count()
 
-        total_amount = sum( size.amount * pieces_count for size in sizes )
+        total_amount = sum(size.amount * pieces_count for size in sizes)
         used_amount = sum(piece.used_amount for piece in pieces)
-        # available_amount = total_amount - used_amount
 
-        # available_amount = sum(piece.available_amount for piece in pieces.filter(available_amount__gte=0))
-        # used_amount = total_amount - available_amount
-        # used_amount = total_amount * 0.81
         percent = (used_amount / total_amount) * 100
 
         if percent > 80:
@@ -41,15 +39,42 @@ class Model(models.Model):
             percent_style = "bg-success"
         else:
             percent_style = ""
-        print(int(total_amount))
+
+        # Calculate usage percentage for each type
+        type_usage = []
+        type_names = set(pieces.values_list('type', flat=True))
+        for type_name in type_names:
+            type_pieces = pieces.filter(type=type_name)
+            type_total_amount = total_amount / pieces_count
+            type_used_amount = sum(piece.used_amount for piece in type_pieces)
+            type_percent = (type_used_amount / type_total_amount) * 100 if type_total_amount > 0 else 0
+
+            if type_percent > 80:
+                type_percent_style = "bg-danger"
+            elif type_percent > 60:
+                type_percent_style = "bg-warning"
+            elif type_percent > 40:
+                type_percent_style = "bg-info"
+            elif type_percent > 20:
+                type_percent_style = "bg-success"
+            else:
+                type_percent_style = ""
+
+            type_usage.append({
+                "type": type_name,
+                "total_amount": int(type_total_amount),
+                "used_amount": int(type_used_amount),
+                "percent": int(type_percent),
+                "percent_style": type_percent_style,
+            })
+
         return {
             "total_amount": int(total_amount),
             "used_amount": int(used_amount),
             "percent": int(percent),
             "percent_style": percent_style,
+            "type_usage": type_usage,
         }
-
-
 class SizeAmount(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="size_amounts")
     size = models.CharField(max_length=50, verbose_name="المقاس")

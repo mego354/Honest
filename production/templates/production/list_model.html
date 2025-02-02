@@ -56,27 +56,27 @@
         <div class="model-card">
             
             {% with usage=model.get_usage_percentage %}
-            <div dir="ltr" class="progress mb-2 position-relative">
-                <div class="progress-bar progress-bar-striped {{ usage.percent_style }}" 
-                     role="progressbar" 
-                     style="width: {{ usage.percent }}%" 
-                     aria-valuenow="{{ usage.used_amount }}" 
-                     aria-valuemin="0" 
-                     aria-valuemax="{{ usage.total_amount }}">
-                </div>
-                <div class="progress-data d-flex justify-content-between align-items-center px-3 position-absolute w-100 h-100" 
-                     style="top: -1px; left: 0; color: #000000; font-weight: 500; font-size: 16px">
-                    <div>
-                        {{ usage.used_amount }} / {{ usage.total_amount }}
+                <!-- Overall Usage Progress Bar -->
+                <div dir="ltr" class="progress mb-2 position-relative">
+                    <div class="progress-bar progress-bar-striped {{ usage.percent_style }}" 
+                        role="progressbar" 
+                        style="width: {{ usage.percent }}%" 
+                        aria-valuenow="{{ usage.used_amount }}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="{{ usage.total_amount }}">
                     </div>
-                    <div>
-                        {{ usage.percent }}%
+                    <div class="progress-data d-flex justify-content-between align-items-center px-3 position-absolute w-100 h-100" 
+                        style="top: -1px; left: 0; color: #000000; font-weight: 500; font-size: 16px">
+                        <div>
+                            {{ usage.used_amount }} / {{ usage.total_amount }}
+                        </div>
+                        <div>
+                            {{ usage.percent }}%
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            {% endwith %}            
-
+            
+                
             <div class="d-flex justify-content-between align-items-center pb-3">
                 <h5 class="mb-0">
                     {{ model.model_number }}
@@ -114,11 +114,34 @@
             <div id="details-{{ model.id }}" class="model-details-toggle mt-3">
                 <div class="card">
                     <div class="card-body">
+                        <!-- Usage Progress Bars for Each Type -->
+                        {% for type in usage.type_usage %}
+                            <div dir="ltr" class="progress mb-2 position-relative">
+                                <div class="progress-bar progress-bar-striped {{ type.percent_style }}" 
+                                    role="progressbar" 
+                                    style="width: {{ type.percent }}%" 
+                                    aria-valuenow="{{ type.used_amount }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="{{ type.total_amount }}">
+                                </div>
+                                <div class="progress-data d-flex justify-content-between align-items-center px-3 position-absolute w-100 h-100" 
+                                    style="top: -2px; left: 0; color: #000000; font-weight: 500; font-size: 15px">
+                                    <div>
+                                        {{ type.used_amount }} / {{ type.total_amount }} ({{ type.type }})
+                                    </div>
+                                    <div>
+                                        {{ type.percent }}%
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endwith %}
+
+
+
                         <div class="d-flex justify-content-between align-items-center pb-3">
                             <h6 class="text-dark mb-0">تفاصيل الموديل</h6>
                             <a href="{% url 'production_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn"> عرض الانتاج </a>
-            
-
                         </div>
             
                         <div class="table-responsive">
@@ -127,6 +150,7 @@
                                     <tr>
                                         <th>نوع القطعة</th>
                                         <th>المقاس</th>
+                                        <th>المصنع</th>
                                         <th>المنتج</th>
                                         <th>المتبقي</th>
                                     </tr>
@@ -136,6 +160,7 @@
                                     <tr>
                                         <td>{{ part.type }}</td>
                                         <td>{{ part.size }}</td>
+                                        <td>{{ part.productions.first.factory }}</td>
                                         <td>{{ part.used_amount }}</td>
                                         <td>{{ part.available_amount }}</td>
                                     </tr>
