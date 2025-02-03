@@ -36,8 +36,9 @@ body {
 /* Containers and Layout */
 .body-div {
     margin: 2%;
+    margin-top: 8vh;
     max-width: 98%;
-    min-height: 82vh;
+    min-height: 81vh;
 }
 
 /* Navbar */
