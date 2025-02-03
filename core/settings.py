@@ -12,7 +12,7 @@ STATIC_URL = 'static/'
 STATIC_ROOT = 'cloth/static'
 
 Hosted = True
-Hosted = False 
+# Hosted = False 
 if Hosted:
     DEBUG = False
     ALLOWED_HOSTS = ['honestfabrics.pythonanywhere.com']
