@@ -21,7 +21,6 @@ class Model(models.Model):
         return available_pieces > 0
     
     def commets_count(self):
-        print(self.pieces.filter(productions__comment__gt="").count())
         return self.pieces.filter(productions__comment__gt="").count()
     
     def get_usage_percentage(self):
