@@ -20,6 +20,10 @@ class Model(models.Model):
         available_pieces = sum(piece.available_amount for piece in self.pieces.filter(available_amount__gt=0))  # using the Django ORM filter condition
         return available_pieces > 0
     
+    def commets_count(self):
+        print(self.pieces.filter(productions__comment__gt="").count())
+        return self.pieces.filter(productions__comment__gt="").count()
+    
     def get_usage_percentage(self):
         sizes = self.size_amounts.all()
         pieces = self.pieces.all()
@@ -103,6 +107,9 @@ class Piece(models.Model):
         
     def __str__(self):
         return f"{self.model.model_number} - Size: {self.size} - Type: {self.type}"
+
+
+
     
 class ProductionPiece(models.Model):
     piece = models.ForeignKey(Piece, verbose_name="القطعة", on_delete=models.CASCADE, related_name="productions")

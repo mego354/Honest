@@ -14,6 +14,7 @@
 {% endblock %}
 
 {% block body %}
+
     <div class="pt-4 section-title d-flex justify-content-between align-items-center">
         {% if not is_archive %}
             <h2>عرض الموديلات</h2>
@@ -53,8 +54,8 @@
 <body class="bg-light">
     <div class="container mt-4">
         {% for model in object_list %}
-        <div class="model-card">
-            
+
+        <div class="model-card">            
             {% with usage=model.get_usage_percentage %}
                 <!-- Overall Usage Progress Bar -->
                 <div dir="ltr" class="progress mb-2 position-relative" style="border: 1px solid blue; border-radius: 5px; height: 18px;">
@@ -143,11 +144,43 @@
                         {% endfor %}
                     {% endwith %}
 
-
-
                         <div class="d-flex justify-content-between align-items-center pb-3">
                             <h6 class="text-dark mb-0">تفاصيل الموديل</h6>
                             <a href="{% url 'production_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn"> عرض الانتاج </a>
+
+                            <!-- Button to trigger the notes of production -->
+                            <button class="btn btn-sm btn-primary oped_details_btn" onclick="openModal('customModal_{{ model.id }}')">الملاحظات <span class="oped_details_count">{{model.commets_count}}<span></button>
+
+                            <!-- Custom Off-canvas for notes of production -->
+                            <div id="customModal_{{ model.id }}" class="custom-modal">
+                                <div class="custom-modal-content">
+                                    <div class="custom-modal-header">
+                                        <h5 class="custom-modal-title">ملاحظات الانتاج</h5>
+                                        <button type="button" class="custom-modal-close" onclick="closeModal('customModal_{{ model.id }}')">&times;</button>
+                                    </div>
+                                    {% for part in model.pieces.all %}
+                                        {% for production in part.productions.all %}
+                                            {% if production.comment %}
+                                            <div class="custom-modal-body">
+                                                <strong>{{ production.piece.type }} {{ production.piece.size }}</strong> 
+                                                <strong style="float: left;">({{ production.piece.used_amount }})</strong>
+                                                <br>
+                                                {{ production.comment }}
+                                            </div>
+
+                                            
+                                            {% endif %}
+                                            {% endfor %}
+                                    {% endfor %}
+
+                                    <div class="custom-modal-footer">
+                                        <button type="button" class="btn btn-secondary" onclick="closeModal('customModal_{{ model.id }}')">Close</button>
+                                        {% comment %} <button type="button" class="btn btn-primary">Save changes</button> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
             
                         <div class="table-responsive">
@@ -275,5 +308,31 @@
             window.location.href = `/delete/${modelId}`;
         }
     }
+
+    // Function to open the modal
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex'; // Show the modal
+    }
+}
+
+// Function to close the modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none'; // Hide the modal
+    }
+}
+
+// Close the modal if the user clicks outside the modal content
+window.addEventListener('click', (event) => {
+    const modals = document.querySelectorAll('.custom-modal');
+    modals.forEach((modal) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
 </script>
 {% endblock script %}
