@@ -454,6 +454,8 @@ body {
 }
 
 .custom-modal-content {
+    padding-top: 10vh;
+
     background-color: white;
     border-radius: 8px;
     width: 90%;
@@ -468,6 +470,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.custom-modal-body {
+
+    max-height: 75vh;
+    overflow-y: auto;
+
 }
 
 .custom-modal-title {
@@ -514,3 +523,8 @@ body {
     padding: 5px;
     border-radius: 60%;
 }
+.progress-data {
+    white-space: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+  }

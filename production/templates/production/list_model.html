@@ -158,20 +158,22 @@
                                         <h5 class="custom-modal-title">ملاحظات الانتاج</h5>
                                         <button type="button" class="custom-modal-close" onclick="closeModal('customModal_{{ model.id }}')">&times;</button>
                                     </div>
-                                    {% for part in model.pieces.all %}
+                                    <div class="custom-modal-body">
+                                        {% for part in model.pieces.all %}
                                         {% for production in part.productions.all %}
-                                            {% if production.comment %}
-                                            <div class="custom-modal-body">
-                                                <strong>{{ production.piece.type }} {{ production.piece.size }}</strong> 
-                                                <strong style="float: left;">({{ production.piece.used_amount }})</strong>
-                                                <br>
-                                                {{ production.comment }}
-                                            </div>
-
-                                            
-                                            {% endif %}
-                                            {% endfor %}
-                                    {% endfor %}
+                                        {% if production.comment %}
+                                        <div class="custom-modal-body">
+                                            <strong>{{ production.piece.type }} {{ production.piece.size }}</strong> 
+                                            <strong style="float: left;">({{ production.piece.used_amount }})</strong>
+                                            <br>
+                                            {{ production.comment }}
+                                        </div>
+                                        
+                                        
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% endfor %}
+                                    </div>
 
                                     <div class="custom-modal-footer">
                                         <button type="button" class="btn btn-secondary" onclick="closeModal('customModal_{{ model.id }}')">Close</button>
