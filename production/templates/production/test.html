@@ -1,0 +1,75 @@
+{% extends "cloth/layout.html" %}
+{% load math_filters %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+{% if data.recent_models %}
+{% for model in data.recent_models %}
+<h3>Model: {{ model.model }}</h3>
+<ul>
+    {% for production in model.productions %}
+    <li>Piece: {{ production.piece }} | Used Amount: {{ production.used_amount }}</li>
+    {% endfor %}
+</ul>
+{% endfor %}
+{% endif %}
+
+{% if data.recent_productions %}
+
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>الرمز</th>
+            <th>كود الخامه</th>
+            <th>اسم الخامه</th>
+            <th>اللون</th>
+            <th>عدد الاتواب</th>
+            <th>الوزن</th>
+            <th>التاريخ</th>
+            <th>الموديل / المصبغة</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for obj in data.recent_productions %}
+            <tr>
+                <td>{{ obj.id }}</td>
+                <td>{{ obj.fabric_code|default:"-" }}</td>
+                <td>{{ obj.fabric_name|default:"-" }}</td>
+                <td>{{ obj.color|default:"-" }}</td>
+                <td>{{ obj.roll|default:"-" }}</td>
+                <td>{{ obj.weight|default:"-" }}</td>
+                <td>{{ obj.date }}</td>
+                <td>
+                    {% if obj.dyehouse_name %}
+                        {{ obj.dyehouse_name }}
+                    {% elif obj.model_number %}
+                        {{ obj.model_number }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center;">لا توجد بيانات لليوم أو أمس</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+
+
+{% endblock body %}

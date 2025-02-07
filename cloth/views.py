@@ -1,15 +1,17 @@
 from ast import Return
-from django.views.generic.list import ListView
+from django.views.generic import TemplateView, ListView
 from django.db.models import Q
 from .models import Fabric, CutTransfer, ReturnTransfer, Statistics, Updates
 
 from django.utils.timezone import localtime
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import json
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .PDF import PDFTableGenerator
+
+from cloth.utils import get_recent_productions
 
 @csrf_exempt
 def generate_pdf(request):
@@ -135,3 +137,21 @@ class StatisticsView(FilterableListView):
     filter_fields = ['fabric_code', 'model_number', 'fabric_name', 'color']
     columns = ["التاريخ","كود الخامة","اسم الخامة","اللون","عدد الاتواب","الوزن","اسم المصبغة","رقم الموديل","نوع الحركة","رمز الحركة"]
 
+################################
+
+
+class TestView(TemplateView):
+    template_name = "production/test.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Fetch sorted records from the last 4 days
+        models = [Fabric, CutTransfer, ReturnTransfer, Statistics]
+        recent_productions = get_recent_productions(models)
+
+        context["data"] = {
+            "recent_productions": recent_productions,
+        }
+
+        return context

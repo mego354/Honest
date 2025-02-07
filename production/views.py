@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 from django.http import JsonResponse
 from django.views import View
-from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView
+from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView, TemplateView
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404, render
 from django.utils.timezone import datetime, now, localtime
@@ -11,6 +11,11 @@ from django.contrib import messages
 
 from .models import Model, Piece, SizeAmount, ProductionPiece
 from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm
+
+from django.utils.timezone import localtime, now
+from datetime import datetime, timedelta
+from production.utils import get_recent_models
+
 ###############################################################################################################################
 class ModelCreationView(FormView):
     template_name = "production/create_model.html"
@@ -390,4 +395,14 @@ class ProductionListingView(ListView):
         return context
 
 ###############################################################################################################################
+class TestView(TemplateView):
+    template_name = "production/test.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["data"] = {
+            "recent_models": get_recent_models(),
+        }
+
+        return context
