@@ -1,13 +1,13 @@
 from django.utils.timezone import now
-from datetime import timedelta
+from datetime import datetime, timedelta
 from .models import ProductionPiece
 
-def get_recent_models():
+def get_recent_models(days=1):
     """
     Retrieves unique models from productions created in the last 3 days.
     """
     productions = ProductionPiece.objects.filter(
-        created_at__gt=now() - timedelta(days=3)
+        created_at__gt=now() - timedelta(days=days)
     )
 
     model_productions_map = {}
@@ -18,8 +18,9 @@ def get_recent_models():
             model_productions_map[model] = []
 
         model_productions_map[model].append({
-            "piece": production.piece,
-            "created_at": production.created_at,
+            "type": production.piece.type,
+            "size": production.piece.size,
+            "created_at":  production.created_at.strftime("%p %I:%M %Y/%m/%d"),
             "used_amount": production.used_amount,
             "factory": production.factory,
         })

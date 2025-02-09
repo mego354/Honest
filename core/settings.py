@@ -10,14 +10,16 @@ DEBUG = True
 ALLOWED_HOSTS = []
 STATIC_URL = 'static/'
 STATIC_ROOT = 'cloth/static'
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 Hosted = True
 # Hosted = False 
 if Hosted:
     DEBUG = False
     ALLOWED_HOSTS = ['honestfabrics.pythonanywhere.com', 'www.honestfactory.top']
-    STATIC_URL = 'static/'
     STATIC_ROOT = '/home/honestfabrics/Honest/cloth/static'
+    MEDIA_ROOT = '/home/honestfabrics/Honest/media'
 
 # Application definition
 INSTALLED_APPS = [
@@ -104,5 +106,12 @@ TIME_ZONE = 'Etc/GMT-2'
 USE_I18N = True
 USE_TZ = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'mahmoudmegahd010000@gmail.com'
+EMAIL_HOST_PASSWORD = 'nuiovtbksdoxoemb'
+DEFAULT_FROM_EMAIL = 'Honest Factory'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

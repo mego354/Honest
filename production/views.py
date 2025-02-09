@@ -1,4 +1,6 @@
+import os
 from urllib.parse import urlencode
+from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView, TemplateView
@@ -401,8 +403,10 @@ class TestView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["data"] = {
-            "recent_models": get_recent_models(),
-        }
+        report_path = "reports/production_report.pdf"
+        full_path = os.path.join(settings.MEDIA_ROOT, report_path)
+
+        context["report_available"] = not os.path.exists(full_path)
+        context["report_url"] = settings.MEDIA_URL + report_path
 
         return context

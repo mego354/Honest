@@ -11,9 +11,9 @@ def parse_date(date_str):
     except ValueError:
         return None  # Handle invalid date formats safely
 
-def get_recent_productions(models, days=5):
+def get_recent_cloth_operations(models, days=1):
     """
-    Fetch and return productions from the provided models where the date is within the last 'days' days.
+    Fetch and return cloth_operations from the provided models where the date is within the last 'days' days.
     
     Args:
         models (list): A list of Django model classes.
@@ -25,17 +25,31 @@ def get_recent_productions(models, days=5):
     today = datetime.today().date()
     start_date = today - timedelta(days=days)
 
-    all_productions = []
+    all_cloth_operations = {"وارد": [], "قص": [], "مرتجع": [], "احصائيات": []}
+
     for model in models:
         instances = model.objects.filter(Q(date__isnull=False))
 
-        # Filter only productions within the date range
+        # Filter only cloth_operations within the date range
         filtered_instances = [
             obj for obj in instances if (parsed_date := parse_date(obj.date)) and start_date <= parsed_date <= today
         ]
 
-        all_productions.extend(filtered_instances)
+        # Determine the type of operation based on the model or some attribute
+        # This is just an example, you need to adjust it based on your actual logic
+        if model.__name__ == "Fabric":
+            all_cloth_operations["وارد"].extend(filtered_instances)
+        elif model.__name__ == "CutTransfer":
+            all_cloth_operations["قص"].extend(filtered_instances)
+        elif model.__name__ == "ReturnTransfer":
+            all_cloth_operations["مرتجع"].extend(filtered_instances)
+        elif model.__name__ == "Statistics":
+            all_cloth_operations["احصائيات"].extend(filtered_instances)
 
-    # Sort by date (newest first)
-    print(sorted(all_productions, key=lambda obj: parse_date(obj.date), reverse=True))
-    return sorted(all_productions, key=lambda obj: parse_date(obj.date), reverse=True)
+    # Sort each list by date (newest first)
+    for key in all_cloth_operations:
+        all_cloth_operations[key] = sorted(all_cloth_operations[key], key=lambda obj: parse_date(obj.date), reverse=True)
+    return all_cloth_operations
+
+###############################################################################################################################
+

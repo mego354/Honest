@@ -70,6 +70,12 @@
 </table>
 {% endif %}
 
-
+{% if report_available %}
+    <a href="{{ report_url }}" download class="btn btn-primary">
+        تحميل تقرير الإنتاج 📄
+    </a>
+{% else %}
+    <p>التقرير غير متوفر حاليًا.</p>
+{% endif %}
 
 {% endblock body %}
