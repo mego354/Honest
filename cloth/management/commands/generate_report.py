@@ -18,9 +18,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE("Generating the daily production report..."))
 
         # Fetch recent operations
+        days = 5
         models = [Fabric, CutTransfer, ReturnTransfer, Statistics]
-        recent_cloth_operations = get_recent_cloth_operations(models,days=5)
-        recent_models = get_recent_models(days=5)
+        recent_cloth_operations = get_recent_cloth_operations(models,days=days)
+        recent_models = get_recent_models(days=days)
 
         # Define output path
         report_path = os.path.join("reports", "production_report.pdf")
@@ -31,22 +32,22 @@ class Command(BaseCommand):
 
         # Generate report
         generated = generate_production_report(recent_cloth_operations, recent_models, full_path)
-        if generated:            
+        if generated:
             self.stdout.write(self.style.SUCCESS(f"Report saved at {full_path}"))
             try:
                 send_email_with_attachment()
-                self.stdout.write(self.style.SUCCESS(f"Report Sent Successfully"))
+                self.stdout.write(self.style.SUCCESS("Report Sent Successfully"))
             except:
                 self.stdout.write(self.style.NOTICE("Error Sending The Report"))
-                
+
 
 
 
 def send_email_with_attachment():
     subject = "Daily Production Report"
     body = "Hello Ahmed,\n\nPlease find attached the daily production report.\n\nBest regards,\nMahmoud"
-    recipient = ["megomego354@gmail.com", ""]
-    recipient = ["megomego354@gmail.com"]
+    recipient = ["megomego354@gmail.com", "ahnabil148@gmail.com"]
+    # recipient = ["megomego354@gmail.com"]
 
     email = EmailMessage(subject, body, settings.EMAIL_HOST_USER, recipient)
 
