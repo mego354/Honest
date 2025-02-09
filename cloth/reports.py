@@ -1,4 +1,5 @@
 import os
+from django.conf import settings
 from fpdf import FPDF
 import arabic_reshaper
 from bidi.algorithm import get_display
@@ -102,8 +103,9 @@ class PDF(FPDF):
 
 def generate_production_report(recent_cloth_operations, recent_models, output_path):
     footer = format_arabic_text(f"تقرير بتاريخ {localtime(now()).strftime('%Y/%m/%d')}")
+    font_path = os.path.join(settings.STATIC_ROOT,"cloth", "arial.ttf")
 
-    pdf = PDF(title="Honest Factory Daily Report", final_footer=footer, font_path="cloth/static/cloth/arial.ttf")
+    pdf = PDF(title="Honest Factory Daily Report", final_footer=footer, font_path=font_path)
     pdf.add_page()
 
     pdf.add_section("تقرير الانتاج", [])
