@@ -45,7 +45,7 @@ class Command(BaseCommand):
 def send_email_with_attachment():
     subject = "Daily Production Report"
     body = "Hello Ahmed,\n\nPlease find attached the daily production report.\n\nBest regards,\nMahmoud"
-    recipient = ["megomego354@gmail.com", ""]
+    recipient = ["megomego354@gmail.com", "ahnabil148@gmail.com"]
     recipient = ["megomego354@gmail.com"]
 
     email = EmailMessage(subject, body, settings.EMAIL_HOST_USER, recipient)
