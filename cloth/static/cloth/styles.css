@@ -526,5 +526,6 @@ body {
 .progress-data {
     white-space: nowrap;
     overflow-x: auto;
+    overflow-y: hidden;
     max-width: 100%;
   }
