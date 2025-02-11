@@ -94,7 +94,7 @@
                 <p class="mb-0"><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"Y/m/d" }}</span></p>
                 <div class="d-flex justify-content-between align-items-center">
                     {% if model.is_archive == is_archive %}
-                    <a class="btn btn-sm btn-secondary" href="{% url 'toggle_archive' model.id %}">
+                    <a class="btn btn-sm btn-secondary" href="#" onclick="confirmArchive(event, '{% url 'toggle_archive' model.id %}')">
                         <i class="fa-solid fa-box-archive"></i>
                     </a>
                     {% endif %}
@@ -305,9 +305,15 @@
             icon.classList.add('fa-chevron-down');
         }        
     }
-    function confirmDelete(modelId) {
-        if (confirm('هل أنت متأكد من حذف هذا الموديل؟')) {
-            window.location.href = `/delete/${modelId}`;
+    function confirmArchive(event, archiveUrl, isArchive) {
+        {% if not is_archive %}
+            let message = "هل أنت متأكد أنك تريد أرشفة هذا الموديل؟";
+        {% else %}
+            let message = "هل أنت متأكد أنك تريد إلغاء أرشفة هذا الموديل؟";
+        {% endif %}
+        
+        if (confirm(message)) {
+            window.location.href = archiveUrl;
         }
     }
 
