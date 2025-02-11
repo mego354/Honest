@@ -133,7 +133,7 @@ class ProductionPiece(models.Model):
 
         model = self.piece.model
         production_pieces = list(model.pieces.filter(productions__isnull=False))
-        if len(production_pieces) == 1 and production_pieces[0].productions.count() == 1:
+        if len(production_pieces) == 0:
             model.created_at = localtime(now())
             model.save()
         
