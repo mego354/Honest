@@ -144,3 +144,4 @@ class ProductionPiece(models.Model):
         self.piece.used_amount -= self.used_amount
         self.piece.save()
         super().delete(*args, **kwargs)
+        
