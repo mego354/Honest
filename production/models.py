@@ -129,8 +129,14 @@ class ProductionPiece(models.Model):
         else:
             self.piece.available_amount -= self.used_amount
             self.piece.used_amount += self.used_amount
-        
         self.piece.save()
+
+        model = self.piece.model
+        production_pieces = list(model.pieces.filter(productions__isnull=False))
+        if len(production_pieces) == 1 and production_pieces[0].productions.count() == 1:
+            model.created_at = localtime(now())
+            model.save()
+        
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
