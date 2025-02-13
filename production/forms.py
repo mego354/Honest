@@ -5,11 +5,12 @@ from .models import Model, SizeAmount, ProductionPiece
 class ModelForm(forms.ModelForm):
     class Meta:
         model = Model
-        fields = ['model_number']
+        fields = ['model_number', 'Packing_per_carton']
         widgets = {
             'model_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'Packing_per_carton': forms.Select(attrs={'class': 'form-control'}), 
         }
-
+        
 class SizeAmountForm(forms.ModelForm):
     class Meta:
         model = SizeAmount

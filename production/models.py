@@ -1,14 +1,21 @@
 from django.db import models
-from django.db.models import F, Value
-from django.db.models.functions import Trim
 from django.utils.timezone import localtime, now
 
 class Model(models.Model):
+    DOZENS_CHOICES = [
+        (12, "1"),
+        (24, "2"),
+        (36, "3"),
+        (48, "4"),
+    ]
+
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
     ended_at = models.DateTimeField(verbose_name="تاريخ الانتهاء", blank=True, null=True)
     is_archive = models.BooleanField(default=False)
+
+    Packing_per_carton = models.PositiveIntegerField(verbose_name="الدست في الكرتونة",choices=DOZENS_CHOICES, default=12)
 
     class Meta:
         ordering = ['-created_at']
@@ -106,9 +113,6 @@ class Piece(models.Model):
         
     def __str__(self):
         return f"{self.model.model_number} - Size: {self.size} - Type: {self.type}"
-
-
-
     
 class ProductionPiece(models.Model):
     piece = models.ForeignKey(Piece, verbose_name="القطعة", on_delete=models.CASCADE, related_name="productions")
@@ -145,3 +149,10 @@ class ProductionPiece(models.Model):
         self.piece.save()
         super().delete(*args, **kwargs)
         
+        
+class carton(models.Model):
+    model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="cartons")
+    length = models.PositiveIntegerField(verbose_name="الطول")
+    width = models.PositiveIntegerField(verbose_name="العرض")
+    height = models.PositiveIntegerField(verbose_name="الارتفاع")
+    comment = models.CharField(max_length=100, verbose_name="الملاحظات", blank=True)
