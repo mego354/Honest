@@ -24,9 +24,15 @@
     </div>
         
     <div class="model-details container my-4 p-4 border rounded shadow-sm bg-light">
+        <div class="section-title border-bottom-5 mb-2 d-flex justify-content-between align-items-center">
+            <h2>معلومات الموديل</h2>
+            <div class="ps-2">
+                <a href="{% url 'model_update_view' model.id%}" class="px-2 btn">
+                    <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
+                </a>
+            </div>
+        </div>
 
-        <h3 class="section-title border-bottom-5 mb-4">معلومات الموديل</h3>
-        
         <div class="row">
             <div class="col-md-6 col-sm-12">
                 <div class="row info-card shadow-sm rounded">
@@ -65,6 +71,12 @@
                 <div class="row info-card shadow-sm rounded">
                     <h5 class="col text-center"><strong>عدد الدست</strong></h5>
                     <h5 class="col text-center">{{ total_Dozens }}</h5>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="row info-card shadow-sm rounded">
+                    <h5 class="col text-center"><strong>الدست في الكرتونة</strong></h5>
+                    <h5 class="col text-center">{{ Packing_per_carton }}</h5>
                 </div>
             </div>
         </div>

@@ -9,8 +9,11 @@ urlpatterns = [
     path('archive-models/', ArchivedModelListingView.as_view(), name='archived_model_list_view'),
     path('create/', ModelCreationView.as_view(), name='model_creation_view'),
     path('model/<int:pk>/', ModelDetailView.as_view(), name='model_detail_view'),
+    path('model/<int:pk>/edit', ModelUpdateView.as_view(), name='model_update_view'),
     path('model/<int:pk>/delete/', ModelDeleteView.as_view(), name='model_delete_view'),
     path('model/<int:pk>/toggle-archive/', ToggleArchiveView.as_view(), name='toggle_archive'),
+
+    path('model/<int:pk>/add-carton', CartonCreateView.as_view(), name='add_carton_view'),
     
     path('size/add/<int:model_id>/', SizeAmountCreateView.as_view(), name='sizeamount_add'),
     path('size/<int:pk>/edit/', SizeAmountEditView.as_view(), name='SizeAmount_edit'),

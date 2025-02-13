@@ -150,7 +150,7 @@ class ProductionPiece(models.Model):
         super().delete(*args, **kwargs)
         
         
-class carton(models.Model):
+class Carton(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="cartons")
     length = models.PositiveIntegerField(verbose_name="الطول")
     width = models.PositiveIntegerField(verbose_name="العرض")

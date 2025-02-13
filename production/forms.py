@@ -1,5 +1,5 @@
 from django import forms
-from .models import Model, SizeAmount, ProductionPiece
+from .models import Model, SizeAmount, ProductionPiece, Carton
 
 
 class ModelForm(forms.ModelForm):
@@ -90,3 +90,14 @@ class ProductionForm(forms.Form):
             self.fields['size_amount'].choices = [("", "---------")]
             self.fields['piece'].choices = [("", "---------")]
 
+class CartonForm(forms.ModelForm):
+    class Meta:
+        model = Carton
+        fields = ['model', 'length', 'width', 'height', 'comment']
+        widgets = {
+            'model'  : forms.Select(attrs={'class': 'form-control'}),
+            'length' : forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'width'  : forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'height' : forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control'}),
+        }

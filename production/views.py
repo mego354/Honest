@@ -11,8 +11,8 @@ from django.db import transaction
 from django.db.models import Q, Sum, F
 from django.contrib import messages
 
-from .models import Model, Piece, SizeAmount, ProductionPiece
-from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm
+from .models import Model, Piece, SizeAmount, ProductionPiece, Carton
+from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm
 
 from django.utils.timezone import localtime, now
 from datetime import datetime, timedelta
@@ -97,8 +97,8 @@ class ModelDetailView(DetailView):
         total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
 
         context['total_sizes_pieces'] = total_sizes_pieces
-        # context['total_Dozens'] = round(total_sizes_pieces / 12, 2)
         context['total_Dozens'] = int(total_sizes_pieces / 12)
+        context['Packing_per_carton'] = int(model.Packing_per_carton / 12)
         return context
     
 class ModelDeleteView(DeleteView):
@@ -109,6 +109,18 @@ class ModelDeleteView(DeleteView):
     def form_valid(self, form):
         messages.success(self.request, "تم حذف الموديل بنجاح")
         return super().form_valid(form)
+
+class ModelUpdateView(UpdateView):
+    model = Model
+    form_class = ModelForm
+    template_name = "production/edit_model.html"
+
+    def form_valid(self, form):
+        messages.success(self.request, "تم تعديل الموديل بنجاح")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('model_detail_view', kwargs={'pk': self.object.pk})
 
 class BaseModelListingView(ListView):
     template_name = "production/list_model.html"
@@ -395,6 +407,48 @@ class ProductionListingView(ListView):
         ]
 
         return context
+
+###############################################################################################################################
+class CartonCreateView(CreateView):
+    model = Carton
+    form_class = CartonForm
+    template_name = 'production/create_carton.html'
+
+    def form_valid(self, form):
+        model_id = self.kwargs.get('model_id')
+        model_instance = get_object_or_404(Model, pk=model_id)
+        form.instance.model = model_instance  
+        self.object = form.save()  
+        messages.success(self.request, "تمت إضافة الكرتون بنجاح.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("model_detail_view", args=[self.object.model.id])
+
+
+class CartonUpdateView(UpdateView):
+    model = Carton
+    form_class = CartonForm
+    template_name = 'production/create_carton.html'
+
+    def form_valid(self, form):
+        form.save()
+        return self.get_success_url()
+
+    def get_success_url(self):
+        production_piece = self.get_object()
+        model = production_piece.piece.model
+        messages.success(self.request, "تم تعديل الانتاج بنجاح.")
+        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+
+class CartonDeleteView(DeleteView):
+    model = Carton
+    template_name = 'production/delete_production.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "تم حذف الانتاج بنجاح.")
+        return reverse_lazy("production_list_view")
+
 
 ###############################################################################################################################
 class TestView(TemplateView):
