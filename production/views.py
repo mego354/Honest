@@ -412,43 +412,44 @@ class ProductionListingView(ListView):
 class CartonCreateView(CreateView):
     model = Carton
     form_class = CartonForm
-    template_name = 'production/create_carton.html'
+    template_name = 'production/carton_form.html'
 
     def form_valid(self, form):
-        model_id = self.kwargs.get('model_id')
-        model_instance = get_object_or_404(Model, pk=model_id)
-        form.instance.model = model_instance  
-        self.object = form.save()  
+        model_id = self.kwargs.get("model_id")
+        self.model = get_object_or_404(Model, pk=model_id)
+        form.instance.model = self.model
+        form.save()
+
         messages.success(self.request, "تمت إضافة الكرتون بنجاح.")
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("model_detail_view", args=[self.object.model.id])
+        return reverse_lazy("model_detail_view", args=[self.model.id])
 
 
-class CartonUpdateView(UpdateView):
+class CartonEditView(UpdateView):
     model = Carton
     form_class = CartonForm
-    template_name = 'production/create_carton.html'
+    template_name = 'production/carton_form.html'
 
     def form_valid(self, form):
-        form.save()
-        return self.get_success_url()
+        messages.success(self.request, "تم تعديل الكرتون بنجاح.")
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
-        production_piece = self.get_object()
-        model = production_piece.piece.model
-        messages.success(self.request, "تم تعديل الانتاج بنجاح.")
-        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+        instance_carton = self.get_object()
+        model = instance_carton.model
+        return reverse_lazy("model_detail_view", args=[model.id])
 
 class CartonDeleteView(DeleteView):
     model = Carton
-    template_name = 'production/delete_production.html'
+    template_name = 'production/delete_carton.html'
 
     def get_success_url(self):
-        messages.success(self.request, "تم حذف الانتاج بنجاح.")
-        return reverse_lazy("production_list_view")
-
+        instance_carton = self.get_object()
+        model = instance_carton.model
+        messages.success(self.request, "تم حذف الكرتون بنجاح.")
+        return reverse_lazy("model_detail_view", args=[model.id])
 
 ###############################################################################################################################
 class TestView(TemplateView):

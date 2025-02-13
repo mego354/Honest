@@ -93,9 +93,8 @@ class ProductionForm(forms.Form):
 class CartonForm(forms.ModelForm):
     class Meta:
         model = Carton
-        fields = ['model', 'length', 'width', 'height', 'comment']
+        fields = ['length', 'width', 'height', 'comment']
         widgets = {
-            'model'  : forms.Select(attrs={'class': 'form-control'}),
             'length' : forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
             'width'  : forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
             'height' : forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),

@@ -13,7 +13,9 @@ urlpatterns = [
     path('model/<int:pk>/delete/', ModelDeleteView.as_view(), name='model_delete_view'),
     path('model/<int:pk>/toggle-archive/', ToggleArchiveView.as_view(), name='toggle_archive'),
 
-    path('model/<int:pk>/add-carton', CartonCreateView.as_view(), name='add_carton_view'),
+    path('carton/add/<int:model_id>/', CartonCreateView.as_view(), name='carton_add'),
+    path('carton/add/<int:pk>/edit/', CartonEditView.as_view(), name='carton_edit'),
+    path('carton/add/<int:pk>/delete/', CartonDeleteView.as_view(), name='carton_delete_view'),
     
     path('size/add/<int:model_id>/', SizeAmountCreateView.as_view(), name='sizeamount_add'),
     path('size/<int:pk>/edit/', SizeAmountEditView.as_view(), name='SizeAmount_edit'),

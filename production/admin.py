@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Model, Piece, SizeAmount, ProductionPiece
+from .models import Model, Piece, SizeAmount, ProductionPiece, Carton
 
 
 class PieceInline(admin.TabularInline):  # Use TabularInline for related Pieces
@@ -67,3 +67,8 @@ class ProductionPieceAdmin(admin.ModelAdmin):
         """Handle custom logic when deleting an object."""
         obj.delete()
 
+@admin.register(Carton)
+class CartonAdmin(admin.ModelAdmin):
+    list_display = ("model", "length", "width", "height", "comment")
+    search_fields = ("model__name", "comment")  # Assuming 'model' has a 'name' field
+    list_filter = ("model",)
