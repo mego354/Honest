@@ -114,7 +114,7 @@ class ModelCreationView(FormView):
         messages.success(self.request, f"تم انشاء الموديل {model.model_number} بنجاح")
         model.update_available_carton()
 
-        return redirect({reverse_lazy('model_detail_view', args=[model.pk])})
+        return redirect(reverse_lazy('model_detail_view', args=[model.pk]))
 
     def form_invalid(self, form):
         messages.error(self.request, "هنالك عطل في النموذج، يرجى إصلاحه والمحاولة مرة أخرى")
@@ -232,10 +232,10 @@ class ToggleShippedView(View):
         
         archive_mode = model_instance.is_archive
         if archive_mode:
-            messages.success(self.request, f"تم شحن الموديل بنجاح")
+            messages.success(self.request, f"تم الغاء شحن الموديل بنجاح")
             return redirect(reverse_lazy("archived_model_list_view"))
         else:
-            messages.success(self.request, f"تم الغاء شحن الموديل بنجاح")
+            messages.success(self.request, f"تم شحن الموديل بنجاح")
             return redirect(reverse_lazy("model_list_view"))
 
 
