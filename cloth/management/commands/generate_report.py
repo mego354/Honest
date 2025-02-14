@@ -38,7 +38,7 @@ class Command(BaseCommand):
         if generated:
             self.stdout.write(self.style.SUCCESS(f"Report saved at {full_path}"))
             try:
-                send_email_with_attachment()
+                # send_email_with_attachment()
                 self.stdout.write(self.style.SUCCESS("Report Sent Successfully"))
             except:
                 self.stdout.write(self.style.NOTICE("Error Sending The Report"))
