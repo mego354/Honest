@@ -114,8 +114,7 @@ class ModelCreationView(FormView):
         messages.success(self.request, f"تم انشاء الموديل {model.model_number} بنجاح")
         model.update_available_carton()
 
-        carton_count = self.request.POST.get("carton_count", 1)
-        return redirect(f"{reverse_lazy('carton_add_set', args=[model.pk])}?count={carton_count}")
+        return redirect({reverse_lazy('model_detail_view', args=[model.pk])})
 
     def form_invalid(self, form):
         messages.error(self.request, "هنالك عطل في النموذج، يرجى إصلاحه والمحاولة مرة أخرى")
