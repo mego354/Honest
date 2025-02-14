@@ -107,6 +107,8 @@ class Piece(models.Model):
     size = models.CharField(max_length=50, verbose_name="المقاس", blank=True)
     available_amount = models.IntegerField(verbose_name="الكمية المتبقية", blank=True, default=0)
     used_amount = models.IntegerField(verbose_name="الكمية المستخدمة", default=0, blank=True)
+    packing_available_amount = models.IntegerField(verbose_name="الكمية المتبقية للتعبئة", blank=True, default=0)
+    packing_used_amount = models.IntegerField(verbose_name="الكمية المستخدمة للتعبئة", default=0, blank=True)
 
     class Meta:
         ordering = ['size', 'type']
@@ -156,3 +158,30 @@ class Carton(models.Model):
     width = models.PositiveIntegerField(verbose_name="العرض")
     height = models.PositiveIntegerField(verbose_name="الارتفاع")
     comment = models.CharField(max_length=100, verbose_name="الملاحظات", blank=True)
+
+class Packing(models.Model):
+    piece = models.ForeignKey(Piece, verbose_name="القطعة", on_delete=models.CASCADE, related_name="Packings")
+    created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
+    used_amount = models.IntegerField(verbose_name="الكمية للتعبئة", default=0, blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original = Packing.objects.get(pk=self.pk)
+            diff = self.used_amount - original.used_amount
+            self.piece.production_available_amount -= diff
+            self.piece.production_used_amount += diff
+        else:
+            self.piece.production_available_amount -= self.used_amount
+            self.piece.production_used_amount += self.used_amount
+        self.piece.save()
+
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.piece.production_available_amount += self.used_amount
+        self.piece.production_used_amount -= self.used_amount
+        self.piece.save()
+        super().delete(*args, **kwargs)
