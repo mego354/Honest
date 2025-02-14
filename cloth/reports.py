@@ -4,6 +4,7 @@ from fpdf import FPDF
 import arabic_reshaper
 from bidi.algorithm import get_display
 from django.utils.timezone import localtime, now
+from datetime import datetime, date
 
 def format_arabic_text(text):
     """
@@ -103,14 +104,14 @@ class PDF(FPDF):
 
 def generate_production_report(recent_cloth_operations, recent_models, output_path):
     footer = format_arabic_text(f"تقرير بتاريخ {localtime(now()).strftime('%Y/%m/%d')}")
-    font_path = os.path.join(settings.STATIC_ROOT,"cloth", "arial.ttf")
+    font_path = os.path.join(settings.STATIC_ROOT, "cloth", "arial.ttf")
 
     pdf = PDF(title="Honest Factory Daily Report", final_footer=footer, font_path=font_path)
     pdf.add_page()
 
     pdf.add_section("تقرير الانتاج", [])
 
-    if len(recent_models) > 0:  # Ensures that there is data before processing
+    if recent_models:
         for model_data in recent_models:
             pdf.chapter_body([f"الموديل: {model_data['model']}"])
             headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
@@ -118,51 +119,108 @@ def generate_production_report(recent_cloth_operations, recent_models, output_pa
             pdf.add_table(headers, table_data)
             pdf.ln(10)
     else:
-        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])  # Display a message if no data exists
+        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
     pdf.add_section("تقرير القماش", [])
 
     operation_headers = {
-        "وارد": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة"],
-        "قص": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
-        "مرتجع": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
-        "احصائيات": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة", "رقم الموديل", "نوع الحركه"]
+        "وارد": ["كود الخامه", "عدد الاتواب", "الوزن", "التاريخ"],
+        "قص": ["كود الخامه", "عدد الاتواب", "الوزن", "التاريخ"],
+        "مرتجع": ["كود الخامه", "عدد الاتواب", "الوزن", "التاريخ"],
     }
 
-    operation_key = {
-        "كود الخامه": "fabric_code",
-        "اسم الخامه": "fabric_name",
-        "اللون": "color",
-        "عدد الاتواب": "roll",
-        "الوزن": "weight",
-        "التاريخ": "date",
-        "اسم المصبغة": "dyehouse_name",
-        "رقم الموديل": "model_number",
-        "نوع الحركه": "movement_type",
-    }
-
-    # Track whether we added any data
     has_data = False
 
     for op_type, headers in operation_headers.items():
         if recent_cloth_operations.get(op_type):
             has_data = True
             pdf.chapter_body([op_type])
-            
-            # Extract table data safely
+
             table_data = [
-                [f"{getattr(op, operation_key.get(field))}" for field in headers]
+                [
+                    op["fabric_code"],
+                    op["roll"],
+                    op["weight"],
+                    op["date"].strftime("%Y/%m/%d") if isinstance(op["date"], (datetime, date)) else op["date"]
+                ]
                 for op in recent_cloth_operations[op_type]
             ]
-            
+
             pdf.add_table(headers, table_data)
             pdf.ln(10)
 
-    # If no data was added, show a fallback message
     if not has_data:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
-    
+
     pdf.add_final_footer()
     pdf.output(output_path)
 
     return True
+
+
+
+# def generate_production_report(recent_cloth_operations, recent_models, output_path):
+#     footer = format_arabic_text(f"تقرير بتاريخ {localtime(now()).strftime('%Y/%m/%d')}")
+#     font_path = os.path.join(settings.STATIC_ROOT,"cloth", "arial.ttf")
+
+#     pdf = PDF(title="Honest Factory Daily Report", final_footer=footer, font_path=font_path)
+#     pdf.add_page()
+
+#     pdf.add_section("تقرير الانتاج", [])
+
+#     if len(recent_models) > 0:  # Ensures that there is data before processing
+#         for model_data in recent_models:
+#             pdf.chapter_body([f"الموديل: {model_data['model']}"])
+#             headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
+#             table_data = [[p['type'], p['used_amount'], p['size'], p['factory'], p['created_at']] for p in model_data["productions"]]
+#             pdf.add_table(headers, table_data)
+#             pdf.ln(10)
+#     else:
+#         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])  # Display a message if no data exists
+
+#     pdf.add_section("تقرير القماش", [])
+
+#     operation_headers = {
+#         "وارد": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة"],
+#         "قص": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
+#         "مرتجع": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
+#         "احصائيات": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة", "رقم الموديل", "نوع الحركه"]
+#     }
+
+#     operation_key = {
+#         "كود الخامه": "fabric_code",
+#         "اسم الخامه": "fabric_name",
+#         "اللون": "color",
+#         "عدد الاتواب": "roll",
+#         "الوزن": "weight",
+#         "التاريخ": "date",
+#         "اسم المصبغة": "dyehouse_name",
+#         "رقم الموديل": "model_number",
+#         "نوع الحركه": "movement_type",
+#     }
+
+#     # Track whether we added any data
+#     has_data = False
+
+#     for op_type, headers in operation_headers.items():
+#         if recent_cloth_operations.get(op_type):
+#             has_data = True
+#             pdf.chapter_body([op_type])
+            
+#             # Extract table data safely
+#             table_data = [
+#                 [f"{getattr(op, operation_key.get(field))}" for field in headers]
+#                 for op in recent_cloth_operations[op_type]
+#             ]
+            
+#             pdf.add_table(headers, table_data)
+#             pdf.ln(10)
+
+#     # If no data was added, show a fallback message
+#     if not has_data:
+#         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
+    
+#     pdf.add_final_footer()
+#     pdf.output(output_path)
+
+#     return True

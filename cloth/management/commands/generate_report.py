@@ -4,8 +4,6 @@ from django.conf import settings
 
 from django.core.mail import EmailMessage
 
-from cloth.models import Fabric, CutTransfer, ReturnTransfer, Statistics
-
 from cloth.utils import get_recent_cloth_operations
 from production.utils import get_recent_models
 
@@ -19,8 +17,7 @@ class Command(BaseCommand):
 
         # Fetch recent operations
         days = 1
-        models = [Fabric, CutTransfer, ReturnTransfer, Statistics]
-        recent_cloth_operations = get_recent_cloth_operations(models,days=days)
+        recent_cloth_operations = get_recent_cloth_operations(days=days)
         recent_models = get_recent_models(days=days)
 
         # Define output path
@@ -35,7 +32,7 @@ class Command(BaseCommand):
         if generated:
             self.stdout.write(self.style.SUCCESS(f"Report saved at {full_path}"))
             try:
-                send_email_with_attachment()
+                # send_email_with_attachment()
                 self.stdout.write(self.style.SUCCESS("Report Sent Successfully"))
             except:
                 self.stdout.write(self.style.NOTICE("Error Sending The Report"))
