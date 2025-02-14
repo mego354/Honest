@@ -12,7 +12,7 @@ from django.db.models import Q, Sum, F
 from django.contrib import messages
 
 from .models import Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
-from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm
+from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
 
 from django.utils.timezone import localtime, now
 from datetime import datetime, timedelta
@@ -302,7 +302,7 @@ def load_sizes(request):
 def load_pieces(request):
     size_amount_id = request.GET.get('size_amount_id')
     size = SizeAmount.objects.get(pk=size_amount_id)
-    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount')
+    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount', 'packing_available_amount')
     return JsonResponse({'pieces': list(pieces)})
 
 def load_carton(request):
@@ -489,8 +489,8 @@ class PackingFormView(FormView):
 
 class PackingPieceUpdateView(UpdateView):
     model = Packing
-    form_class = PackingForm
-    template_name = 'production/packing_form.html'
+    form_class = PackingPieceForm
+    template_name = 'production/packing_piece_form.html'
 
     def form_valid(self, form):
         form.save()

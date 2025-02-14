@@ -212,7 +212,7 @@
                     pieceField.innerHTML = '<option value="">اختر القطعة</option>';
                     if (data.pieces && data.pieces.length > 0) {
                         data.pieces.forEach(piece => {
-                            pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - متبقي (${piece.available_amount})</option>`;
+                            pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - متبقي (${piece.packing_available_amount})</option>`;
                         });
                     } else {
                         console.warn("No pieces found for the selected size."); // Debugging: Log a warning
