@@ -354,7 +354,7 @@ def load_sizes(request):
 def load_pieces(request):
     size_amount_id = request.GET.get('size_amount_id')
     size = SizeAmount.objects.get(pk=size_amount_id)
-    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount', 'packing_available_amount')
+    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount')
     return JsonResponse({'pieces': list(pieces)})
 
 def load_carton(request):

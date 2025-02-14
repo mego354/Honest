@@ -109,37 +109,6 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
     pdf = PDF(title="Honest Factory Daily Report", final_footer=footer, font_path=font_path)
     pdf.add_page()
 
-    # ---------------------- تقرير الإنتاج (Production Report) ----------------------
-    pdf.add_section("تقرير الانتاج", [])
-    
-    if producion_models:
-        for model_data in producion_models:
-            if pdf.get_y() + 0 > 270:
-                pdf.add_page()
-
-            pdf.chapter_body([f"الموديل: {model_data['model']}"])
-            
-            headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
-            table_data = [
-                [p['type'], p['used_amount'], p['size'], p['factory'], p['created_at']]
-                for p in model_data["productions"]
-            ]
-            
-            pdf.add_table(headers, table_data)
-            pdf.ln(5)
-
-            if "totals" in model_data and model_data["totals"]:
-                pdf.chapter_body(["إجمالي الكمية لكل قطعة:"])
-                total_headers = ["القطعة", "إجمالي الكمية"]
-                total_data = [[t['type'], t['total_used_amount']] for t in model_data["totals"]]
-                pdf.add_table(total_headers, total_data)
-            
-            pdf.ln(10)
-    else:
-        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
-
-    pdf.ln(20)
-
     # ---------------------- تقرير القماش (Cloth Report) ----------------------
     pdf.add_section("تقرير القماش", [])
     has_data = False
@@ -174,6 +143,37 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
 
     if not has_data:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
+
+    # ---------------------- تقرير الإنتاج (Production Report) ----------------------
+    pdf.add_section("تقرير الانتاج", [])
+    
+    if producion_models:
+        for model_data in producion_models:
+            if pdf.get_y() + 0 > 270:
+                pdf.add_page()
+
+            pdf.chapter_body([f"الموديل: {model_data['model']}"])
+            
+            headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
+            table_data = [
+                [p['type'], p['used_amount'], p['size'], p['factory'], p['created_at']]
+                for p in model_data["productions"]
+            ]
+            
+            pdf.add_table(headers, table_data)
+            pdf.ln(5)
+
+            if "totals" in model_data and model_data["totals"]:
+                pdf.chapter_body(["إجمالي الكمية لكل قطعة:"])
+                total_headers = ["القطعة", "إجمالي الكمية"]
+                total_data = [[t['type'], t['total_used_amount']] for t in model_data["totals"]]
+                pdf.add_table(total_headers, total_data)
+            
+            pdf.ln(10)
+    else:
+        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
+
+    pdf.ln(20)
 
     # ---------------------- تقرير التعبئة (Packing Report) ----------------------
     pdf.add_section("تقرير التعبئة", [])
