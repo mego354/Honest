@@ -25,23 +25,20 @@ class ProductionPieceInline(admin.TabularInline):
 
 @admin.register(Model)
 class ModelAdmin(admin.ModelAdmin):
-    list_display = ("id", "model_number", "created_at", "ended_at", "is_active", "is_archive", "usage_percentage_display")
-    list_filter = ("created_at", "ended_at", "is_archive")
-    search_fields = ("model_number",)
+    list_display = ('id', 'model_number', 'created_at', 'is_archive', 'Packing_per_carton', 'is_active_display', 'comments_count_display')
+    search_fields = ('model_number',)
+    list_filter = ('is_archive', 'Packing_per_carton', 'created_at')
+    ordering = ('-created_at',)
     inlines = [SizeAmountInline, PieceInline, PackingInline]
+    readonly_fields = ('is_active_display', 'comments_count_display')
 
-    def is_active(self, obj):
+    def is_active_display(self, obj):
         return obj.is_active()
-    is_active.boolean = True
+    is_active_display.short_description = "نشط"
 
-    def usage_percentage_display(self, obj):
-        data = obj.get_usage_percentage()
-        return format_html(
-            '<div style="width:100px; background-color:{}; color:white; padding:3px; text-align:center;">{}%</div>',
-            data["percent_style"],
-            data["percent"]
-        )
-    usage_percentage_display.short_description = "Usage Percentage"
+    def comments_count_display(self, obj):
+        return obj.comments_count()
+    comments_count_display.short_description = "عدد التعليقات"
 
 
 @admin.register(SizeAmount)

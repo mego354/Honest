@@ -59,7 +59,7 @@
                         <a href="{% url 'model_detail_view' package_item.model.id %}">{{ package_item.model.id }}</a>
                     </td>
                     <td>{{ package_item.model.model_number }}</td>
-                    <td>{{ package_item.carton.length }}*{{ package_item.carton.width }}*{{ package_item.carton.height }}</td>
+                    <td>{{ package_item.carton.length }}*{{ package_item.carton.width }}*{{ package_item.carton.height }} ({{ package_item.carton.type }})</td>
                     <td>{{ package_item.used_carton }}</td>
                     <td dir="rtl">{{ package_item.created_at|date:"Y/m/d h:i A" }}</td>
                     {% comment %} <td style="overflow-x:auto; max-width:100px; ">{{ package_item.comment }}</td> {% endcomment %}

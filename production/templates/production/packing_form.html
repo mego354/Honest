@@ -141,7 +141,7 @@
                     cartonField.innerHTML = '<option value="">اختر الكرتونة</option>';
                     if (data.cartons && data.cartons.length > 0) {
                         data.cartons.forEach(carton => {
-                            cartonField.innerHTML += `<option value="${carton.id}">${carton.length}*${carton.width}*${carton.height}</option>`;
+                            cartonField.innerHTML += `<option value="${carton.id}">${carton.length}*${carton.width}*${carton.height} (${carton.type})</option>`;
                         });
                     } else {
                         console.warn("No cartonس found for the selected model."); // Debugging: Log a warning

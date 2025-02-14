@@ -78,6 +78,7 @@ class ModelCreationView(FormView):
 
         # Add a success message
         messages.success(self.request, f"تم انشاء المودبل {model.model_number} بنجاح")
+        model.update_available_carton()
 
         carton_count = self.request.POST.get("carton_count", 1)
         return redirect(f"{reverse_lazy('carton_add_set', args=[model.pk])}?count={carton_count}")
@@ -140,8 +141,8 @@ class BaseModelListingView(ListView):
             return None
 
     def get_queryset(self):
-        for model in Model.objects.all():
-            model.save()
+        # for model in Model.objects.all():
+        #     model.save()
         queryset = super().get_queryset()
         filters = Q(is_archive=self.is_archive)  # Use dynamic is_archive flag
 
@@ -326,7 +327,7 @@ def load_pieces(request):
 
 def load_carton(request):
     model_id = request.GET.get('model_id')
-    cartons = Carton.objects.filter(model_id=model_id).values('id', 'length', 'width', 'height')
+    cartons = Carton.objects.filter(model_id=model_id).values('id', 'length', 'width', 'height', 'type')
     return JsonResponse({'cartons': list(cartons)})
 
 
