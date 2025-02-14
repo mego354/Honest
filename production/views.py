@@ -31,6 +31,7 @@ class ModelCreationView(FormView):
         # Extract pieces and sizes data from POST
         pieces = []
         sizes_amounts = []
+        cartons = []
         index = 1
 
         # Extract piece fields
@@ -59,6 +60,33 @@ class ModelCreationView(FormView):
             sizes_amounts.append({"size": size, "amount": int(amount)})
             index += 1
 
+        # Reset index for cartons
+        index = 1
+        while True:
+            length_key = f"carton_length_{index}"
+            width_key = f"carton_width_{index}"
+            height_key = f"carton_height_{index}"
+            type_key = f"carton_type_{index}"
+            comment_key = f"carton_comment_{index}"
+
+            length = self.request.POST.get(length_key)
+            width = self.request.POST.get(width_key)
+            height = self.request.POST.get(height_key)
+            carton_type = self.request.POST.get(type_key)
+            comment = self.request.POST.get(comment_key)
+
+            if not length or not width or not height or not carton_type:
+                break
+
+            cartons.append({
+                "length": length,
+                "width": width,
+                "height": height,
+                "type": carton_type,
+                "comment": comment or ""
+            })
+            index += 1
+
         # Save sizes to the database
         size_amounts_objects = [
             SizeAmount(model=model, size=size_data["size"], amount=size_data["amount"])
@@ -76,16 +104,21 @@ class ModelCreationView(FormView):
                     available_amount=size_amount.amount,
                 )
 
+        # Save cartons to the database
+        carton_objects = [
+            Carton(model=model, **carton_data) for carton_data in cartons
+        ]
+        Carton.objects.bulk_create(carton_objects)
+
         # Add a success message
-        messages.success(self.request, f"تم انشاء المودبل {model.model_number} بنجاح")
+        messages.success(self.request, f"تم انشاء الموديل {model.model_number} بنجاح")
         model.update_available_carton()
 
         carton_count = self.request.POST.get("carton_count", 1)
         return redirect(f"{reverse_lazy('carton_add_set', args=[model.pk])}?count={carton_count}")
-        
 
     def form_invalid(self, form):
-        messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
+        messages.error(self.request, "هنالك عطل في النموذج، يرجى إصلاحه والمحاولة مرة أخرى")
         return self.render_to_response(self.get_context_data(form=form))
 
 class ModelDetailView(DetailView):
@@ -101,7 +134,7 @@ class ModelDetailView(DetailView):
 
         context['total_sizes_pieces'] = total_sizes_pieces
         context['total_Dozens'] = int(total_sizes_pieces / 12)
-        context['Packing_per_carton'] = int(model.Packing_per_carton / 12)
+        context['Packing_per_carton'] = int(model.Packing_per_carton)
         return context
     
 class ModelDeleteView(DeleteView):
