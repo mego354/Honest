@@ -102,30 +102,22 @@ class PDF(FPDF):
         self.chapter_body(content)
 
 
-def generate_production_report(recent_cloth_operations, recent_models, output_path):
+def generate_production_report(recent_cloth_operations, producion_models, output_path):
     footer = format_arabic_text(f"تقرير بتاريخ {localtime(now()).strftime('%Y/%m/%d')}")
     font_path = os.path.join(settings.STATIC_ROOT, "cloth", "arial.ttf")
 
     pdf = PDF(title="Honest Factory Daily Report", final_footer=footer, font_path=font_path)
     pdf.add_page()
 
-    # Function to draw a bordered box
-    def draw_box(pdf, start_y, height):
-        pdf.set_draw_color(0, 0, 0)  # Black color
-        pdf.rect(10, start_y, 190, height)  # (x, y, width, height)
-
     # ---------------------- تقرير الإنتاج (Production Report) ----------------------
-    section_start_y = pdf.get_y()
     pdf.add_section("تقرير الانتاج", [])
-    section_height = 0  # Track height to close the border
-
-    if recent_models:
-        for model_data in recent_models:
+    
+    if producion_models:
+        for model_data in producion_models:
             # Ensure enough space for a new model
-            if pdf.get_y() > 230:  # Adjust this threshold if needed
+            if pdf.get_y() + 0 > 270:  
                 pdf.add_page()
 
-            model_start_y = pdf.get_y()  # Start Y position for model border
             pdf.chapter_body([f"الموديل: {model_data['model']}"])
             
             # Table headers
@@ -151,23 +143,13 @@ def generate_production_report(recent_cloth_operations, recent_models, output_pa
             
             pdf.ln(10)  # Add space before the next model
             
-            # Draw a box around this model section
-            model_height = pdf.get_y() - model_start_y
-            draw_box(pdf, model_start_y - 5, model_height + 10)
-
-            pdf.ln(15)  # Add extra spacing after each model to prevent touching
-
     else:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
-    # Draw a box around the entire production report section
-    section_height = pdf.get_y() - section_start_y
-    draw_box(pdf, section_start_y - 5, section_height + 10)
 
     pdf.ln(20)  # Extra spacing before the next section
 
     # ---------------------- تقرير القماش (Cloth Report) ----------------------
-    section_start_y = pdf.get_y()
     pdf.add_section("تقرير القماش", [])
     has_data = False
 
@@ -185,7 +167,6 @@ def generate_production_report(recent_cloth_operations, recent_models, output_pa
             if pdf.get_y() > 230:  
                 pdf.add_page()
 
-            operation_start_y = pdf.get_y()  # Start Y for cloth operation
             pdf.chapter_body([op_type])
 
             table_data = [
@@ -201,88 +182,11 @@ def generate_production_report(recent_cloth_operations, recent_models, output_pa
             pdf.add_table(headers, table_data)
             pdf.ln(10)
 
-            # Draw a box around this operation section
-            operation_height = pdf.get_y() - operation_start_y
-            draw_box(pdf, operation_start_y - 5, operation_height + 10)
-
-            pdf.ln(15)  # Extra spacing after each operation type
-
     if not has_data:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
-
-    # Draw a box around the entire cloth report section
-    section_height = pdf.get_y() - section_start_y
-    draw_box(pdf, section_start_y - 5, section_height + 10)
 
     pdf.add_final_footer()
     pdf.output(output_path)
 
     return True
 
-
-
-# def generate_production_report(recent_cloth_operations, recent_models, output_path):
-#     footer = format_arabic_text(f"تقرير بتاريخ {localtime(now()).strftime('%Y/%m/%d')}")
-#     font_path = os.path.join(settings.STATIC_ROOT,"cloth", "arial.ttf")
-
-#     pdf = PDF(title="Honest Factory Daily Report", final_footer=footer, font_path=font_path)
-#     pdf.add_page()
-
-#     pdf.add_section("تقرير الانتاج", [])
-
-#     if len(recent_models) > 0:  # Ensures that there is data before processing
-#         for model_data in recent_models:
-#             pdf.chapter_body([f"الموديل: {model_data['model']}"])
-#             headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
-#             table_data = [[p['type'], p['used_amount'], p['size'], p['factory'], p['created_at']] for p in model_data["productions"]]
-#             pdf.add_table(headers, table_data)
-#             pdf.ln(10)
-#     else:
-#         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])  # Display a message if no data exists
-
-#     pdf.add_section("تقرير القماش", [])
-
-#     operation_headers = {
-#         "وارد": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة"],
-#         "قص": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
-#         "مرتجع": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
-#         "احصائيات": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة", "رقم الموديل", "نوع الحركه"]
-#     }
-
-#     operation_key = {
-#         "كود الخامه": "fabric_code",
-#         "اسم الخامه": "fabric_name",
-#         "اللون": "color",
-#         "عدد الاتواب": "roll",
-#         "الوزن": "weight",
-#         "التاريخ": "date",
-#         "اسم المصبغة": "dyehouse_name",
-#         "رقم الموديل": "model_number",
-#         "نوع الحركه": "movement_type",
-#     }
-
-#     # Track whether we added any data
-#     has_data = False
-
-#     for op_type, headers in operation_headers.items():
-#         if recent_cloth_operations.get(op_type):
-#             has_data = True
-#             pdf.chapter_body([op_type])
-            
-#             # Extract table data safely
-#             table_data = [
-#                 [f"{getattr(op, operation_key.get(field))}" for field in headers]
-#                 for op in recent_cloth_operations[op_type]
-#             ]
-            
-#             pdf.add_table(headers, table_data)
-#             pdf.ln(10)
-
-#     # If no data was added, show a fallback message
-#     if not has_data:
-#         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
-    
-#     pdf.add_final_footer()
-#     pdf.output(output_path)
-
-#     return True

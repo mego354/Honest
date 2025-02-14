@@ -12,7 +12,7 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from production.utils import get_recent_models
+from production.utils import get_producion_models
 from cloth.utils import get_recent_cloth_operations
 from cloth.reports import generate_production_report
 from .PDF import PDFTableGenerator

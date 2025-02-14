@@ -16,7 +16,7 @@ from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceFor
 
 from django.utils.timezone import localtime, now
 from datetime import datetime, timedelta
-from production.utils import get_recent_models
+from production.utils import get_producion_models
 
 ###############################################################################################################################
 class ModelCreationView(FormView):

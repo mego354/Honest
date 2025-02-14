@@ -213,7 +213,7 @@ class Carton(models.Model):
     comment = models.CharField(max_length=100, verbose_name="المقاسات داخل الكرتونة", blank=True)
 
     def __str__(self):
-        return f"length: {self.length} - width: {self.width} - height: {self.height}"
+        return f"{self.length}*{self.width}*{self.height} ({self.type})"
 
 class Packing(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="packings")

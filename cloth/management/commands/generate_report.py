@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 
 from cloth.utils import get_recent_cloth_operations
-from production.utils import get_recent_models
+from production.utils import get_producion_models, get_packing_models
 
 from cloth.reports import generate_production_report
 
@@ -16,9 +16,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE("Generating the daily production report..."))
 
         # Fetch recent operations
-        days = 1
+        days = 10
         recent_cloth_operations = get_recent_cloth_operations(days=days)
-        recent_models = get_recent_models(days=days)
+        producion_models = get_producion_models(days=days)
+        # packing_models = get_packing_models(days=days)
 
         # Define output path
         report_path = os.path.join("reports", "production_report.pdf")
@@ -28,7 +29,7 @@ class Command(BaseCommand):
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
         # Generate report
-        generated = generate_production_report(recent_cloth_operations, recent_models, full_path)
+        generated = generate_production_report(recent_cloth_operations, producion_models, full_path)
         if generated:
             self.stdout.write(self.style.SUCCESS(f"Report saved at {full_path}"))
             try:
