@@ -139,6 +139,8 @@ class BaseModelListingView(ListView):
             return None
 
     def get_queryset(self):
+        for model in Model.objects.all():
+            model.save()
         queryset = super().get_queryset()
         filters = Q(is_archive=self.is_archive)  # Use dynamic is_archive flag
 
@@ -184,6 +186,20 @@ class ToggleArchiveView(View):
 
         else:
             messages.success(self.request, f"تم ازالة المودبل {model_instance.model_number} من الارشيف بنجاح")
+            return redirect(reverse_lazy("model_list_view"))
+
+class ToggleShippedView(View):
+    def get(self, request, pk, *args, **kwargs):
+        model_instance = get_object_or_404(Model, pk=pk)
+        shipped_mode = not model_instance.is_shipped
+        model_instance.is_shipped = shipped_mode
+        model_instance.save()
+        archive_mode = model_instance.is_archive
+        if archive_mode:
+            messages.success(self.request, f"تم شحن الموديل بنجاح")
+            return redirect(reverse_lazy("archived_model_list_view"))
+        else:
+            messages.success(self.request, f"تم الغاء شحن الموديل بنجاح")
             return redirect(reverse_lazy("model_list_view"))
 
 
@@ -454,6 +470,10 @@ class CartonDeleteView(DeleteView):
 
     def get_success_url(self):
         instance_carton = self.get_object()
+        deleted_packings = Packing.objects.filter(carton=instance_carton) 
+        for deleted_packing in deleted_packings:
+            deleted_packing.delete()
+            
         model = instance_carton.model
         messages.success(self.request, "تم حذف الكرتون بنجاح.")
         return reverse_lazy("model_detail_view", args=[model.id])
@@ -465,16 +485,15 @@ class PackingFormView(FormView):
 
             
     def form_valid(self, form):
-        piece_id = form.cleaned_data['piece']
+        model_instance = form.cleaned_data['model']
         carton_id = form.cleaned_data['carton']
-        used_amount = form.cleaned_data['used_amount']
+        used_carton = form.cleaned_data['used_carton']
 
-        self.piece_instance = Piece.objects.get(id=piece_id)
-        self.carton_instance = Carton.objects.get(id=carton_id)
+        carton_instance = Carton.objects.get(id=carton_id)
         Packing.objects.create(
-            piece=self.piece_instance,
-            carton=self.carton_instance,
-            used_amount=used_amount,
+            model=model_instance,
+            carton=carton_instance,
+            used_carton=used_carton,
         )
 
         return self.get_success_url()
@@ -485,7 +504,7 @@ class PackingFormView(FormView):
 
     def get_success_url(self):
         messages.success(self.request, "تمت إضافة التعبئة بنجاح.")
-        return redirect(reverse_lazy("production_form"))
+        return redirect(reverse_lazy("packing_form"))
 
 class PackingPieceUpdateView(UpdateView):
     model = Packing
@@ -498,7 +517,7 @@ class PackingPieceUpdateView(UpdateView):
 
     def get_success_url(self):
         packing_piece = self.get_object()
-        model = packing_piece.piece.model
+        model = packing_piece.model
         messages.success(self.request, "تم تعديل التعبئة بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
 
@@ -514,7 +533,7 @@ class PackingListingView(ListView):
     template_name = "production/list_package.html"
     model = Packing
     paginate_by = 30
-    filter_fields = ["model_number", "type", "size", "start_date", "end_date"]
+    filter_fields = ["model_number", "start_date", "end_date"]
 
     def parse_date(self, date_str):
         """
@@ -533,19 +552,7 @@ class PackingListingView(ListView):
 
         model_number = self.request.GET.get("model_number")
         if model_number:
-            filters &= Q(piece__model__model_number__icontains=model_number)
-
-        size = self.request.GET.get("size")
-        if size:
-            filters &= Q(piece__size__icontains=size)
-
-        type = self.request.GET.get("type")
-        if type:
-            filters &= Q(piece__type__icontains=type)
-
-        factory = self.request.GET.get("factory")
-        if factory:
-            filters &= Q(factory__icontains=factory)
+            filters &= Q(model__model_number__icontains=model_number)
 
         start_date = self.parse_date(self.request.GET.get("start_date"))
         end_date = self.parse_date(self.request.GET.get("end_date"))
@@ -562,7 +569,6 @@ class PackingListingView(ListView):
         # Add filters to the context
         context["filter_fields"] = [
             {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
-            {"field_name": "size", "verbose_name": "المقاس", "value": self.request.GET.get("size", "")},
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
             {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
         ]

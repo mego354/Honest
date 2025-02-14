@@ -56,23 +56,60 @@
         {% for model in object_list %}
 
         <div class="model-card">            
+            {% if not model.is_shipped %}
+                <div class="d-flex justify-content-end align-items-center pb-3 px-2" style="color: var(--danger-color)">
+                    <p class="fw-bolder m-0 ms-2 mb-1">
+                        لم يتم الشحن بعد 
+                    </p>
+                    <i class="fa-regular fa-circle fa-l"></i>
+                </div>
+            {% else %}
+                <div class="d-flex justify-content-end align-items-center pb-3 px-2" style="color: var(--success-color)">
+
+                    <p class="fw-bolder m-0 ms-2 mb-1">
+                        تم الشحن
+                    </p>
+                    <i class="fa-solid fa-circle fa-l"></i>
+                </div>
+            {% endif %}
+
             {% with usage=model.get_usage_percentage %}
                 <!-- Overall Usage Progress Bar -->
                 <div dir="ltr" class="progress mb-2 position-relative" style="border: 1px solid blue; border-radius: 5px; height: 18px;">
-                    <div class="progress-bar progress-bar-striped {{ usage.percent_style }}" 
+                    <div class="progress-bar progress-bar-striped {{ usage.production_percent_style }}" 
                         role="progressbar" 
-                        style="width: {{ usage.percent }}%" 
-                        aria-valuenow="{{ usage.used_amount }}" 
+                        style="width: {{ usage.production_percent }}%" 
+                        aria-valuenow="{{ usage.production_used_amount }}" 
                         aria-valuemin="0" 
-                        aria-valuemax="{{ usage.total_amount }}">
+                        aria-valuemax="{{ usage.production_total_amount }}">
                     </div>
                     <div class="progress-data d-flex justify-content-between align-items-center px-3 position-absolute w-100 h-100" 
                         style="top: -1px; left: 0; color: #000000; font-weight: 500; font-size: 16px">
                         <div>
-                            {{ usage.used_amount }} / {{ usage.total_amount }}
+                            {{ usage.production_used_amount }} / {{ usage.production_total_amount }} (الانتاج)
                         </div>
                         <div>
-                            {{ usage.percent }}%
+                            {{ usage.production_percent }}%
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Overall Usage Progress Bar -->
+                <div dir="ltr" class="progress mb-2 position-relative" style="border: 1px solid blue; border-radius: 5px; height: 18px;">
+                    <div class="progress-bar progress-bar-striped {{ usage.packaging_percent_style }}" 
+                        role="progressbar" 
+                        style="width: {{ usage.packaging_percent }}%" 
+                        aria-valuenow="{{ usage.packaging_used_amount }}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="{{ usage.packaging_total_amount }}">
+                    </div>
+                    <div class="progress-data d-flex justify-content-between align-items-center px-3 position-absolute w-100 h-100" 
+                        style="top: -1px; left: 0; color: #000000; font-weight: 500; font-size: 16px">
+                        <div>
+                            {{ usage.packaging_used_amount }} / {{ usage.packaging_total_amount }} (الانتاج)
+                        </div>
+                        <div>
+                            {{ usage.packaging_percent }}%
                         </div>
                     </div>
                 </div>
@@ -93,17 +130,22 @@
                 {% comment %} <p><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</span></p> {% endcomment %}
                 <p class="mb-0"><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"Y/m/d" }}</span></p>
                 <div class="d-flex justify-content-between align-items-center">
-                    {% if model.is_archive == is_archive %}
-                    <a class="btn btn-sm btn-secondary" href="#" onclick="confirmArchive(event, '{% url 'toggle_archive' model.id %}')">
-                        <i class="fa-solid fa-box-archive"></i>
+                    {% if model.is_archive == model.is_shipped %}
+                    <a class="btn btn-sm btn-primary" href="#" onclick="confirmShipped(event, '{% url 'toggle_shipped' model.id %}')">
+                        <i class="fa-solid fa-truck-arrow-right"></i>
                     </a>
                     {% endif %}
+
+                    <a class="me-1 btn btn-sm btn-secondary" href="#" onclick="confirmArchive(event, '{% url 'toggle_archive' model.id %}')">
+                        <i class="fa-solid fa-box-archive"></i>
+                    </a>
+
                     {% if is_archive %}
                     <a class="me-1 btn btn-sm btn-danger" href="{% url 'model_delete_view' model.id %}">
                         <i class="fas fa-trash"></i>
                     </a>
                     {% endif %}
-        
+
                     <a class="me-1 btn btn-sm" style="background-color: #0784e4; color: #ffffff" href="{% url 'model_detail_view' model.id %}">
                         <i class="fa-regular fa-eye" ></i>
                     </a>
@@ -122,7 +164,7 @@
                 <div class="card">
                     <div class="card-body">
                         <!-- Usage Progress Bars for Each Type -->
-                        {% for type in usage.type_usage %}
+                        {% for type in usage.production_type_usage %}
                             <div dir="ltr" class="progress mb-2 position-relative" style="border: 1px solid blue; border-radius: 5px; height: 18px;">
                                 <div class="progress-bar progress-bar-striped {{ type.percent_style }}" 
                                     role="progressbar" 
@@ -144,12 +186,13 @@
                         {% endfor %}
                     {% endwith %}
 
+                    <h5 class="text-dark my-3">تفاصيل الموديل</h6>
                         <div class="d-flex justify-content-between align-items-center pb-3">
-                            <h6 class="text-dark mb-0">تفاصيل الموديل</h6>
-                            <a href="{% url 'production_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn"> عرض الانتاج </a>
+                            <a href="{% url 'packing_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn">عرض التعبئة</a>
+                            <a href="{% url 'production_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn">عرض الانتاج</a>
 
                             <!-- Button to trigger the notes of production -->
-                            <button class="btn btn-sm btn-primary oped_details_btn" onclick="openModal('customModal_{{ model.id }}')">الملاحظات <span class="oped_details_count">{{model.commets_count}}<span></button>
+                            <button class="btn btn-sm btn-primary oped_details_btn" onclick="openModal('customModal_{{ model.id }}')">ملاحظات <span class="oped_details_count">{{model.comments_count}}<span></button>
 
                             <!-- Custom Off-canvas for notes of production -->
                             <div id="customModal_{{ model.id }}" class="custom-modal">
@@ -310,6 +353,17 @@
             let message = "هل أنت متأكد أنك تريد أرشفة هذا الموديل؟";
         {% else %}
             let message = "هل أنت متأكد أنك تريد إلغاء أرشفة هذا الموديل؟";
+        {% endif %}
+        
+        if (confirm(message)) {
+            window.location.href = archiveUrl;
+        }
+    }
+    function confirmShipped(event, archiveUrl, isArchive) {
+        {% if not is_archive %}
+            let message = "هل أنت متأكد أنك تريد شحن هذا الموديل؟";
+        {% else %}
+            let message = "هل أنت متأكد أنك تريد إلغاء شحن هذا الموديل؟";
         {% endif %}
         
         if (confirm(message)) {

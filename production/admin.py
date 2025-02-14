@@ -28,7 +28,7 @@ class ModelAdmin(admin.ModelAdmin):
     list_display = ("id", "model_number", "created_at", "ended_at", "is_active", "is_archive", "usage_percentage_display")
     list_filter = ("created_at", "ended_at", "is_archive")
     search_fields = ("model_number",)
-    inlines = [SizeAmountInline, PieceInline]  # Keep the inlines that relate to Model
+    inlines = [SizeAmountInline, PieceInline, PackingInline]
 
     def is_active(self, obj):
         return obj.is_active()
@@ -53,10 +53,9 @@ class SizeAmountAdmin(admin.ModelAdmin):
 
 @admin.register(Piece)
 class PieceAdmin(admin.ModelAdmin):
-    list_display = ("model", "type", "size", "available_amount", "used_amount", "packing_available_amount", "packing_used_amount")
+    list_display = ("model", "type", "size", "available_amount", "used_amount")
     list_filter = ("type", "size")
     search_fields = ("model__model_number", "type", "size")
-    inlines = [PackingInline]  # Packing has a ForeignKey to Piece
 
 
 @admin.register(ProductionPiece)
@@ -74,6 +73,6 @@ class CartonAdmin(admin.ModelAdmin):
 
 @admin.register(Packing)
 class PackingAdmin(admin.ModelAdmin):
-    list_display = ("piece", "carton", "used_amount", "created_at")
+    list_display = ("model", "carton", "used_carton", "created_at")
     list_filter = ("created_at",)
     search_fields = ("piece__model__model_number",)

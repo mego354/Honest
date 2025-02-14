@@ -96,9 +96,9 @@ class ProductionForm(forms.Form):
 class PackingPieceForm(forms.ModelForm):
     class Meta:
         model = Packing
-        fields = ['used_amount']
+        fields = ['used_carton']
         widgets = {
-            'used_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'used_carton': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
 
 
@@ -109,18 +109,6 @@ class PackingForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
     )
 
-    size_amount = forms.ChoiceField(
-        label="اختر المقاس",
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
-    piece = forms.ChoiceField(
-        label="اختر القطعة",
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
     carton = forms.ChoiceField(
         label="اختر الكرتونة",
         required=True,
@@ -128,8 +116,8 @@ class PackingForm(forms.Form):
     )
 
 
-    used_amount = forms.IntegerField(
-        label="الكمية المراد تعبئتها",
+    used_carton = forms.IntegerField(
+        label="الكرتون للتعبئة",
         min_value=1,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
     )
@@ -143,24 +131,12 @@ class PackingForm(forms.Form):
             model_id = self.data.get('model')
             model_instance = Model.objects.get(id=model_id)
 
-            # Populate size_amount choices based on the model
-            self.fields['size_amount'].choices = [
-                (str(size.id), size.size) for size in model_instance.size_amounts.all()
-            ]
-
-            # Populate piece choices based on the model
-            self.fields['piece'].choices = [
-                (str(piece.id), piece.type) for piece in model_instance.pieces.all()
-            ]
-
             # Populate piece choices based on the model
             self.fields['carton'].choices = [
                 (str(carton.id), f"{carton.length} -{carton.width} -{carton.height} -") for carton in model_instance.cartons.all()
             ]
         else:
             # If no model is selected, set empty choices
-            self.fields['size_amount'].choices = [("", "---------")]
-            self.fields['piece'].choices = [("", "---------")]
             self.fields['carton'].choices = [("", "---------")]
 
 ###############################################################################################################################

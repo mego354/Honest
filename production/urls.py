@@ -12,11 +12,8 @@ urlpatterns = [
     path('model/<int:pk>/edit', ModelUpdateView.as_view(), name='model_update_view'),
     path('model/<int:pk>/delete/', ModelDeleteView.as_view(), name='model_delete_view'),
     path('model/<int:pk>/toggle-archive/', ToggleArchiveView.as_view(), name='toggle_archive'),
+    path('model/<int:pk>/toggle-shipped/', ToggleShippedView.as_view(), name='toggle_shipped'),
 
-    path('carton/add/<int:model_id>/', CartonCreateView.as_view(), name='carton_add'),
-    path('carton/<int:pk>/edit/', CartonEditView.as_view(), name='carton_edit'),
-    path('carton/<int:pk>/delete/', CartonDeleteView.as_view(), name='carton_delete_view'),
-    
     path('size/add/<int:model_id>/', SizeAmountCreateView.as_view(), name='sizeamount_add'),
     path('size/<int:pk>/edit/', SizeAmountEditView.as_view(), name='SizeAmount_edit'),
     path('size/<int:pk>/delete/', SizeAmountDeleteView.as_view(), name='SizeAmount_delete_view'),
@@ -27,6 +24,10 @@ urlpatterns = [
     path('production/<int:pk>/edit/', ProductionPieceUpdateView.as_view(), name='productionpiece_edit'),
     path('production/<int:pk>/delete/', ProductionPieceDeleteView.as_view(), name='productionpiece_delete'),
 
+    path('carton/add/<int:model_id>/', CartonCreateView.as_view(), name='carton_add'),
+    path('carton/<int:pk>/edit/', CartonEditView.as_view(), name='carton_edit'),
+    path('carton/<int:pk>/delete/', CartonDeleteView.as_view(), name='carton_delete_view'),
+    
     path('packing/', PackingFormView.as_view(), name='packing_form'),
     path('packing-list', PackingListingView.as_view(), name='packing_list_view'),
     path('packing/<int:pk>/edit/', PackingPieceUpdateView.as_view(), name='packingpiece_edit'),

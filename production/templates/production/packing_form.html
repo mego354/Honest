@@ -37,20 +37,8 @@
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    {{ form.size_amount.label_tag }}
-                    {{ form.size_amount }}
-                </div>
-            </div>
-            <div class="row mb-2">
-                <div class="col">
-                    {{ form.piece.label_tag }}
-                    {{ form.piece }}
-                </div>
-            </div>
-            <div class="row mb-2">
-                <div class="col">
-                    {{ form.used_amount.label_tag }}
-                    {{ form.used_amount }}
+                    {{ form.used_carton.label_tag }}
+                    {{ form.used_carton }}
                 </div>
             </div>
         </div>
@@ -125,16 +113,8 @@
     
             // Function to reset dependent fields
             function resetDependentFields() {
-                const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
-                const pieceField = document.getElementById('{{ form.piece.auto_id }}');
                 const cartonField = document.getElementById('{{ form.carton.auto_id }}');
     
-                // Reset size field
-                sizeField.innerHTML = '<option value="">---------</option>';
-    
-                // Reset piece field
-                pieceField.innerHTML = '<option value="">---------</option>';
-
                 // Reset carton field
                 cartonField.innerHTML = '<option value="">---------</option>';
             }
@@ -147,33 +127,12 @@
         document.getElementById('{{ form.model.auto_id }}').addEventListener('change', function () {
             if (!this.value) {
                 // If the model is invalid, reset dependent fields
-                const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
-                const pieceField = document.getElementById('{{ form.piece.auto_id }}');
                 const cartonField = document.getElementById('{{ form.carton.auto_id }}');
-    
-                sizeField.innerHTML = '<option value="">---------</option>';
-                pieceField.innerHTML = '<option value="">---------</option>';
                 cartonField.innerHTML = '<option value="">---------</option>';
+                
                 return;
             }
     
-            fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
-                .then(response => response.json())
-                .then(data => {
-                    {% comment %} console.log("Sizes Data:", data); // Debugging: Log the response {% endcomment %}
-                    const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
-                    sizeField.innerHTML = '<option value="">اختر المقاس</option>';
-                    if (data.sizes && data.sizes.length > 0) {
-                        data.sizes.forEach(size => {
-                            sizeField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
-                        });
-                    } else {
-                        console.warn("No sizes found for the selected model."); // Debugging: Log a warning
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching sizes:", error); // Debugging: Log any errors
-                });
             fetch(`{% url 'load_cartons' %}?model_id=${this.value}`)
                 .then(response => response.json())
                 .then(data => {
@@ -182,7 +141,7 @@
                     cartonField.innerHTML = '<option value="">اختر الكرتونة</option>';
                     if (data.cartons && data.cartons.length > 0) {
                         data.cartons.forEach(carton => {
-                            cartonField.innerHTML += `<option value="${carton.id}">${carton.length} -${carton.width} -${carton.height}</option>`;
+                            cartonField.innerHTML += `<option value="${carton.id}">${carton.length}*${carton.width}*${carton.height}</option>`;
                         });
                     } else {
                         console.warn("No cartonس found for the selected model."); // Debugging: Log a warning
@@ -193,35 +152,6 @@
                 });
         });
     
-        document.getElementById('{{ form.size_amount.auto_id }}').addEventListener('change', function () {
-            const selectedSizeId = this.value; // Get the selected size ID
-            const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
-    
-            if (!selectedSizeId) {
-                // If the size is invalid, reset the piece field
-                const pieceField = document.getElementById('{{ form.piece.auto_id }}');
-                pieceField.innerHTML = '<option value="">---------</option>';
-                return;
-            }
-    
-            fetch(`{% url 'load_pieces' %}?size_amount_id=${selectedSizeId}`)
-                .then(response => response.json())
-                .then(data => {
-                    {% comment %} console.log("Pieces Data:", data); // Debugging: Log the response {% endcomment %}
-                    const pieceField = document.getElementById('{{ form.piece.auto_id }}');
-                    pieceField.innerHTML = '<option value="">اختر القطعة</option>';
-                    if (data.pieces && data.pieces.length > 0) {
-                        data.pieces.forEach(piece => {
-                            pieceField.innerHTML += `<option value="${piece.id}">${piece.type} - متبقي (${piece.packing_available_amount})</option>`;
-                        });
-                    } else {
-                        console.warn("No pieces found for the selected size."); // Debugging: Log a warning
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching pieces:", error); // Debugging: Log any errors
-                });
-        });
     });
     
 </script>
