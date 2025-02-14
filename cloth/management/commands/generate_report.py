@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -13,13 +14,17 @@ class Command(BaseCommand):
     help = "Generates the daily production report"
 
     def handle(self, *args, **kwargs):
+        if datetime.today().weekday() == 4:
+            self.stdout.write(self.style.WARNING("Task skipped: Today is Friday."))
+            return
+
         self.stdout.write(self.style.NOTICE("Generating the daily production report..."))
 
         # Fetch recent operations
-        days = 10
+        days = 1
         recent_cloth_operations = get_recent_cloth_operations(days=days)
         producion_models = get_producion_models(days=days)
-        # packing_models = get_packing_models(days=days)
+        packing_models = get_packing_models(days=days)
 
         # Define output path
         report_path = os.path.join("reports", "production_report.pdf")
@@ -29,7 +34,7 @@ class Command(BaseCommand):
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
         # Generate report
-        generated = generate_production_report(recent_cloth_operations, producion_models, full_path)
+        generated = generate_production_report(recent_cloth_operations, producion_models, packing_models, full_path)
         if generated:
             self.stdout.write(self.style.SUCCESS(f"Report saved at {full_path}"))
             try:

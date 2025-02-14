@@ -102,7 +102,7 @@ class PDF(FPDF):
         self.chapter_body(content)
 
 
-def generate_production_report(recent_cloth_operations, producion_models, output_path):
+def generate_production_report(recent_cloth_operations, producion_models, packing_models, output_path):
     footer = format_arabic_text(f"تقرير بتاريخ {localtime(now()).strftime('%Y/%m/%d')}")
     font_path = os.path.join(settings.STATIC_ROOT, "cloth", "arial.ttf")
 
@@ -114,40 +114,31 @@ def generate_production_report(recent_cloth_operations, producion_models, output
     
     if producion_models:
         for model_data in producion_models:
-            # Ensure enough space for a new model
-            if pdf.get_y() + 0 > 270:  
+            if pdf.get_y() + 0 > 270:
                 pdf.add_page()
 
             pdf.chapter_body([f"الموديل: {model_data['model']}"])
             
-            # Table headers
             headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
-            
-            # Table data for individual productions
             table_data = [
                 [p['type'], p['used_amount'], p['size'], p['factory'], p['created_at']]
                 for p in model_data["productions"]
             ]
             
             pdf.add_table(headers, table_data)
-            pdf.ln(5)  # Add space before totals section
+            pdf.ln(5)
 
-            # Display total used amount for each piece type
             if "totals" in model_data and model_data["totals"]:
                 pdf.chapter_body(["إجمالي الكمية لكل قطعة:"])
-                
                 total_headers = ["القطعة", "إجمالي الكمية"]
                 total_data = [[t['type'], t['total_used_amount']] for t in model_data["totals"]]
-                
                 pdf.add_table(total_headers, total_data)
             
-            pdf.ln(10)  # Add space before the next model
-            
+            pdf.ln(10)
     else:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
-
-    pdf.ln(20)  # Extra spacing before the next section
+    pdf.ln(20)
 
     # ---------------------- تقرير القماش (Cloth Report) ----------------------
     pdf.add_section("تقرير القماش", [])
@@ -163,8 +154,7 @@ def generate_production_report(recent_cloth_operations, producion_models, output
         if recent_cloth_operations.get(op_type):
             has_data = True
 
-            # Ensure enough space before adding new operation type
-            if pdf.get_y() > 230:  
+            if pdf.get_y() > 230:
                 pdf.add_page()
 
             pdf.chapter_body([op_type])
@@ -185,8 +175,34 @@ def generate_production_report(recent_cloth_operations, producion_models, output
     if not has_data:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
-    pdf.add_final_footer()
+    # ---------------------- تقرير التعبئة (Packing Report) ----------------------
+    pdf.add_section("تقرير التعبئة", [])
+
+    if packing_models:
+        for model_data in packing_models:
+            if pdf.get_y() > 270:
+                pdf.add_page()
+
+            pdf.chapter_body([f"الموديل: {model_data['model']}"])
+
+            headers = ["الكرتونة", "الكميات المستخدمة", "التاريخ"]
+            table_data = [
+                [p['carton'], p['used_carton'], p['created_at']]
+                for p in model_data["packings"]
+            ]
+
+            pdf.add_table(headers, table_data)
+            pdf.ln(5)
+
+            # Display total used cartons per model
+            pdf.chapter_body(["إجمالي الكمية المستخدمة من الكراتين:"])
+            total_headers = ["الموديل", "إجمالي الكراتين المستخدمة"]
+            total_data = [[model_data['model'], model_data["totals"]]]
+
+            pdf.add_table(total_headers, total_data)
+            pdf.ln(10)
+    else:
+        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
+
     pdf.output(output_path)
-
     return True
-

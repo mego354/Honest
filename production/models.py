@@ -86,9 +86,9 @@ class Model(models.Model):
             })
 
         # Packaging calculations
-        total_dozen = self.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
-        packaging_total_carton = (total_dozen / self.Packing_per_carton) / pieces_count
-        packaging_used_carton = self.used_carton
+        total_sizes_pieces = self.size_amounts.aggregate(total=Sum("amount"))["total"] or 0
+        packaging_total_carton = total_sizes_pieces / self.Packing_per_carton
+        packaging_used_carton = sum(self.packings.values_list("used_carton", flat=True))
         packaging_percent = (packaging_used_carton / packaging_total_carton * 100) if packaging_total_carton else 0
 
         return {
@@ -116,11 +116,8 @@ class Model(models.Model):
         return ""
 
     def update_available_carton(self, *args, **kwargs):
-        sizes = self.size_amounts.all()
-        pieces = self.pieces.all()
-
         total_sizes_pieces = self.size_amounts.aggregate(total=Sum("amount"))["total"] or 0
-        total_cartons = (total_sizes_pieces // self.Packing_per_carton) / (pieces.count() / sizes.count())
+        total_cartons = total_sizes_pieces / self.Packing_per_carton
         used_cartons = sum(self.packings.values_list("used_carton", flat=True))
         self.available_carton = total_cartons - used_cartons
 

@@ -154,7 +154,7 @@ class TestView(TemplateView):
         # Fetch sorted records from the last 4 days
         models = [Fabric, CutTransfer, ReturnTransfer, Statistics] 
         recent_cloth_operations = get_recent_cloth_operations(models)
-        recent_models = get_recent_models()
+        recent_models = get_producion_models()
 
         context["data"] = {
             "recent_cloth_operations": recent_cloth_operations,
