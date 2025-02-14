@@ -74,6 +74,7 @@ class ModelCreationView(FormView):
                     type=piece_data["type"],
                     size=size_amount.size,
                     available_amount=size_amount.amount,
+                    packing_available_amount=size_amount.amount,
                 )
 
         # Add a success message

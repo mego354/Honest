@@ -154,9 +154,9 @@ class ProductionPiece(models.Model):
         
 class Carton(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="cartons")
-    length = models.PositiveIntegerField(verbose_name="الطول")
-    width = models.PositiveIntegerField(verbose_name="العرض")
-    height = models.PositiveIntegerField(verbose_name="الارتفاع")
+    length = models.CharField(max_length=50, verbose_name="الطول", blank=True)
+    width = models.CharField(max_length=50, verbose_name="العرض", blank=True)
+    height = models.CharField(max_length=50, verbose_name="الارتفاع", blank=True)
     comment = models.CharField(max_length=100, verbose_name="الملاحظات", blank=True)
 
 class Packing(models.Model):
@@ -171,17 +171,17 @@ class Packing(models.Model):
         if self.pk:
             original = Packing.objects.get(pk=self.pk)
             diff = self.used_amount - original.used_amount
-            self.piece.production_available_amount -= diff
-            self.piece.production_used_amount += diff
+            self.piece.packing_available_amount -= diff
+            self.piece.packing_used_amount += diff
         else:
-            self.piece.production_available_amount -= self.used_amount
-            self.piece.production_used_amount += self.used_amount
+            self.piece.packing_available_amount -= self.used_amount
+            self.piece.packing_used_amount += self.used_amount
         self.piece.save()
 
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        self.piece.production_available_amount += self.used_amount
-        self.piece.production_used_amount -= self.used_amount
+        self.piece.packing_available_amount += self.used_amount
+        self.piece.packing_used_amount -= self.used_amount
         self.piece.save()
         super().delete(*args, **kwargs)
