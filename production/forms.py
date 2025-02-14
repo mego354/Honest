@@ -143,10 +143,11 @@ class PackingForm(forms.Form):
 class CartonForm(forms.ModelForm):
     class Meta:
         model = Carton
-        fields = ['length', 'width', 'height', 'comment']
+        fields = ['length', 'width', 'height', 'type', 'comment']
         widgets = {
             'length' : forms.TextInput(attrs={'class': 'form-control'}),
             'width'  : forms.TextInput(attrs={'class': 'form-control'}),
             'height' : forms.TextInput(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
             'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }

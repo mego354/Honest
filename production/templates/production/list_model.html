@@ -106,7 +106,7 @@
                     <div class="progress-data d-flex justify-content-between align-items-center px-3 position-absolute w-100 h-100" 
                         style="top: -1px; left: 0; color: #000000; font-weight: 500; font-size: 16px">
                         <div>
-                            {{ usage.packaging_used_amount }} / {{ usage.packaging_total_amount }} (الانتاج)
+                            {{ usage.packaging_used_amount }} / {{ usage.packaging_total_amount }} (التعبئة)
                         </div>
                         <div>
                             {{ usage.packaging_percent }}%
@@ -123,11 +123,11 @@
                     </span>
                 </h5>
                 <button class="btn btn-sm btn-primary oped_details_btn" onclick="toggleDetails('{{ model.id }}')">
-                    عرض التفاصيل <i id="chevron-icon-{{ model.id }}" class="fas fa-chevron-down"></i>
+                    <span id="chevron-text-{{ model.id }}">عرض التفاصيل</span> 
+                    <i id="chevron-icon-{{ model.id }}" class="fas fa-chevron-down"></i>
                 </button>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-                {% comment %} <p><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"d/m/Y h:i A" }}</span></p> {% endcomment %}
                 <p class="mb-0"><strong>تاريخ الإنشاء:</strong> <span dir="ltr">{{ model.created_at|date:"Y/m/d" }}</span></p>
                 <div class="d-flex justify-content-between align-items-center">
                     {% if model.is_archive == model.is_shipped %}
@@ -154,6 +154,9 @@
             <div>
                 {% if model.ended_at %}
                 <p class="mb-0"><strong>تاريخ الانتهاء:</strong> <span dir="ltr">{{ model.ended_at|date:"Y/m/d" }}</span></p>
+                {% endif %}
+                {% if model.is_shipped %}
+                <p class="mb-0"><strong>تاريخ الشحن:</strong> <span dir="ltr">{{ model.shipped_at|date:"Y/m/d" }}</span></p>
                 {% endif %}
     
             </div>
@@ -338,14 +341,17 @@
     function toggleDetails(modelId) {
         let details = document.getElementById('details-' + modelId);
         let icon = document.getElementById('chevron-icon-' + modelId);
+        let text = document.getElementById('chevron-text-' + modelId);
         if (details.style.display === 'none' || details.style.display === '') {
             details.style.display = 'block';
             icon.classList.remove('fa-chevron-down');
             icon.classList.add('fa-chevron-up');
+            text.innerHTML = "اخفاء التفاصيل";
         } else {
             details.style.display = 'none';
             icon.classList.remove('fa-chevron-up');
             icon.classList.add('fa-chevron-down');
+            text.innerHTML = "عرض التفاصيل";
         }        
     }
     function confirmArchive(event, archiveUrl, isArchive) {

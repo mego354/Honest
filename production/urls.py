@@ -24,6 +24,7 @@ urlpatterns = [
     path('production/<int:pk>/edit/', ProductionPieceUpdateView.as_view(), name='productionpiece_edit'),
     path('production/<int:pk>/delete/', ProductionPieceDeleteView.as_view(), name='productionpiece_delete'),
 
+    path('carton/add-set/<int:model_id>/', CartonCreateFormSetView.as_view(), name='carton_add_set'),
     path('carton/add/<int:model_id>/', CartonCreateView.as_view(), name='carton_add'),
     path('carton/<int:pk>/edit/', CartonEditView.as_view(), name='carton_edit'),
     path('carton/<int:pk>/delete/', CartonDeleteView.as_view(), name='carton_delete_view'),

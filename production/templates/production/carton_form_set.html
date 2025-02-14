@@ -13,16 +13,19 @@
 {% endblock %}
 
 {% block body %}
-{% if carton %}
-    <h2 class="section-title pt-4">تعديل الكرتون</h2>
-{% else %}
-    <h2 class="section-title pt-4">اضافة الكرتون</h2>
-{% endif %}
+<h2 class="section-title pt-4">
+    {% if carton %} تعديل الكرتون {% else %} إضافة الكرتون {% endif %}
+</h2>
+
 <div id="order-form-wrapper" class="container py-4">
+    
     <form method="post" id="order-form" class="mb-4 p-4 pt-0">
         {% csrf_token %}
+        {{ formset.management_form }}
+        
+        {% for form in formset %}
         <div class="container border rounded p-3 mb-3">
-            <h3 class="section-title border-bottom-5 mb-2">تفاصيل الكرتونة</h3>
+            <h3 class="section-title border-bottom-5 mb-2">تفاصيل الكرتونة {{ forloop.counter }}</h3>
             <div class="row mb-2">
                 <div class="col">
                     {{ form.length.label_tag }}
@@ -54,6 +57,8 @@
                 </div>
             </div>
         </div>
+        {% endfor %}
+        
         <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
     </form>
 </div>

@@ -9,21 +9,22 @@ from django.utils.timezone import now
 
 class Model(models.Model):
     DOZENS_CHOICES = [
-        (12, "1"),
-        (24, "2"),
-        (36, "3"),
-        (48, "4"),
+        (12, "12"),
+        (24, "24"),
+        (36, "36"),
+        (48, "48"),
     ]
 
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
     ended_at = models.DateTimeField(verbose_name="تاريخ الانتهاء", blank=True, null=True)
+    shipped_at = models.DateTimeField(verbose_name="تاريخ الشحن", blank=True, null=True)
     is_archive = models.BooleanField(default=False)
     is_shipped = models.BooleanField(default=False)
 
     Packing_per_carton = models.PositiveIntegerField(
-        verbose_name="الدست في الكرتونة", choices=DOZENS_CHOICES, default=12
+        verbose_name="القطع في الكرتونة", choices=DOZENS_CHOICES, default=12
     )
     available_carton = models.IntegerField(verbose_name="الكراتين المتبقية", blank=True, default=0)
     used_carton = models.IntegerField(verbose_name="الكراتين المستخدمة", blank=True, default=0)
@@ -196,10 +197,16 @@ class ProductionPiece(models.Model):
         
         
 class Carton(models.Model):
+    TYPE_CHOICES = [
+        ("شماعة", "شماعة"),
+        ("تطبيق", "تطبيق"),
+    ]
+
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="cartons")
     length = models.CharField(max_length=50, verbose_name="الطول", blank=True)
     width = models.CharField(max_length=50, verbose_name="العرض", blank=True)
     height = models.CharField(max_length=50, verbose_name="الارتفاع", blank=True)
+    type = models.CharField(verbose_name="النوع", choices=TYPE_CHOICES, max_length=10, default="تطبيق")
     comment = models.CharField(max_length=100, verbose_name="المقاسات داخل الكرتونة", blank=True)
 
     def __str__(self):

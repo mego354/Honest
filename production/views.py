@@ -74,12 +74,13 @@ class ModelCreationView(FormView):
                     type=piece_data["type"],
                     size=size_amount.size,
                     available_amount=size_amount.amount,
-                    packing_available_amount=size_amount.amount,
                 )
 
         # Add a success message
         messages.success(self.request, f"تم انشاء المودبل {model.model_number} بنجاح")
-        return redirect(reverse_lazy("model_detail_view", args=[model.pk]))
+
+        carton_count = self.request.POST.get("carton_count", 1)
+        return redirect(f"{reverse_lazy('carton_add_set', args=[model.pk])}?count={carton_count}")
         
 
     def form_invalid(self, form):
@@ -193,7 +194,9 @@ class ToggleShippedView(View):
         model_instance = get_object_or_404(Model, pk=pk)
         shipped_mode = not model_instance.is_shipped
         model_instance.is_shipped = shipped_mode
+        model_instance.shipped_at = localtime(now()) if shipped_mode else None
         model_instance.save()
+        
         archive_mode = model_instance.is_archive
         if archive_mode:
             messages.success(self.request, f"تم شحن الموديل بنجاح")
@@ -431,6 +434,49 @@ class ProductionListingView(ListView):
         return context
 
 ###############################################################################################################################
+from django.forms import modelformset_factory
+class CartonCreateFormSetView(FormView):
+    template_name = "production/carton_form_set.html"
+    form_class = CartonForm
+
+    def get_formset(self):
+        """Create a formset based on the number of forms needed."""
+        num_forms = int(self.request.GET.get("count", 1))
+        CartonFormSet = modelformset_factory(Carton, form=CartonForm, extra=num_forms, can_delete=False)
+        return CartonFormSet(queryset=Carton.objects.none())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["formset"] = self.get_formset()
+        print("Number of forms in formset:", len(self.get_formset().forms))
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        CartonFormSet = modelformset_factory(Carton, form=CartonForm, extra=0, can_delete=False)
+        formset = CartonFormSet(data=request.POST)
+
+        model_id = self.kwargs.get("model_id")
+        model = get_object_or_404(Model, pk=model_id)
+
+        if formset.is_valid():
+            for form in formset:
+                carton = form.save(commit=False)
+                carton.model = model
+                carton.save()
+            
+            messages.success(self.request, "تمت إضافة الكرتون بنجاح.")
+            return self.form_valid(formset)
+
+        return self.form_invalid(formset)
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("model_detail_view", args=[self.kwargs.get("model_id")])
+
+
 class CartonCreateView(CreateView):
     model = Carton
     form_class = CartonForm
