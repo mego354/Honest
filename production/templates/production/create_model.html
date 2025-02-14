@@ -15,7 +15,7 @@
 {% block body %}
 <h2 class="section-title pt-4">إضافة موديل جديد</h2>
 <div id="order-form-wrapper" class="container py-4">
-    <form method="post" id="order-form" class="mb-4 p-4 pt-0 rounded ">
+    <form method="post" id="order-form" class="mb-4 p-4 pt-0 rounded">
         {% csrf_token %}
         <section>
             <div class="container border rounded p-3 mb-3">
@@ -43,7 +43,7 @@
                 <div class="row mb-2">
                     <div class="col">
                         <label for="carton_count">عدد الكراتين</label>
-                        <input class="form-control" type="number" min="1" name="carton_count" id="carton_count" value="1" required>
+                        <input class="form-control" type="number" min="1" id="carton_count" value="1" required>
                     </div>
                 </div>
             </div>
@@ -52,10 +52,15 @@
                 <h3 class="section-title border-bottom-5 mb-2">قطع الموديل</h3>
                 <div id="pieces-container"></div>            
             </div>
-            
+
             <div class="container border rounded p-3 mb-3">
                 <h3 class="section-title border-bottom-5 mb-2">مقاسات الموديل</h3>
                 <div id="sizes-container"></div>
+            </div>
+
+            <div class="container border rounded p-3 mb-3">
+                <h3 class="section-title border-bottom-5 mb-2">كراتين الموديل</h3>
+                <div id="cartons-container"></div>
             </div>
             
         </section>
@@ -69,8 +74,12 @@
     document.addEventListener('DOMContentLoaded', () => {
         const piecesCountInput = document.getElementById('id_pieces_count');
         const piecesContainer = document.getElementById('pieces-container');
+
         const sizesCountInput = document.getElementById('id_sizes_count');
         const sizesContainer = document.getElementById('sizes-container');
+
+        const cartonCountInput = document.getElementById('carton_count');
+        const cartonsContainer = document.getElementById('cartons-container');
 
         function updateFields(container, fieldTemplate, count) {
             while (container.children.length < count) {
@@ -109,6 +118,37 @@
             return div;
         }
 
+        function cartonFieldTemplate(index) {
+            const div = document.createElement('div');
+            div.className = 'row mb-2';
+            div.innerHTML = `
+                <div class="col">
+                    <label for="carton_length_${index}">الطول ${index}</label>
+                    <input type="text" class="form-control" id="carton_length_${index}" name="carton_length_${index}" required>
+                </div>
+                <div class="col">
+                    <label for="carton_width_${index}">العرض ${index}</label>
+                    <input type="text" class="form-control" id="carton_width_${index}" name="carton_width_${index}" required>
+                </div>
+                <div class="col">
+                    <label for="carton_height_${index}">الارتفاع ${index}</label>
+                    <input type="text" class="form-control" id="carton_height_${index}" name="carton_height_${index}" required>
+                </div>
+                <div class="col">
+                    <label for="carton_type_${index}">نوع الكرتونة ${index}</label>
+                    <select class="form-control" id="carton_type_${index}" name="carton_type_${index}" required>
+                        <option value="شماعة">شماعة</option>
+                        <option value="تطبيق">تطبيق</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="carton_comment_${index}">مقاسات ${index}</label>
+                    <input type="text" class="form-control" id="carton_comment_${index}" name="carton_comment_${index}"></input>
+                </div>
+            `;
+            return div;
+        }
+
         piecesCountInput.addEventListener('input', () => {
             updateFields(piecesContainer, pieceFieldTemplate, parseInt(piecesCountInput.value) || 0);
         });
@@ -116,8 +156,14 @@
         sizesCountInput.addEventListener('input', () => {
             updateFields(sizesContainer, sizeFieldTemplate, parseInt(sizesCountInput.value) || 0);
         });
+
+        cartonCountInput.addEventListener('input', () => {
+            updateFields(cartonsContainer, cartonFieldTemplate, parseInt(cartonCountInput.value) || 0);
+        });
+
         piecesCountInput.dispatchEvent(new Event('input'));
         sizesCountInput.dispatchEvent(new Event('input'));
+        cartonCountInput.dispatchEvent(new Event('input'));
     });
 </script>
 {% endblock script %}

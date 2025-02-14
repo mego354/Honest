@@ -149,5 +149,5 @@ class CartonForm(forms.ModelForm):
             'width'  : forms.TextInput(attrs={'class': 'form-control'}),
             'height' : forms.TextInput(attrs={'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-control'}),
-            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'comment': forms.TextInput(attrs={'class': 'form-control'}),
         }
