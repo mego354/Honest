@@ -159,13 +159,25 @@ class Carton(models.Model):
     height = models.CharField(max_length=50, verbose_name="الارتفاع", blank=True)
     comment = models.CharField(max_length=100, verbose_name="الملاحظات", blank=True)
 
+    def __str__(self):
+        return f"length: {self.length} - width: {self.width} - height: {self.height}"
+
 class Packing(models.Model):
     piece = models.ForeignKey(Piece, verbose_name="القطعة", on_delete=models.CASCADE, related_name="Packings")
+    carton = models.ForeignKey(Carton, verbose_name="الكرتونة", on_delete=models.CASCADE, related_name="Packings")
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
-    used_amount = models.IntegerField(verbose_name="الكمية للتعبئة", default=0, blank=True)
+    used_amount = models.IntegerField(verbose_name="الكمية للتعبئة", default=0)
+    used_carton = models.IntegerField(verbose_name="الكرتون للتعبئة", default=0)
     
     class Meta:
         ordering = ['-created_at']
+
+    def update_used_carton(self):
+        model = self.piece.model
+        Packing_per_carton = model.Packing_per_carton
+        self.used_carton = self.used_amount / Packing_per_carton
+        self.save()
+        
 
     def save(self, *args, **kwargs):
         if self.pk:
@@ -179,6 +191,7 @@ class Packing(models.Model):
         self.piece.save()
 
         super().save(*args, **kwargs)
+        self.update_used_carton()
 
     def delete(self, *args, **kwargs):
         self.piece.packing_available_amount += self.used_amount

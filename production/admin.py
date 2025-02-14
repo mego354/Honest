@@ -74,6 +74,6 @@ class CartonAdmin(admin.ModelAdmin):
 
 @admin.register(Packing)
 class PackingAdmin(admin.ModelAdmin):
-    list_display = ("piece", "used_amount", "created_at")
+    list_display = ("piece", "carton", "used_amount", "created_at")
     list_filter = ("created_at",)
     search_fields = ("piece__model__model_number",)
