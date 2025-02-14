@@ -1,0 +1,30 @@
+{% extends "cloth/layout.html" %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+<div class="confirmation-card text-center p-5 my-5 bg-light shadow-sm rounded">
+    <h2 class="section-title mb-4">هل أنت متأكد من حذف الكرتونة مقاس "{{carton.length}} - {{carton.width}} - {{carton.height}}"
+         ؟</h2>
+    <p class="lead">لن يمكنك التراجع عن هذا الإجراء.</p>
+    <div class="mt-4 d-flex justify-content-center">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger px-4 mx-2">حذف</button>
+        </form>
+        {% comment %} <a href="{% url 'model_detail_view' pk=productionpiece.piece.model.pk %}" class="btn btn-secondary px-4 mx-2">إلغاء</a> {% endcomment %}
+        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary px-4 mx-2">إلغاء</a>
+
+    </div>
+</div>
+{% endblock body %}

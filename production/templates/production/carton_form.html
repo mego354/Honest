@@ -1,0 +1,54 @@
+{% extends "cloth/layout.html" %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+{% if carton %}
+    <h2 class="section-title pt-4">تعديل الكرتون</h2>
+{% else %}
+    <h2 class="section-title pt-4">اضافة الكرتون</h2>
+{% endif %}
+<div id="order-form-wrapper" class="container py-4">
+    <form method="post" id="order-form" class="mb-4 p-4 pt-0">
+        {% csrf_token %}
+        <div class="container border rounded p-3 mb-3">
+            <h3 class="section-title border-bottom-5 mb-2">تفاصيل الكرتونة</h3>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.length.label_tag }}
+                    {{ form.length }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.width.label_tag }}
+                    {{ form.width }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.height.label_tag }}
+                    {{ form.height }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    {{ form.comment.label_tag }}
+                    {{ form.comment }}
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
+    </form>
+</div>
+{% endblock body %}

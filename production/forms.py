@@ -1,15 +1,17 @@
 from django import forms
-from .models import Model, SizeAmount, ProductionPiece
+from .models import Model, SizeAmount, ProductionPiece, Carton, Packing
 
 
 class ModelForm(forms.ModelForm):
     class Meta:
         model = Model
-        fields = ['model_number']
+        fields = ['model_number', 'Packing_per_carton']
         widgets = {
             'model_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'Packing_per_carton': forms.Select(attrs={'class': 'form-control'}), 
         }
 
+###############################################################################################################################
 class SizeAmountForm(forms.ModelForm):
     class Meta:
         model = SizeAmount
@@ -19,6 +21,7 @@ class SizeAmountForm(forms.ModelForm):
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
 
+###############################################################################################################################
 class ProductionPieceForm(forms.ModelForm):
     class Meta:
         model = ProductionPiece
@@ -89,3 +92,61 @@ class ProductionForm(forms.Form):
             self.fields['size_amount'].choices = [("", "---------")]
             self.fields['piece'].choices = [("", "---------")]
 
+###############################################################################################################################
+class PackingPieceForm(forms.ModelForm):
+    class Meta:
+        model = Packing
+        fields = ['used_carton']
+        widgets = {
+            'used_carton': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+        }
+
+
+class PackingForm(forms.Form):
+    model = forms.ModelChoiceField(
+        queryset=Model.objects.filter(is_archive=False),
+        label="اختر الموديل",
+        widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
+    )
+
+    carton = forms.ChoiceField(
+        label="اختر الكرتونة",
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+
+    used_carton = forms.IntegerField(
+        label="الكرتون للتعبئة",
+        min_value=1,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
+    )
+
+
+    def __init__(self, *args, **kwargs):
+        # Dynamically populate size_amount and piece choices based on the selected model
+        super().__init__(*args, **kwargs)
+
+        if 'model' in self.data:  # Check if model has been selected (in a GET request or during form submission)
+            model_id = self.data.get('model')
+            model_instance = Model.objects.get(id=model_id)
+
+            # Populate piece choices based on the model
+            self.fields['carton'].choices = [
+                (str(carton.id), f"{carton.length} -{carton.width} -{carton.height} -") for carton in model_instance.cartons.all()
+            ]
+        else:
+            # If no model is selected, set empty choices
+            self.fields['carton'].choices = [("", "---------")]
+
+###############################################################################################################################
+class CartonForm(forms.ModelForm):
+    class Meta:
+        model = Carton
+        fields = ['length', 'width', 'height', 'comment']
+        widgets = {
+            'length' : forms.TextInput(attrs={'class': 'form-control'}),
+            'width'  : forms.TextInput(attrs={'class': 'form-control'}),
+            'height' : forms.TextInput(attrs={'class': 'form-control'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }

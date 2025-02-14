@@ -24,9 +24,15 @@
     </div>
         
     <div class="model-details container my-4 p-4 border rounded shadow-sm bg-light">
+        <div class="section-title border-bottom-5 mb-2 d-flex justify-content-between align-items-center">
+            <h2>معلومات الموديل</h2>
+            <div class="ps-2">
+                <a href="{% url 'model_update_view' model.id%}" class="px-2 btn">
+                    <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
+                </a>
+            </div>
+        </div>
 
-        <h3 class="section-title border-bottom-5 mb-4">معلومات الموديل</h3>
-        
         <div class="row">
             <div class="col-md-6 col-sm-12">
                 <div class="row info-card shadow-sm rounded">
@@ -67,6 +73,12 @@
                     <h5 class="col text-center">{{ total_Dozens }}</h5>
                 </div>
             </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="row info-card shadow-sm rounded">
+                    <h5 class="col text-center"><strong>الدست في الكرتونة</strong></h5>
+                    <h5 class="col text-center">{{ Packing_per_carton }}</h5>
+                </div>
+            </div>
         </div>
 
         <div class="mb-4"></div>       
@@ -80,8 +92,6 @@
             </div>
         </div>
     
-        {% comment %} <h3 class="section-title border-bottom-5 mb-2">تفاصيل المقاسات</h3> {% endcomment %}
-
         <div style="overflow-x: auto; max-height: 70vh; position: relative;" class="table-responsive mb-4">
             <table id="size-table" class="table table-striped">
                 <thead class="table-dark">
@@ -110,6 +120,54 @@
                     {% empty %}
                     <tr>
                         <td colspan="3" class="text-center">لا توجد مقاسات مسجلة</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="mb-4"></div>       
+        <!-- Table for Size Amounts -->
+        <div class="section-title border-bottom-5 mb-2 d-flex justify-content-between align-items-center">
+            <h2>تفاصيل الكراتين</h2>
+            <div class="ps-2">
+                <a href="{% url 'carton_add' model.id%}" class="px-2 btn">
+                    <i class="fa-solid fa-plus fa-xl" style="color: #0bda3f;"></i>
+                </a>
+            </div>
+        </div>
+    
+        <div style="overflow-x: auto; max-height: 70vh; position: relative;" class="table-responsive mb-4">
+            <table id="size-table" class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="position: sticky; top: 0;">الطول</th>
+                        <th style="position: sticky; top: 0;">العرض</th>
+                        <th style="position: sticky; top: 0;">الارتفاع</th>
+                        <th style="position: sticky; top: 0;">المقاسات</th>
+                        <th style="position: sticky; top: 0;">تحكم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for carton in model.cartons.all %}
+                    <tr>
+                        <td>{{ carton.length }}</td>
+                        <td>{{ carton.width }}</td>
+                        <td>{{ carton.height }}</td>
+                        <td>{{ carton.comment }}</td>
+                        <td>
+                            <a class="px-2 btn" href="{% url 'carton_edit' carton.id %}">
+                                <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
+                            </a>
+                            <a class="px-2 btn" href="{% url 'carton_delete_view' carton.id %}">
+                                <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">لا توجد كراتين مسجلة</td>
                     </tr>
                     {% endfor %}
                 </tbody>

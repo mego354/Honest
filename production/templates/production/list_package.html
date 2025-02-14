@@ -1,0 +1,145 @@
+{% extends "cloth/layout.html" %}
+{% load math_filters %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+    <div class="pt-4 section-title d-flex justify-content-between align-items-center">
+        <h2>عرض التعبئة</h2>
+        <div class="ps-2">
+            <a href="{% url 'production_list_view' %}" class="px-2 btn btn-secondary">ضبط</a>
+        </div>
+    </div>
+
+    <form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
+        {% for filter_field in filter_fields %}
+        <div class="form-group mb-3">
+            <label for="filter_{{ forloop.counter }}" class="form-label">{{ filter_field.verbose_name }}</label>
+            <input 
+                type="{% if filter_field.field_name in 'start_date end_date' %}date{% else %}text{% endif %}" 
+                id="filter_{{ forloop.counter }}" 
+                name="{{ filter_field.field_name }}" 
+                placeholder="بحث ب {{ filter_field.verbose_name }}" 
+                class="form-control" 
+                value="{{ filter_field.value }}">
+        </div>
+        {% endfor %}
+        <div class="submit-container">
+            <button type="submit" class="btn btn-primary submit-btn">تنفيذ</button>
+        </div>
+    </form>
+        
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>رمز الموديل</th>
+                    <th>رقم الموديل</th>
+                    <th>الكرتون</th>
+                    <th>الكمية</th>
+                    <th>التاريخ</th>
+                    {% comment %} <th>الملاحظات</th> {% endcomment %}
+                    <th>تحكم</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for package_item in object_list %}
+                <tr class="clickable-row" data-detail_url="{% url 'model_detail_view' package_item.model.id %}">
+                    <td>
+                        <a href="{% url 'model_detail_view' package_item.model.id %}">{{ package_item.model.id }}</a>
+                    </td>
+                    <td>{{ package_item.model.model_number }}</td>
+                    <td>{{ package_item.carton.length }}*{{ package_item.carton.width }}*{{ package_item.carton.height }}</td>
+                    <td>{{ package_item.used_carton }}</td>
+                    <td dir="rtl">{{ package_item.created_at|date:"Y/m/d h:i A" }}</td>
+                    {% comment %} <td style="overflow-x:auto; max-width:100px; ">{{ package_item.comment }}</td> {% endcomment %}
+                    <td>
+                        <a class="px-2 btn" href="{% url 'packingpiece_edit' package_item.id %}">
+                            <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
+                        </a>
+                        <a class="px-2 btn" href="{% url 'packingpiece_delete' package_item.id %}">
+                            <i class="fa-solid fa-trash fa-lg" style="color: #d30d0d;"></i></a>
+                        </a>
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">لا يوجد عناصر</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-between">
+            <!-- Last Page Button -->
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                {% if page_obj.has_next %}
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="Last">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </span>
+                {% endif %}
+            </li>
+            <!-- Next Page Button -->
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                {% if page_obj.has_next %}
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="Next">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&laquo;</span>
+                </span>
+                {% endif %}
+            </li>
+
+            <!-- Current Page Info -->
+            <li class="page-item pagination_page_li">
+                <span class="page-link">الصفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            <!-- Previous Page Button -->
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                {% if page_obj.has_previous %}
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="Previous">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&raquo;</span>
+                </span>
+                {% endif %}
+            </li>
+            <!-- First Page Button -->            
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                {% if page_obj.has_previous %}
+                <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="First">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </span>
+                {% endif %}
+            </li>
+    </ul>
+</nav>
+    
+{% endblock body %}

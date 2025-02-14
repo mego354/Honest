@@ -11,8 +11,8 @@ from django.db import transaction
 from django.db.models import Q, Sum, F
 from django.contrib import messages
 
-from .models import Model, Piece, SizeAmount, ProductionPiece
-from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm
+from .models import Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
+from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
 
 from django.utils.timezone import localtime, now
 from datetime import datetime, timedelta
@@ -74,6 +74,7 @@ class ModelCreationView(FormView):
                     type=piece_data["type"],
                     size=size_amount.size,
                     available_amount=size_amount.amount,
+                    packing_available_amount=size_amount.amount,
                 )
 
         # Add a success message
@@ -97,8 +98,8 @@ class ModelDetailView(DetailView):
         total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
 
         context['total_sizes_pieces'] = total_sizes_pieces
-        # context['total_Dozens'] = round(total_sizes_pieces / 12, 2)
         context['total_Dozens'] = int(total_sizes_pieces / 12)
+        context['Packing_per_carton'] = int(model.Packing_per_carton / 12)
         return context
     
 class ModelDeleteView(DeleteView):
@@ -109,6 +110,18 @@ class ModelDeleteView(DeleteView):
     def form_valid(self, form):
         messages.success(self.request, "تم حذف الموديل بنجاح")
         return super().form_valid(form)
+
+class ModelUpdateView(UpdateView):
+    model = Model
+    form_class = ModelForm
+    template_name = "production/edit_model.html"
+
+    def form_valid(self, form):
+        messages.success(self.request, "تم تعديل الموديل بنجاح")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('model_detail_view', kwargs={'pk': self.object.pk})
 
 class BaseModelListingView(ListView):
     template_name = "production/list_model.html"
@@ -126,6 +139,8 @@ class BaseModelListingView(ListView):
             return None
 
     def get_queryset(self):
+        for model in Model.objects.all():
+            model.save()
         queryset = super().get_queryset()
         filters = Q(is_archive=self.is_archive)  # Use dynamic is_archive flag
 
@@ -171,6 +186,20 @@ class ToggleArchiveView(View):
 
         else:
             messages.success(self.request, f"تم ازالة المودبل {model_instance.model_number} من الارشيف بنجاح")
+            return redirect(reverse_lazy("model_list_view"))
+
+class ToggleShippedView(View):
+    def get(self, request, pk, *args, **kwargs):
+        model_instance = get_object_or_404(Model, pk=pk)
+        shipped_mode = not model_instance.is_shipped
+        model_instance.is_shipped = shipped_mode
+        model_instance.save()
+        archive_mode = model_instance.is_archive
+        if archive_mode:
+            messages.success(self.request, f"تم شحن الموديل بنجاح")
+            return redirect(reverse_lazy("archived_model_list_view"))
+        else:
+            messages.success(self.request, f"تم الغاء شحن الموديل بنجاح")
             return redirect(reverse_lazy("model_list_view"))
 
 
@@ -289,8 +318,13 @@ def load_sizes(request):
 def load_pieces(request):
     size_amount_id = request.GET.get('size_amount_id')
     size = SizeAmount.objects.get(pk=size_amount_id)
-    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount')
+    pieces = Piece.objects.filter(size=size.size, model=size.model).values('id', 'type', 'available_amount', 'packing_available_amount')
     return JsonResponse({'pieces': list(pieces)})
+
+def load_carton(request):
+    model_id = request.GET.get('model_id')
+    cartons = Carton.objects.filter(model_id=model_id).values('id', 'length', 'width', 'height')
+    return JsonResponse({'cartons': list(cartons)})
 
 
 class ProductionPieceCreateView(CreateView):
@@ -392,6 +426,151 @@ class ProductionListingView(ListView):
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
             {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
             {"field_name": "factory", "verbose_name": "المصنع", "value": self.request.GET.get("factory", "")},
+        ]
+
+        return context
+
+###############################################################################################################################
+class CartonCreateView(CreateView):
+    model = Carton
+    form_class = CartonForm
+    template_name = 'production/carton_form.html'
+
+    def form_valid(self, form):
+        model_id = self.kwargs.get("model_id")
+        self.model = get_object_or_404(Model, pk=model_id)
+        form.instance.model = self.model
+        form.save()
+
+        messages.success(self.request, "تمت إضافة الكرتون بنجاح.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("model_detail_view", args=[self.model.id])
+
+
+class CartonEditView(UpdateView):
+    model = Carton
+    form_class = CartonForm
+    template_name = 'production/carton_form.html'
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, "تم تعديل الكرتون بنجاح.")
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        instance_carton = self.get_object()
+        model = instance_carton.model
+        return reverse_lazy("model_detail_view", args=[model.id])
+
+class CartonDeleteView(DeleteView):
+    model = Carton
+    template_name = 'production/delete_carton.html'
+
+    def get_success_url(self):
+        instance_carton = self.get_object()
+        deleted_packings = Packing.objects.filter(carton=instance_carton) 
+        for deleted_packing in deleted_packings:
+            deleted_packing.delete()
+            
+        model = instance_carton.model
+        messages.success(self.request, "تم حذف الكرتون بنجاح.")
+        return reverse_lazy("model_detail_view", args=[model.id])
+
+###############################################################################################################################
+class PackingFormView(FormView):
+    template_name = "production/packing_form.html"
+    form_class = PackingForm
+
+            
+    def form_valid(self, form):
+        model_instance = form.cleaned_data['model']
+        carton_id = form.cleaned_data['carton']
+        used_carton = form.cleaned_data['used_carton']
+
+        carton_instance = Carton.objects.get(id=carton_id)
+        Packing.objects.create(
+            model=model_instance,
+            carton=carton_instance,
+            used_carton=used_carton,
+        )
+
+        return self.get_success_url()
+
+    def form_invalid(self, form):
+        messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_success_url(self):
+        messages.success(self.request, "تمت إضافة التعبئة بنجاح.")
+        return redirect(reverse_lazy("packing_form"))
+
+class PackingPieceUpdateView(UpdateView):
+    model = Packing
+    form_class = PackingPieceForm
+    template_name = 'production/packing_piece_form.html'
+
+    def form_valid(self, form):
+        form.save()
+        return self.get_success_url()
+
+    def get_success_url(self):
+        packing_piece = self.get_object()
+        model = packing_piece.model
+        messages.success(self.request, "تم تعديل التعبئة بنجاح.")
+        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+
+class PackingPieceDeleteView(DeleteView):
+    model = Packing
+    template_name = 'production/delete_package.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "تم حذف الانتاج بنجاح.")
+        return reverse_lazy("packing_list_view")
+
+class PackingListingView(ListView):
+    template_name = "production/list_package.html"
+    model = Packing
+    paginate_by = 30
+    filter_fields = ["model_number", "start_date", "end_date"]
+
+    def parse_date(self, date_str):
+        """
+        Parse a date string into a datetime object.
+        If the format is invalid or the value is nonsensical, return datetime.min.
+        """
+        try:
+            normalized_date = date_str.replace("\\", "/")
+            return datetime.strptime(normalized_date, "%Y-%m-%d")
+        except (ValueError, AttributeError):
+            return None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        filters = Q()
+
+        model_number = self.request.GET.get("model_number")
+        if model_number:
+            filters &= Q(model__model_number__icontains=model_number)
+
+        start_date = self.parse_date(self.request.GET.get("start_date"))
+        end_date = self.parse_date(self.request.GET.get("end_date"))
+        if start_date:
+            filters &= Q(created_at__gte=start_date)
+        if end_date:
+            filters &= Q(created_at__lte=end_date)
+
+        return queryset.filter(filters)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Add filters to the context
+        context["filter_fields"] = [
+            {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
+            {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
+            {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
         ]
 
         return context
