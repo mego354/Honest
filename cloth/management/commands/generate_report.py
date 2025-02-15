@@ -21,7 +21,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE("Generating the daily production report..."))
 
         # Fetch recent operations
-        days = 1
+        days = 5
         recent_cloth_operations = get_recent_cloth_operations(days=days)
         producion_models = get_producion_models(days=days)
         packing_models = get_packing_models(days=days)

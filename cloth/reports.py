@@ -185,9 +185,9 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
 
             pdf.chapter_body([f"الموديل: {model_data['model']}"])
 
-            headers = ["الكرتونة", "الكميات المستخدمة", "التاريخ"]
+            headers = ["قطع", "كراتين", "الكرتونة", "الموديل", "التاريخ"]
             table_data = [
-                [p['carton'], p['used_carton'], p['created_at']]
+                [p['used_pieces'], f"{p['used_carton']} ({p['per_carton']})", p['carton'], p['model'], p['created_at']]
                 for p in model_data["packings"]
             ]
 

@@ -61,8 +61,11 @@ def get_packing_models(days=1):
         model = Packing.model
 
         model_packings_map[model].append({
-            "carton": Packing.carton,
+            "per_carton": Packing.size_amount.Packing_per_carton,
+            "used_pieces": Packing.size_amount.Packing_per_carton * Packing.used_carton,
             "used_carton": Packing.used_carton,
+            "carton": Packing.carton,
+            "model": str(Packing.model),
             "created_at": Packing.created_at.strftime("%p %I:%M %Y/%m/%d"),
         })
 
