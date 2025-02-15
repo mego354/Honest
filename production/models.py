@@ -76,9 +76,13 @@ class Model(models.Model):
             })
 
         # Packaging calculations
-        total_sizes_pieces = self.size_amounts.aggregate(total=Sum("amount"))["total"] or 0
-        packaging_total_carton = total_sizes_pieces / self.Packing_per_carton
-        packaging_used_carton = sum(self.packings.values_list("used_carton", flat=True))
+        totals = SizeAmount.objects.filter(model=self).aggregate(
+            total_cartons=Sum(F('amount') / F('Packing_per_carton')),
+            used_cartons=Sum('packings__used_carton')
+        )
+        packaging_total_carton = totals["total_cartons"] or 0
+        packaging_used_carton = totals["used_cartons"] or 0
+
         packaging_percent = (packaging_used_carton / packaging_total_carton * 100) if packaging_total_carton else 0
 
         return {
@@ -106,22 +110,14 @@ class Model(models.Model):
         return ""
 
     def update_available_carton(self, *args, **kwargs):
-        total_sizes_pieces = self.size_amounts.aggregate(total=Sum("amount"))["total"] or 0
-        total_cartons = total_sizes_pieces / self.Packing_per_carton
-        used_cartons = sum(self.packings.values_list("used_carton", flat=True))
-        self.available_carton = total_cartons - used_cartons
+        totals = SizeAmount.objects.filter(model=self).aggregate(
+            total_cartons=Sum(F('amount') / F('Packing_per_carton')),
+            used_cartons=Sum('packings__used_carton')
+        )
+        self.available_carton = (totals["total_cartons"] or 0) - (totals["used_cartons"] or 0)
+        self.used_carton = totals["used_cartons"] or 0
 
         super().save(*args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        if self.pk:
-            original = Model.objects.filter(pk=self.pk).only("Packing_per_carton").first()
-            if original and self.Packing_per_carton != original.Packing_per_carton:
-                self.update_available_carton(*args, **kwargs)
-            else:
-                super().save(*args, **kwargs)
-        else:
-            super().save(*args, **kwargs)
         
 class SizeAmount(models.Model):
     DOZENS_CHOICES = [
@@ -214,6 +210,7 @@ class Carton(models.Model):
 
 class Packing(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="packings")
+    size_amount = models.ForeignKey(SizeAmount, verbose_name="المقاس", on_delete=models.CASCADE, related_name="packings")
     carton = models.ForeignKey(Carton, verbose_name="الكرتونة", on_delete=models.CASCADE, related_name="packings")
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
     used_carton = models.PositiveIntegerField(verbose_name="الكرتون للتعبئة", blank=True, default=0)    
@@ -226,8 +223,10 @@ class Packing(models.Model):
         if self.pk:
             original = Packing.objects.get(pk=self.pk)
             diff = self.used_carton - original.used_carton
-            self.model.available_carton -= diff
-            self.model.used_carton += diff
+            Model.objects.filter(id=self.model.id).update(
+                available_carton=F('available_carton') - diff,
+                used_carton=F('used_carton') + diff
+            )
         else:
             self.model.available_carton -= self.used_carton
             self.model.used_carton += self.used_carton
