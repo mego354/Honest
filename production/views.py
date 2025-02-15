@@ -576,6 +576,7 @@ class PackingFormView(FormView):
             used_carton=used_carton,
         )
 
+        model_instance.update_available_carton()
         return self.get_success_url()
 
     def form_invalid(self, form):
@@ -598,6 +599,8 @@ class PackingPieceUpdateView(UpdateView):
     def get_success_url(self):
         packing_piece = self.get_object()
         model = packing_piece.model
+        model.update_available_carton()
+
         messages.success(self.request, "تم تعديل التعبئة بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
 
@@ -606,6 +609,10 @@ class PackingPieceDeleteView(DeleteView):
     template_name = 'production/delete_package.html'
 
     def get_success_url(self):
+        packing_piece = self.get_object()
+        model = packing_piece.model
+        model.update_available_carton()
+
         messages.success(self.request, "تم حذف الانتاج بنجاح.")
         return reverse_lazy("packing_list_view")
 

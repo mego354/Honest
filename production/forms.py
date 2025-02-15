@@ -101,25 +101,25 @@ class PackingPieceForm(forms.ModelForm):
             'used_carton': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
     
-    size_amount = forms.ChoiceField(
+    size_amount = forms.ModelChoiceField(
+        queryset=SizeAmount.objects.none(),  # Default empty queryset
         label="اختر المقاس",
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
         instance = kwargs.get('instance')  # Get the instance if editing
 
         if instance and hasattr(instance, 'model') and hasattr(instance.model, 'size_amounts'):
-            # Assuming size_amounts is a list, queryset, or iterable of sizes
+            # Filter SizeAmount related to the Packing model
             sizes = SizeAmount.objects.filter(model=instance.model)  
-            self.fields['size_amount'].choices = [(size, f"{size.size} ({size.Packing_per_carton})") for size in sizes]
+            self.fields['size_amount'].queryset = sizes  # Assign queryset properly
+            self.fields['size_amount'].label_from_instance = lambda obj: f"{obj.size} ({obj.Packing_per_carton})"
         else:
-            # If no instance, provide default choices (optional)
-            self.fields['size_amount'].choices = []
-
+            self.fields['size_amount'].queryset = SizeAmount.objects.none()  # Default empty queryset
 
 class PackingForm(forms.Form):
     model = forms.ModelChoiceField(
