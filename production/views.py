@@ -53,7 +53,6 @@ class ModelCreationView(FormView):
             size = self.request.POST.get(size_key)
             amount = self.request.POST.get(amount_key)
             per_carton = self.request.POST.get(per_carton_key)
-            print(per_carton)
 
             if not size or not amount:  # Stop if no more sizes are found
                 break
@@ -481,7 +480,6 @@ class CartonCreateFormSetView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["formset"] = self.get_formset()
-        print("Number of forms in formset:", len(self.get_formset().forms))
 
         return context
 

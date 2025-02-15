@@ -335,10 +335,10 @@ body {
 /* Responsive Styles */
 @media (max-width: 1200px) {
     body { font-size: 15px; }
-    h4.section-title, h2 { font-size: 28px; }
-    h3.section-title, h3 { font-size: 24px; }
-    h4.section-title, h4 { font-size: 22px; }
-    h5.section-title, h5, .row h5 { font-size: 18px; }
+    h4.section-title, h2 { font-size: 28px !important; }
+    h3.section-title, h3 { font-size: 24px !important; }
+    h4.section-title, h4 { font-size: 22px !important; }
+    h5.section-title, h5, .row h5 { font-size: 18px !important; }
     p.lead, .oped_details_btn, .btn { font-size: 14px !important; }
     ::placeholder { font-size: 12px !important; }
     .info-card {
@@ -353,20 +353,20 @@ body {
         padding: 12px;
         margin-bottom: 10px;
     }
-    h4.section-title, h2 { font-size: 28px; }
-    h3.section-title, h3 { font-size: 24px; }
-    h4.section-title, h4 { font-size: 22px; }
-    h5.section-title, h5, .row h5 { font-size: 18px; }
+    h4.section-title, h2 { font-size: 28px !important; }
+    h3.section-title, h3 { font-size: 24px !important; }
+    h4.section-title, h4 { font-size: 22px !important; }
+    h5.section-title, h5, .row h5 { font-size: 18px !important; }
     p.lead, .oped_details_btn, .btn { font-size: 14px !important; }
     ::placeholder { font-size: 12px !important; }
 }
 
 @media (max-width: 768px) {
     body { font-size: 13px; }
-    h4.section-title, h2 { font-size: 22px; }
-    h3.section-title, h3 { font-size: 18px; }
-    h4.section-title, h4 { font-size: 16px; }
-    h5.section-title, h5, .row h5 { font-size: 14px; }
+    h4.section-title, h2 { font-size: 22px !important; }
+    h3.section-title, h3 { font-size: 18px !important; }
+    h4.section-title, h4 { font-size: 16px !important; }
+    h5.section-title, h5, .row h5 { font-size: 14px !important; }
     p.lead, .oped_details_btn, .btn { font-size: 12px !important; }
     ::placeholder { font-size: 10px !important; }
     .info-card {
@@ -378,10 +378,10 @@ body {
 @media (max-width: 576px) {
     body { font-size: 12px; }
     .container .col { padding-inline: 2px; }
-    h4.section-title, h2 { font-size: 22px; }
-    h3.section-title, h3 { font-size: 18px; }
-    h4.section-title, h4 { font-size: 16px; }
-    h5.section-title, h5, .row h5 { font-size: 14px; }
+    h4.section-title, h2 { font-size: 22px !important; }
+    h3.section-title, h3 { font-size: 18px !important; }
+    h4.section-title, h4 { font-size: 16px !important; }
+    h5.section-title, h5, .row h5 { font-size: 14px !important; }
     p.lead, .oped_details_btn, .btn { font-size: 12px !important; }
     ::placeholder { font-size: 10px !important; }
     .info-card {

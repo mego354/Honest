@@ -50,7 +50,15 @@
             </div>
 
             <div class="container border rounded p-3 mb-3">
-                <h3 class="section-title border-bottom-5 mb-2">مقاسات الموديل</h3>
+                <div class="section-title border-bottom-5 mb-2 d-flex justify-content-between align-items-center">
+                    <h3>مقاسات الموديل</h3>
+                    <select class="form-control w-25" id="Packing_per_carton_general" required>
+                        <option value="12">12</option>
+                        <option value="24" selected>24</option>
+                        <option value="36">36</option>
+                        <option value="48">48</option>
+                    </select>
+                </div>
                 <div id="sizes-container"></div>
             </div>
 
@@ -76,6 +84,8 @@
 
         const cartonCountInput = document.getElementById('carton_count');
         const cartonsContainer = document.getElementById('cartons-container');
+        
+        const PackingPerCartonGeneral = document.getElementById('Packing_per_carton_general');
 
         function updateFields(container, fieldTemplate, count) {
             while (container.children.length < count) {
@@ -91,7 +101,7 @@
             div.className = 'row mb-2';
             div.innerHTML = `
                 <div class="col">
-                    <label for="piece_type_${index}">نوع القطعة ${index}</label>
+                    <label for="piece_type_${index}">نوع القطعة${index}</label>
                     <input type="text" class="form-control" id="piece_type_${index}" name="piece_type_${index}" required>
                 </div>
             `;
@@ -104,16 +114,16 @@
             div.className = 'row mb-2';
             div.innerHTML = `
                 <div class="col">
-                    <label for="size_${index}">المقاس ${index}</label>
+                    <label for="size_${index}">المقاس${index}</label>
                     <input type="text" class="form-control" id="size_${index}" name="size_${index}" required>
                 </div>
                 <div class="col">
-                    <label for="amount_${index}">الكمية ${index}</label>
+                    <label for="amount_${index}">الكمية${index}</label>
                     <input type="number" class="form-control" id="amount_${index}" name="amount_${index}" required>
                 </div>
                 <div class="col">
-                    <label for="Packing_per_carton_${index}">القطع في الكرتونة ${index}</label>
-                    <select class="form-control" id="Packing_per_carton_${index}" name="Packing_per_carton_${index}" required>
+                    <label for="Packing_per_carton_${index}">تعبئة${index}</label>
+                    <select class="form-control Packing_carton" id="Packing_per_carton_${index}" name="Packing_per_carton_${index}" required>
                         <option value="12">12</option>
                         <option value="24" selected>24</option>
                         <option value="36">36</option>
@@ -131,26 +141,26 @@
             div.className = 'row mb-2';
             div.innerHTML = `
                 <div class="col">
-                    <label for="carton_length_${index}">الطول ${index}</label>
+                    <label for="carton_length_${index}">الطول${index}</label>
                     <input type="text" class="form-control" id="carton_length_${index}" name="carton_length_${index}" required>
                 </div>
                 <div class="col">
-                    <label for="carton_width_${index}">العرض ${index}</label>
+                    <label for="carton_width_${index}">العرض${index}</label>
                     <input type="text" class="form-control" id="carton_width_${index}" name="carton_width_${index}" required>
                 </div>
                 <div class="col">
-                    <label for="carton_height_${index}">الارتفاع ${index}</label>
+                    <label for="carton_height_${index}">الارتفاع${index}</label>
                     <input type="text" class="form-control" id="carton_height_${index}" name="carton_height_${index}" required>
                 </div>
                 <div class="col">
-                    <label for="carton_type_${index}">نوع الكرتونة ${index}</label>
+                    <label for="carton_type_${index}">نوع الكرتونة${index}</label>
                     <select class="form-control" id="carton_type_${index}" name="carton_type_${index}" required>
                         <option value="تطبيق">تطبيق</option>
                         <option value="شماعة">شماعة</option>
                     </select>
                 </div>
                 <div class="col">
-                    <label for="carton_comment_${index}">مقاسات ${index}</label>
+                    <label for="carton_comment_${index}">مقاسات${index}</label>
                     <input type="text" class="form-control" id="carton_comment_${index}" name="carton_comment_${index}"></input>
                 </div>
             `;
@@ -168,10 +178,18 @@
         cartonCountInput.addEventListener('input', () => {
             updateFields(cartonsContainer, cartonFieldTemplate, parseInt(cartonCountInput.value) || 0);
         });
-
+        
         piecesCountInput.dispatchEvent(new Event('input'));
         sizesCountInput.dispatchEvent(new Event('input'));
         cartonCountInput.dispatchEvent(new Event('input'));
+
+
+        PackingPerCartonGeneral.addEventListener('change', function () {
+            document.querySelectorAll('.Packing_carton').forEach((select_input) => {
+                select_input.value = this.value;
+            });
+        });
+
     });
 </script>
 {% endblock script %}
