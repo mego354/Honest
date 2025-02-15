@@ -25,9 +25,9 @@ class ProductionPieceInline(admin.TabularInline):
 
 @admin.register(Model)
 class ModelAdmin(admin.ModelAdmin):
-    list_display = ('id', 'model_number', 'created_at', 'is_archive', 'Packing_per_carton', 'is_active_display', 'comments_count_display')
+    list_display = ('id', 'model_number', 'created_at', 'is_archive', 'is_active_display', 'comments_count_display')
     search_fields = ('model_number',)
-    list_filter = ('is_archive', 'Packing_per_carton', 'created_at')
+    list_filter = ('is_archive', 'created_at')
     ordering = ('-created_at',)
     inlines = [SizeAmountInline, PieceInline, PackingInline]
     readonly_fields = ('is_active_display', 'comments_count_display')
@@ -43,8 +43,8 @@ class ModelAdmin(admin.ModelAdmin):
 
 @admin.register(SizeAmount)
 class SizeAmountAdmin(admin.ModelAdmin):
-    list_display = ("model", "size", "amount", "editable")
-    list_filter = ("editable",)
+    list_display = ("model", "size", "amount", 'Packing_per_carton', "editable")
+    list_filter = ("editable", 'Packing_per_carton',)
     search_fields = ("model__model_number", "size")
 
 
