@@ -1,11 +1,17 @@
 from django.db import models
-from django.db.models import Q, Sum, F
+from django.db.models import Sum, F, FloatField
+from django.db.models.functions import Cast
 from django.utils.timezone import localtime, now
 
 from django.db import models
 from django.db.models import Sum
 from django.utils.timezone import now
 
+
+from django.db import models
+from django.utils.timezone import now
+from django.db.models import Sum, F, FloatField
+from django.db.models.functions import Cast
 
 class Model(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
@@ -15,74 +21,75 @@ class Model(models.Model):
     shipped_at = models.DateTimeField(verbose_name="تاريخ الشحن", blank=True, null=True)
     is_archive = models.BooleanField(default=False)
     is_shipped = models.BooleanField(default=False)
-
+    
     available_carton = models.IntegerField(verbose_name="الكراتين المتبقية", blank=True, default=0)
     used_carton = models.IntegerField(verbose_name="الكراتين المستخدمة", blank=True, default=0)
-
+    
     class Meta:
         ordering = ["-created_at"]
-
+    
     def __str__(self):
         return self.model_number
 
+    # Utility Methods
     def is_active(self):
         return self.pieces.filter(available_amount__gt=0).exists()
-
+    
     def comments_count(self):
         return self.pieces.filter(productions__comment__gt="").count()
-
+    
+    @staticmethod
+    def get_percentage_style(percent):
+        if percent > 80:
+            return "bg-danger"
+        elif percent > 60:
+            return "bg-warning"
+        elif percent > 40:
+            return "bg-info"
+        elif percent > 20:
+            return "bg-success"
+        return ""
+    
+    # Carton Calculations
+    def update_available_carton(self, *args, **kwargs):
+        self.available_carton = self.get_total_available_carton()
+        self.used_carton = self.get_total_used_cartons()
+        super().save(*args, **kwargs)
+    
+    def get_total_available_carton(self):
+        return int(SizeAmount.objects.filter(model=self).aggregate(
+            total_cartons=Sum(Cast(F('amount'), FloatField()) / Cast(F('Packing_per_carton'), FloatField()))
+        )['total_cartons'] or 0)
+    
+    def get_total_used_cartons(self):
+        return SizeAmount.objects.filter(model=self).aggregate(
+            used_cartons=Sum('packings__used_carton')
+        )['used_cartons'] or 0
+            
+    def get_total_sizes_pieces(self):
+        return self.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Usage Percentage Calculation
     def get_usage_percentage(self):
         sizes = self.size_amounts.all()
         pieces = self.pieces.all()
         sizes_count = sizes.count()
 
         if sizes_count == 0:
-            return {
-                "production_total_amount": 0,
-                "production_used_amount": 0,
-                "production_percent": 0,
-                "production_percent_style": "",
-                "production_type_usage": [],
-                "packaging_total_amount": 0,
-                "packaging_used_amount": 0,
-                "packaging_percent": 0,
-                "packaging_percent_style": "",
-            }
+            return self._get_empty_usage_stats()
 
         pieces_count = pieces.count() / sizes_count
-
         total_amount = sum(size.amount * pieces_count for size in sizes)
         used_amount = sum(piece.used_amount for piece in pieces)
         percent = (used_amount / total_amount * 100) if total_amount else 0
-
         percent_style = self.get_percentage_style(percent)
 
         # Calculate usage percentage for each type
-        type_usage = []
-        type_names = set(pieces.values_list("type", flat=True))
-
-        for type_name in type_names:
-            type_pieces = pieces.filter(type=type_name)
-            type_total_amount = total_amount / pieces_count
-            type_used_amount = sum(piece.used_amount for piece in type_pieces)
-            type_percent = (type_used_amount / type_total_amount * 100) if type_total_amount else 0
-
-            type_usage.append({
-                "type": type_name,
-                "total_amount": int(type_total_amount),
-                "used_amount": int(type_used_amount),
-                "percent": int(type_percent),
-                "percent_style": self.get_percentage_style(type_percent),
-            })
+        type_usage = self._calculate_type_usage(pieces, total_amount, pieces_count)
 
         # Packaging calculations
-        totals = SizeAmount.objects.filter(model=self).aggregate(
-            total_cartons=Sum(F('amount') / F('Packing_per_carton')),
-            used_cartons=Sum('packings__used_carton')
-        )
-        packaging_total_carton = totals["total_cartons"] or 0
-        packaging_used_carton = totals["used_cartons"] or 0
-
+        packaging_total_carton = self.get_total_available_carton()
+        packaging_used_carton = self.get_total_used_cartons()
         packaging_percent = (packaging_used_carton / packaging_total_carton * 100) if packaging_total_carton else 0
 
         return {
@@ -96,28 +103,39 @@ class Model(models.Model):
             "packaging_percent": int(packaging_percent),
             "packaging_percent_style": self.get_percentage_style(packaging_percent),
         }
+    
+    def _calculate_type_usage(self, pieces, total_amount, pieces_count):
+        type_usage = []
+        type_names = set(pieces.values_list("type", flat=True))
+        
+        for type_name in type_names:
+            type_pieces = pieces.filter(type=type_name)
+            type_total_amount = total_amount / pieces_count
+            type_used_amount = sum(piece.used_amount for piece in type_pieces)
+            type_percent = (type_used_amount / type_total_amount * 100) if type_total_amount else 0
 
-    @staticmethod
-    def get_percentage_style(percent):
-        if percent > 80:
-            return "bg-danger"
-        elif percent > 60:
-            return "bg-warning"
-        elif percent > 40:
-            return "bg-info"
-        elif percent > 20:
-            return "bg-success"
-        return ""
-
-    def update_available_carton(self, *args, **kwargs):
-        totals = SizeAmount.objects.filter(model=self).aggregate(
-            total_cartons=Sum(F('amount') / F('Packing_per_carton')),
-            used_cartons=Sum('packings__used_carton')
-        )
-        self.available_carton = (totals["total_cartons"] or 0) - (totals["used_cartons"] or 0)
-        self.used_carton = totals["used_cartons"] or 0
-
-        super().save(*args, **kwargs)
+            type_usage.append({
+                "type": type_name,
+                "total_amount": int(type_total_amount),
+                "used_amount": int(type_used_amount),
+                "percent": int(type_percent),
+                "percent_style": self.get_percentage_style(type_percent),
+            })
+        
+        return type_usage
+    
+    def _get_empty_usage_stats(self):
+        return {
+            "production_total_amount": 0,
+            "production_used_amount": 0,
+            "production_percent": 0,
+            "production_percent_style": "",
+            "production_type_usage": [],
+            "packaging_total_amount": 0,
+            "packaging_used_amount": 0,
+            "packaging_percent": 0,
+            "packaging_percent_style": "",
+        }
         
 class SizeAmount(models.Model):
     DOZENS_CHOICES = [

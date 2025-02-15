@@ -31,6 +31,12 @@
             </div>
             <div class="row mb-2">
                 <div class="col">
+                    {{ form.size_amount.label_tag }}
+                    {{ form.size_amount }}
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
                     {{ form.carton.label_tag }}
                     {{ form.carton }}
                 </div>
@@ -150,6 +156,26 @@
                 .catch(error => {
                     console.error("Error fetching sizes:", error); // Debugging: Log any errors
                 });
+                
+                fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    {% comment %} console.log("Sizes Data:", data); // Debugging: Log the response {% endcomment %}
+                    const sizeField = document.getElementById('{{ form.size_amount.auto_id }}');
+                    sizeField.innerHTML = '<option value="">اختر المقاس</option>';
+                    if (data.sizes && data.sizes.length > 0) {
+                        data.sizes.forEach(size => {
+                            sizeField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
+                        });
+                    } else {
+                        console.warn("No sizes found for the selected model."); // Debugging: Log a warning
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching sizes:", error); // Debugging: Log any errors
+                });
+
+
         });
     
     });

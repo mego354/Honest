@@ -64,7 +64,7 @@
             <div class="col-md-6 col-sm-12">
                 <div class="row info-card shadow-sm rounded">
                     <h5 class="col text-center"><strong>اجمالي الاطقم</strong></h5>
-                    <h5 class="col text-center">{{ total_sizes_pieces }}</h5>
+                    <h5 class="col text-center">{{ model.get_total_sizes_pieces }}</h5>
                 </div>
             </div>
             <div class="col-md-6 col-sm-12">
@@ -76,7 +76,8 @@
             <div class="col-md-6 col-sm-12">
                 <div class="row info-card shadow-sm rounded">
                     <h5 class="col text-center"><strong>الكراتين الكلية</strong></h5>
-                    <h5 class="col text-center">{{ total_carton }}</h5>
+                    <h5 class="col text-center">{{ model.get_total_available_carton }}</h5>
+
                 </div>
             </div>
         </div>
@@ -98,6 +99,7 @@
                     <tr>
                         <th style="position: sticky; top: 0;">المقاس</th>
                         <th style="position: sticky; top: 0;">الكمية</th>
+                        <th style="position: sticky; top: 0;">التعبئة</th>
                         <th style="position: sticky; top: 0;">تحكم</th>
                     </tr>
                 </thead>
@@ -106,6 +108,7 @@
                     <tr>
                         <td>{{ size.size }}</td>
                         <td>{{ size.amount }}</td>
+                        <td>{{ size.Packing_per_carton }}</td>
                         <td>
                             {% if size.editable %}
                                 <a class="px-2 btn" href="{% url 'SizeAmount_edit' size.id %}">

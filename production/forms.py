@@ -109,12 +109,17 @@ class PackingForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
     )
 
+    size_amount = forms.ChoiceField(
+        label="اختر المقاس",
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     carton = forms.ChoiceField(
         label="اختر الكرتونة",
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
 
     used_carton = forms.IntegerField(
         label="الكرتون للتعبئة",
@@ -131,12 +136,16 @@ class PackingForm(forms.Form):
             model_id = self.data.get('model')
             model_instance = Model.objects.get(id=model_id)
 
-            # Populate piece choices based on the model
+            # Populate choices based on the model
+            self.fields['size_amount'].choices = [
+                (str(size_amounts.id), f"{size_amounts.size} - {size_amounts.amount}") for size_amounts in model_instance.size_amounts.all()
+            ]
             self.fields['carton'].choices = [
-                (str(carton.id), f"{carton.length} -{carton.width} -{carton.height} -") for carton in model_instance.cartons.all()
+                (str(carton.id), f"{carton.length} -{carton.width} -{carton.height}") for carton in model_instance.cartons.all()
             ]
         else:
             # If no model is selected, set empty choices
+            self.fields['size_amount'].choices = [("", "---------")]
             self.fields['carton'].choices = [("", "---------")]
 
 ###############################################################################################################################

@@ -130,15 +130,7 @@ class ModelDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         model = self.get_object()
 
-        total_sizes_pieces = model.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
-
-        context['total_sizes_pieces'] = total_sizes_pieces
-        context['total_Dozens'] = int(total_sizes_pieces / 12)
-
-        context['total_carton'] = SizeAmount.objects.filter(model=model).aggregate(
-            total_cartons=Sum(F('amount') / F('Packing_per_carton'))
-        )['total_cartons'] or 0
-
+        context['total_Dozens'] = int(model.get_total_sizes_pieces() / 12)
         return context
     
 class ModelDeleteView(DeleteView):
@@ -179,7 +171,7 @@ class BaseModelListingView(ListView):
 
     def get_queryset(self):
         # for model in Model.objects.all():
-        #     model.save()
+        #     model.update_available_carton()
         queryset = super().get_queryset()
         filters = Q(is_archive=self.is_archive)  # Use dynamic is_archive flag
 
@@ -574,11 +566,14 @@ class PackingFormView(FormView):
     def form_valid(self, form):
         model_instance = form.cleaned_data['model']
         carton_id = form.cleaned_data['carton']
+        size_amount_id = form.cleaned_data['size_amount']
         used_carton = form.cleaned_data['used_carton']
 
         carton_instance = Carton.objects.get(id=carton_id)
+        size_amount_instance = SizeAmount.objects.get(id=size_amount_id)
         Packing.objects.create(
             model=model_instance,
+            size_amount=size_amount_instance,
             carton=carton_instance,
             used_carton=used_carton,
         )
