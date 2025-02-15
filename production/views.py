@@ -15,8 +15,6 @@ from .models import Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
 from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
 
 from django.utils.timezone import localtime, now
-from datetime import datetime, timedelta
-from production.utils import get_producion_models
 
 ###############################################################################################################################
 class ModelCreationView(FormView):
@@ -50,14 +48,17 @@ class ModelCreationView(FormView):
         while True:
             size_key = f"size_{index}"
             amount_key = f"amount_{index}"
+            per_carton_key = f"Packing_per_carton_{index}"
 
             size = self.request.POST.get(size_key)
             amount = self.request.POST.get(amount_key)
+            per_carton = self.request.POST.get(per_carton_key)
+            print(per_carton)
 
             if not size or not amount:  # Stop if no more sizes are found
                 break
 
-            sizes_amounts.append({"size": size, "amount": int(amount)})
+            sizes_amounts.append({"size": size, "amount": int(amount), "Packing_per_carton": int(per_carton)})
             index += 1
 
         # Reset index for cartons
@@ -89,7 +90,7 @@ class ModelCreationView(FormView):
 
         # Save sizes to the database
         size_amounts_objects = [
-            SizeAmount(model=model, size=size_data["size"], amount=size_data["amount"])
+            SizeAmount(model=model, size=size_data["size"], amount=size_data["amount"], Packing_per_carton=size_data["Packing_per_carton"])
             for size_data in sizes_amounts
         ]
         SizeAmount.objects.bulk_create(size_amounts_objects)
@@ -133,7 +134,11 @@ class ModelDetailView(DetailView):
 
         context['total_sizes_pieces'] = total_sizes_pieces
         context['total_Dozens'] = int(total_sizes_pieces / 12)
-        context['Packing_per_carton'] = int(model.Packing_per_carton)
+
+        context['total_carton'] = SizeAmount.objects.filter(model=model).aggregate(
+            total_cartons=Sum(F('amount') / F('Packing_per_carton'))
+        )['total_cartons'] or 0
+
         return context
     
 class ModelDeleteView(DeleteView):
@@ -261,6 +266,7 @@ class SizeAmountCreateView(CreateView):
                     available_amount=size_amount.amount
                 )
 
+        model.update_available_carton()
         messages.success(self.request, "تم اضافة المقاس وكل القطع المرتبطة به بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model_id]))
     
@@ -277,16 +283,15 @@ class SizeAmountEditView(UpdateView):
         old_size = size_amount.size
         new_size = form.cleaned_data['size']
         new_amount = form.cleaned_data['amount'] - size_amount.amount
-        new_Packing_per_carton = form.cleaned_data['Packing_per_carton']
 
         form.save()
 
         Piece.objects.filter(model=model, size=old_size).update(
             size=new_size,
             available_amount=F('available_amount') + new_amount,
-            Packing_per_carton=new_Packing_per_carton
         )
 
+        model.update_available_carton()
         messages.success(self.request, "تم تعديل المقاس وكل القطع المرتبطة به بنجاح.")
         return redirect(reverse_lazy("model_detail_view", args=[model.id]))
     
@@ -306,6 +311,7 @@ class SizeAmountDeleteView(DeleteView):
         messages.success(self.request, "تم حذف المقاس وكل القطع المرتبطة به بنجاح")
 
         if model.size_amounts.all().count() > 0:
+            model.update_available_carton()
             return redirect(reverse_lazy("model_detail_view", args=[model_pk]))
         else:
             messages.error(self.request, f"تم حذف موديل {model.model_number} لعدم توافر مقاسات اخري")

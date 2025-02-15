@@ -98,12 +98,6 @@
             return div;
         }
 
-        <div class="col">
-            {{ form.Packing_per_carton.label_tag }}
-            {{ form.Packing_per_carton }}
-        </div>
-
-
 
         function sizeFieldTemplate(index) {
             const div = document.createElement('div');
@@ -119,7 +113,14 @@
                 </div>
                 <div class="col">
                     <label for="Packing_per_carton_${index}">القطع في الكرتونة ${index}</label>
-                    <input type="number" class="form-control" id="Packing_per_carton_${index}" name="Packing_per_carton_${index}" required>
+                    <select class="form-control" id="Packing_per_carton_${index}" name="Packing_per_carton_${index}" required>
+                        <option value="12">12</option>
+                        <option value="24" selected>24</option>
+                        <option value="36">36</option>
+                        <option value="48">48</option>
+                    </select>
+
+
                 </div>
             `;
             return div;
@@ -144,8 +145,8 @@
                 <div class="col">
                     <label for="carton_type_${index}">نوع الكرتونة ${index}</label>
                     <select class="form-control" id="carton_type_${index}" name="carton_type_${index}" required>
-                        <option value="شماعة">شماعة</option>
                         <option value="تطبيق">تطبيق</option>
+                        <option value="شماعة">شماعة</option>
                     </select>
                 </div>
                 <div class="col">

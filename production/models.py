@@ -224,18 +224,15 @@ class Packing(models.Model):
             original = Packing.objects.get(pk=self.pk)
             diff = self.used_carton - original.used_carton
             Model.objects.filter(id=self.model.id).update(
-                available_carton=F('available_carton') - diff,
                 used_carton=F('used_carton') + diff
             )
         else:
-            self.model.available_carton -= self.used_carton
             self.model.used_carton += self.used_carton
         self.model.save()
 
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        self.model.available_carton += self.used_carton
         self.model.used_carton -= self.used_carton
         self.model.save()
         super().delete(*args, **kwargs)
