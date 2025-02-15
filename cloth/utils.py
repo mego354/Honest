@@ -28,6 +28,23 @@ def get_recent_cloth_operations(days=1):
 
     all_cloth_operations = {"وارد": [], "قص": [], "مرتجع": []}
 
+    # Define operation headers and keys
+    operation_headers = {
+        "وارد": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة"],
+        "قص": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
+        "مرتجع": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
+    }
+    operation_key = {
+        "كود الخامه": "fabric_code",
+        "اسم الخامه": "fabric_name",
+        "اللون": "color",
+        "عدد الاتواب": "roll",
+        "الوزن": "weight",
+        "التاريخ": "date",
+        "اسم المصبغة": "dyehouse_name",
+        "رقم الموديل": "model_number",
+    }
+
     # Filter instances by date range
     instances = Statistics.objects.filter(Q(date__isnull=False))
     filtered_instances = [
@@ -36,32 +53,38 @@ def get_recent_cloth_operations(days=1):
 
     # Group instances by movement type
     models = {
-        "Fabric": [obj for obj in filtered_instances if obj.movement_type == "وارد"],
-        "CutTransfer": [obj for obj in filtered_instances if obj.movement_type == "قص"],
-        "ReturnTransfer": [obj for obj in filtered_instances if obj.movement_type == "مرتجع"],
+        "وارد": [obj for obj in filtered_instances if obj.movement_type == "وارد"],
+        "قص": [obj for obj in filtered_instances if obj.movement_type == "قص"],
+        "مرتجع": [obj for obj in filtered_instances if obj.movement_type == "مرتجع"],
     }
 
-    for model_type, objects in models.items():
+    for movement_type, objects in models.items():
         model_list = []
         unique_fabric_codes = set(obj.fabric_code for obj in objects)
         
         for fabric_code in unique_fabric_codes:
             fabric_code_models = [obj for obj in objects if obj.fabric_code == fabric_code]
-            model_list.append(
+            fabric_operation = {
+                "fabric_code": fabric_code,
+                "fabric_name": objects[0].fabric_name,
+                "detailed": len(fabric_code_models) > 1,
+                "roll": sum(obj.roll for obj in fabric_code_models),
+                "weight": sum(obj.weight for obj in fabric_code_models),
+                "date": max(parse_date(obj.date) for obj in fabric_code_models if obj.date),
+                "operations": [
+                    {key: getattr(obj, operation_key[key], "") for key in operation_headers[movement_type]}
+                    for obj in fabric_code_models
+                ]
+            }
+            if len(fabric_code_models) == 1:
                 {
-                    "fabric_code": fabric_code,
-                    "roll": sum(obj.roll for obj in fabric_code_models),
-                    "weight": sum(obj.weight for obj in fabric_code_models),
-                    "date": max(parse_date(obj.date) for obj in fabric_code_models if obj.date),  # Ensuring sorting by latest date
+                    "dyehouse_name": objects[0].dyehouse_name or None,
+                    "model_number": objects[0].model_number or None,
+                    "color": objects[0].color or None
                 }
-            )
+            model_list.append(fabric_operation)
 
-        if model_type == "Fabric":
-            all_cloth_operations["وارد"].extend(model_list)
-        elif model_type == "CutTransfer":
-            all_cloth_operations["قص"].extend(model_list)
-        elif model_type == "ReturnTransfer":
-            all_cloth_operations["مرتجع"].extend(model_list)
+        all_cloth_operations[movement_type].extend(model_list)
 
     # Sort each list by date (newest first)
     for key in all_cloth_operations:
