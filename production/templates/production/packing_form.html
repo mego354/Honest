@@ -165,7 +165,7 @@
                     sizeField.innerHTML = '<option value="">اختر المقاس</option>';
                     if (data.sizes && data.sizes.length > 0) {
                         data.sizes.forEach(size => {
-                            sizeField.innerHTML += `<option value="${size.id}">${size.size}</option>`;
+                            sizeField.innerHTML += `<option value="${size.id}">${size.size} (${size.Packing_per_carton})</option>`;
                         });
                     } else {
                         console.warn("No sizes found for the selected model."); // Debugging: Log a warning

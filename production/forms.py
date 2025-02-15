@@ -96,10 +96,29 @@ class ProductionForm(forms.Form):
 class PackingPieceForm(forms.ModelForm):
     class Meta:
         model = Packing
-        fields = ['used_carton']
+        fields = ['used_carton', 'size_amount']
         widgets = {
             'used_carton': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
+    
+    size_amount = forms.ChoiceField(
+        label="اختر المقاس",
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        instance = kwargs.get('instance')  # Get the instance if editing
+
+        if instance and hasattr(instance, 'model') and hasattr(instance.model, 'size_amounts'):
+            # Assuming size_amounts is a list, queryset, or iterable of sizes
+            sizes = SizeAmount.objects.filter(model=instance.model)  
+            self.fields['size_amount'].choices = [(size, f"{size.size} ({size.Packing_per_carton})") for size in sizes]
+        else:
+            # If no instance, provide default choices (optional)
+            self.fields['size_amount'].choices = []
 
 
 class PackingForm(forms.Form):

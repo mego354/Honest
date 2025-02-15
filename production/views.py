@@ -348,7 +348,7 @@ class ProductionFormView(FormView):
 
 def load_sizes(request):
     model_id = request.GET.get('model_id')
-    sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount')
+    sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount', 'Packing_per_carton')
     return JsonResponse({'sizes': list(sizes)})
 
 def load_pieces(request):

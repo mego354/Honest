@@ -47,6 +47,7 @@
                     <th>رقم الموديل</th>
                     <th>الكرتون</th>
                     <th>الكمية</th>
+                    <th>القطع</th>
                     <th>التاريخ</th>
                     {% comment %} <th>الملاحظات</th> {% endcomment %}
                     <th>تحكم</th>
@@ -60,9 +61,9 @@
                     </td>
                     <td>{{ package_item.model.model_number }}</td>
                     <td>{{ package_item.carton.length }}*{{ package_item.carton.width }}*{{ package_item.carton.height }} ({{ package_item.carton.type }})</td>
-                    <td>{{ package_item.used_carton }}</td>
+                    <td>({{ package_item.size_amount.Packing_per_carton }}) {{ package_item.used_carton }}</td>
+                    <td>{{ package_item.get_total_pieces }}</td>
                     <td dir="rtl">{{ package_item.created_at|date:"Y/m/d h:i A" }}</td>
-                    {% comment %} <td style="overflow-x:auto; max-width:100px; ">{{ package_item.comment }}</td> {% endcomment %}
                     <td>
                         <a class="px-2 btn" href="{% url 'packingpiece_edit' package_item.id %}">
                             <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>

@@ -254,3 +254,6 @@ class Packing(models.Model):
         self.model.used_carton -= self.used_carton
         self.model.save()
         super().delete(*args, **kwargs)
+
+    def get_total_pieces(self):
+        return self.size_amount.Packing_per_carton * self.used_carton
