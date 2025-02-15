@@ -110,9 +110,10 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
     pdf.add_page()
 
     # ---------------------- تقرير القماش (Cloth Report) ----------------------
+
     pdf.add_section("تقرير القماش", [])
     has_data = False
-
+    
     operation_headers = {
         "وارد": ["كود الخامه", "اسم الخامه", "عدد الاتواب", "الوزن", "التاريخ"],
         "قص": ["كود الخامه", "اسم الخامه", "عدد الاتواب", "الوزن", "التاريخ"],
@@ -125,80 +126,45 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
         "مرتجع": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "رقم الموديل"],
         "احصائيات": ["كود الخامه", "اسم الخامه", "اللون", "عدد الاتواب", "الوزن", "التاريخ", "اسم المصبغة", "رقم الموديل", "نوع الحركه"]
     }
-
+    
     for op_type, headers in operation_headers.items():
-        if recent_cloth_operations.get(op_type):
+        operations = recent_cloth_operations.get(op_type, [])
+        if operations:
             has_data = True
 
             if pdf.get_y() > 230:
                 pdf.add_page()
 
             pdf.chapter_body([op_type])
-
+            
             table_data = []
+            detail_headers = operation_headers_details[op_type]
             
-            for op in recent_cloth_operations[op_type]:
-                # استخراج التفاصيل لكل عملية
-                detail_headers = operation_headers_details[op_type]
-                # إدراج الصف الأساسي في الجدول الرئيسي
-                if op_type == "وارد":
-                    table_data.append([
-                        op["fabric_code"],
-                        op["fabric_name"],
+            for op in operations:
+                if len(op['operations']) > 1:
+                    summary_row = [
+                        op.get("fabric_code", "------"),
+                        op.get("fabric_name", "------"),
                         "------",
-                        op["roll"],
-                        op["weight"],
-                        op["date"].strftime("%Y/%m/%d") if isinstance(op["date"], (datetime, date)) else op["date"],
-                        "! تجميع !",
-                    ])
-                elif op_type == "قص":
-                    table_data.append([
-                        op["fabric_code"],
-                        op["fabric_name"],
+                        op.get("roll", 0),
+                        op.get("weight", 0),
                         "------",
-                        op["roll"],
-                        op["weight"],
-                        op["date"].strftime("%Y/%m/%d") if isinstance(op["date"], (datetime, date)) else op["date"],
-                        "! تجميع !",
-                    ])
-                elif op_type == "مرتجع":
-                    table_data.append([
-                        op["fabric_code"],
-                        op["fabric_name"],
-                        "------",
-                        op["roll"],
-                        op["weight"],
-                        op["date"].strftime("%Y/%m/%d") if isinstance(op["date"], (datetime, date)) else op["date"],
-                        "! تجميع !",
-                    ])
-                else:
-                    continue
-                    table_data.append([
-                        op["fabric_code"],
-                        op["fabric_name"],
-                        op["dyehouse_name"],
-                        op["model_number"],
-                        op["color"],
-                        op["roll"],
-                        op["weight"],
-                        op["date"].strftime("%Y/%m/%d") if isinstance(op["date"], (datetime, date)) else op["date"],
-                    ])
-            
-                if op['detailed']:
-                    detail_data = []
-
+                        f" تجميع {op_type}"
+                    ]
+                    table_data.append(summary_row)
+                
                     for op_detail in op['operations']:
+                        op_detail["كود الخامه"] = op_detail.get("كود الخامه", "------")
                         table_data.append(list(op_detail.values()))
-                        # إضافة جدول التفاصيل أولًا
-                        # pdf.add_table(detail_headers, detail_data)
-                        pdf.ln(5)  # مسافة بسيطة بين الجدولين
-
+                else:
+                    table_data.append(list(op['operations'][0].values()))
             
             pdf.add_table(detail_headers, table_data)
             pdf.ln(10)
-
+    
     if not has_data:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
+
 
     # ---------------------- تقرير الإنتاج (Production Report) ----------------------
     pdf.add_section("تقرير الانتاج", [])

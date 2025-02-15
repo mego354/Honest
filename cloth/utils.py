@@ -66,22 +66,16 @@ def get_recent_cloth_operations(days=1):
             fabric_code_models = [obj for obj in objects if obj.fabric_code == fabric_code]
             fabric_operation = {
                 "fabric_code": fabric_code,
-                "fabric_name": objects[0].fabric_name,
-                "detailed": len(fabric_code_models) > 1,
+                "fabric_name": fabric_code_models[0].fabric_name or "------",
+                "detailed_level": len(fabric_code_models),
                 "roll": sum(obj.roll for obj in fabric_code_models),
                 "weight": sum(obj.weight for obj in fabric_code_models),
-                "date": max(parse_date(obj.date) for obj in fabric_code_models if obj.date),
+                "date":  "------",
                 "operations": [
                     {key: getattr(obj, operation_key[key], "") for key in operation_headers[movement_type]}
                     for obj in fabric_code_models
                 ]
             }
-            if len(fabric_code_models) == 1:
-                {
-                    "dyehouse_name": objects[0].dyehouse_name or None,
-                    "model_number": objects[0].model_number or None,
-                    "color": objects[0].color or None
-                }
             model_list.append(fabric_operation)
 
         all_cloth_operations[movement_type].extend(model_list)
