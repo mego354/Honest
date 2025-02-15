@@ -277,12 +277,14 @@ class SizeAmountEditView(UpdateView):
         old_size = size_amount.size
         new_size = form.cleaned_data['size']
         new_amount = form.cleaned_data['amount'] - size_amount.amount
+        new_Packing_per_carton = form.cleaned_data['Packing_per_carton']
 
         form.save()
 
         Piece.objects.filter(model=model, size=old_size).update(
             size=new_size,
-            available_amount=F('available_amount') + new_amount
+            available_amount=F('available_amount') + new_amount,
+            Packing_per_carton=new_Packing_per_carton
         )
 
         messages.success(self.request, "تم تعديل المقاس وكل القطع المرتبطة به بنجاح.")

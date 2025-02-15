@@ -8,13 +8,6 @@ from django.utils.timezone import now
 
 
 class Model(models.Model):
-    DOZENS_CHOICES = [
-        (12, "12"),
-        (24, "24"),
-        (36, "36"),
-        (48, "48"),
-    ]
-
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
@@ -23,9 +16,6 @@ class Model(models.Model):
     is_archive = models.BooleanField(default=False)
     is_shipped = models.BooleanField(default=False)
 
-    Packing_per_carton = models.PositiveIntegerField(
-        verbose_name="القطع في الكرتونة", choices=DOZENS_CHOICES, default=12
-    )
     available_carton = models.IntegerField(verbose_name="الكراتين المتبقية", blank=True, default=0)
     used_carton = models.IntegerField(verbose_name="الكراتين المستخدمة", blank=True, default=0)
 
@@ -134,10 +124,20 @@ class Model(models.Model):
             super().save(*args, **kwargs)
         
 class SizeAmount(models.Model):
+    DOZENS_CHOICES = [
+        (12, "12"),
+        (24, "24"),
+        (36, "36"),
+        (48, "48"),
+    ]
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="size_amounts")
     size = models.CharField(max_length=50, verbose_name="المقاس")
     amount = models.PositiveIntegerField(verbose_name="الكمية")
     editable = models.BooleanField(default=True)
+
+    Packing_per_carton = models.PositiveIntegerField(
+        verbose_name="القطع في الكرتونة", choices=DOZENS_CHOICES, default=12
+    )
 
     class Meta:
         unique_together = ('model', 'size')

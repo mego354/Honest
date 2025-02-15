@@ -25,10 +25,6 @@
                         {{ form.model_number.label_tag }}
                         {{ form.model_number }}
                     </div>
-                    <div class="col">
-                        {{ form.Packing_per_carton.label_tag }}
-                        {{ form.Packing_per_carton }}
-                    </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">
@@ -102,6 +98,13 @@
             return div;
         }
 
+        <div class="col">
+            {{ form.Packing_per_carton.label_tag }}
+            {{ form.Packing_per_carton }}
+        </div>
+
+
+
         function sizeFieldTemplate(index) {
             const div = document.createElement('div');
             div.className = 'row mb-2';
@@ -113,6 +116,10 @@
                 <div class="col">
                     <label for="amount_${index}">الكمية ${index}</label>
                     <input type="number" class="form-control" id="amount_${index}" name="amount_${index}" required>
+                </div>
+                <div class="col">
+                    <label for="Packing_per_carton_${index}">القطع في الكرتونة ${index}</label>
+                    <input type="number" class="form-control" id="Packing_per_carton_${index}" name="Packing_per_carton_${index}" required>
                 </div>
             `;
             return div;
