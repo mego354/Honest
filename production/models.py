@@ -150,7 +150,7 @@ class SizeAmount(models.Model):
     editable = models.BooleanField(default=True)
 
     Packing_per_carton = models.PositiveIntegerField(
-        verbose_name="القطع في الكرتونة", choices=DOZENS_CHOICES, default=12
+        verbose_name="القطع في الكرتونة", choices=DOZENS_CHOICES, default=24
     )
 
     class Meta:
