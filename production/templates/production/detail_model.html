@@ -158,7 +158,7 @@
                         <td>{{ carton.length }}</td>
                         <td>{{ carton.width }}</td>
                         <td>{{ carton.height }}</td>
-                        <td>{{ carton.comment }}</td>
+                        <td>({{ carton.type }}) - {{ carton.comment }} </td>
                         <td>
                             <a class="px-2 btn" href="{% url 'carton_edit' carton.id %}">
                                 <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>
