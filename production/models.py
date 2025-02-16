@@ -62,8 +62,8 @@ class Model(models.Model):
         )['total_cartons'] or 0)
     
     def get_total_used_cartons(self):
-        return SizeAmount.objects.filter(model=self).aggregate(
-            used_cartons=Sum('packings__used_carton')
+        return Packing.objects.filter(model=self).aggregate(
+            used_cartons=Sum('used_carton')
         )['used_cartons'] or 0
             
     def get_total_sizes_pieces(self):
@@ -228,7 +228,6 @@ class Carton(models.Model):
 
 class Packing(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="packings")
-    size_amount = models.ForeignKey(SizeAmount, verbose_name="المقاس", on_delete=models.CASCADE, related_name="packings")
     carton = models.ForeignKey(Carton, verbose_name="الكرتونة", on_delete=models.CASCADE, related_name="packings")
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
     used_carton = models.PositiveIntegerField(verbose_name="الكرتون للتعبئة", blank=True, default=0)    
@@ -255,5 +254,3 @@ class Packing(models.Model):
         self.model.save()
         super().delete(*args, **kwargs)
 
-    def get_total_pieces(self):
-        return self.size_amount.Packing_per_carton * self.used_carton

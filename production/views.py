@@ -564,14 +564,11 @@ class PackingFormView(FormView):
     def form_valid(self, form):
         model_instance = form.cleaned_data['model']
         carton_id = form.cleaned_data['carton']
-        size_amount_id = form.cleaned_data['size_amount']
         used_carton = form.cleaned_data['used_carton']
 
         carton_instance = Carton.objects.get(id=carton_id)
-        size_amount_instance = SizeAmount.objects.get(id=size_amount_id)
         Packing.objects.create(
             model=model_instance,
-            size_amount=size_amount_instance,
             carton=carton_instance,
             used_carton=used_carton,
         )
