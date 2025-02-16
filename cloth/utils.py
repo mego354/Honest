@@ -36,7 +36,7 @@ def get_recent_cloth_operations(days=1):
     }
     operation_key = {
         "كود الخامه": "fabric_code",
-        "اسم الخامه": "fabric_name",
+        "اسم الخامه": "model_number",
         "اللون": "color",
         "عدد الاتواب": "roll",
         "الوزن": "weight",
@@ -59,24 +59,42 @@ def get_recent_cloth_operations(days=1):
     }
 
     for movement_type, objects in models.items():
-        model_list = []
-        unique_fabric_codes = set(obj.fabric_code for obj in objects)
-        
-        for fabric_code in unique_fabric_codes:
-            fabric_code_models = [obj for obj in objects if obj.fabric_code == fabric_code]
-            fabric_operation = {
-                "fabric_code": fabric_code,
-                "fabric_name": fabric_code_models[0].fabric_name or "------",
-                "detailed_level": len(fabric_code_models),
-                "roll": sum(obj.roll for obj in fabric_code_models),
-                "weight": sum(obj.weight for obj in fabric_code_models),
-                "date":  "------",
-                "operations": [
-                    {key: getattr(obj, operation_key[key], "") for key in operation_headers[movement_type]}
-                    for obj in fabric_code_models
-                ]
-            }
-            model_list.append(fabric_operation)
+        if movement_type == "وارد":
+            model_list = []
+            unique_fabric_codes = set(obj.fabric_code for obj in objects)
+            for fabric_code in unique_fabric_codes:
+                fabric_code_models = [obj for obj in objects if obj.fabric_code == fabric_code]
+                fabric_operation = {
+                    "fabric_code": fabric_code,
+                    "fabric_name": fabric_code_models[0].fabric_name or "------",
+                    "detailed_level": len(fabric_code_models),
+                    "roll": sum(obj.roll for obj in fabric_code_models),
+                    "weight": sum(obj.weight for obj in fabric_code_models),
+                    "date":  "------",
+                    "operations": [
+                        {key: getattr(obj, operation_key[key], "") for key in operation_headers[movement_type]}
+                        for obj in fabric_code_models
+                    ]
+                }
+                model_list.append(fabric_operation)
+        else:
+            model_list = []
+            unique_model_number = set(obj.model_number for obj in objects)
+            for model_number in unique_model_number:
+                fabric_code_models = [obj for obj in objects if obj.model_number == model_number]
+                fabric_operation = {
+                    "fabric_code": fabric_code_models[0].fabric_code or "------",
+                    "fabric_name": fabric_code_models[0].fabric_name or "------",
+                    "detailed_level": len(fabric_code_models),
+                    "roll": sum(obj.roll for obj in fabric_code_models),
+                    "weight": sum(obj.weight for obj in fabric_code_models),
+                    "date":  "------",
+                    "operations": [
+                        {key: getattr(obj, operation_key[key], "") for key in operation_headers[movement_type]}
+                        for obj in fabric_code_models
+                    ]
+                }
+                model_list.append(fabric_operation)
 
         all_cloth_operations[movement_type].extend(model_list)
 
