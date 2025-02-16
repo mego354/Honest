@@ -149,6 +149,8 @@
                         <th style="position: sticky; top: 0;">العرض</th>
                         <th style="position: sticky; top: 0;">الارتفاع</th>
                         <th style="position: sticky; top: 0;">المقاسات</th>
+                        <th style="position: sticky; top: 0;">المستخدم</th>
+                        <th style="position: sticky; top: 0;">الاجمالي</th>
                         <th style="position: sticky; top: 0;">تحكم</th>
                     </tr>
                 </thead>
@@ -159,6 +161,8 @@
                         <td>{{ carton.width }}</td>
                         <td>{{ carton.height }}</td>
                         <td>({{ carton.type }}) - {{ carton.comment }} </td>
+                        <td>{{ carton.get_carton_usage }} </td>
+                        <td>{{ model.get_total_available_carton }} </td>
                         <td>
                             <a class="px-2 btn" href="{% url 'carton_edit' carton.id %}">
                                 <i class="fa-solid fa-pen-to-square fa-lg" style="color: #3498db;"></i>

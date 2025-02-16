@@ -225,6 +225,9 @@ class Carton(models.Model):
 
     def __str__(self):
         return f"{self.length}*{self.width}*{self.height} ({self.type})"
+    
+    def get_carton_usage(self):
+        return sum(packing.used_carton for packing in Packing.objects.filter(carton=self) )
 
 class Packing(models.Model):
     model = models.ForeignKey(Model, verbose_name="الموديل", on_delete=models.CASCADE, related_name="packings")

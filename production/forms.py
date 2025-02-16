@@ -96,10 +96,30 @@ class ProductionForm(forms.Form):
 class PackingPieceForm(forms.ModelForm):
     class Meta:
         model = Packing
-        fields = ['used_carton']
+        fields = ['used_carton', 'carton']
         widgets = {
             'used_carton': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
+    
+    carton = forms.ModelChoiceField(
+        queryset=Carton.objects.none(),  # Default empty queryset
+        label="اختر الكرتونة",
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        instance = kwargs.get('instance')  # Get the instance if editing
+
+        if instance and hasattr(instance, 'model'):
+            # Filter SizeAmount related to the Packing model
+            cartons = Carton.objects.filter(model=instance.model)  
+            self.fields['carton'].queryset = cartons  # Assign queryset properly
+            self.fields['carton'].label_from_instance = lambda obj: f"{obj.length}*{obj.width}*{obj.height} ({obj.type})"
+        else:
+            self.fields['carton'].queryset = Carton.objects.none()  # Default empty queryset
     
 class PackingForm(forms.Form):
     model = forms.ModelChoiceField(
@@ -130,7 +150,7 @@ class PackingForm(forms.Form):
             model_instance = Model.objects.get(id=model_id)
 
             self.fields['carton'].choices = [
-                (str(carton.id), f"{carton.length} -{carton.width} -{carton.height}") for carton in model_instance.cartons.all()
+                (str(carton.id), f"{carton.length}*{carton.width}*{carton.height} ({carton.type})") for carton in model_instance.cartons.all()
             ]
         else:
             # If no model is selected, set empty choices

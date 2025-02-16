@@ -66,10 +66,22 @@ class PDF(FPDF):
         
         # Auto-size columns to fit within the page width
         if col_widths is None:
-            max_table_width = self.w - 20  # Ensure table fits within the page
-            num_columns = len(headers)
-            max_col_width = max_table_width / num_columns  # Distribute width evenly
-            col_widths = [max_col_width] * num_columns  # Apply fixed column widths
+            column_widths = {
+                "كود الخامه": 20,
+                "اسم الخامه": 40,
+                "اللون": 40,
+                "عدد الاتواب": 20,
+                "الوزن": 20,
+                "التاريخ": 25,
+                "اسم المصبغة": 30,
+                "رقم الموديل": 30,
+                "نوع الحركه": 25,
+            }
+            col_widths = [column_widths.get(header, 30) for header in headers]  # Default width = 30
+            
+            # max_table_width = self.w - 20  # Ensure table fits within the page
+            # num_columns = len(headers)
+            # max_col_width = max_table_width / num_columns  # Distribute width evenly
         
         table_width = sum(col_widths)
         margin_x = (self.w - table_width) / 2
@@ -207,9 +219,9 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
 
             pdf.chapter_body([f"الموديل: {model_data['model']}"])
 
-            headers = ["قطع", "كراتين", "الكرتونة", "الموديل", "التاريخ"]
+            headers = ["كراتين", "مقاسات", "الكرتونة", "الموديل", "التاريخ"]
             table_data = [
-                [p['used_pieces'], f"{p['used_carton']} ({p['per_carton']})", p['carton'], p['model'], p['created_at']]
+                [p['used_carton'], p['sizes'], p['carton'], p['model'], p['created_at']]
                 for p in model_data["packings"]
             ]
 

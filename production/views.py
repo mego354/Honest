@@ -4,6 +4,8 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView, TemplateView
+from django.forms import modelformset_factory
+
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404, render
 from django.utils.timezone import datetime, now, localtime
@@ -466,7 +468,6 @@ class ProductionListingView(ListView):
         return context
 
 ###############################################################################################################################
-from django.forms import modelformset_factory
 class CartonCreateFormSetView(FormView):
     template_name = "production/carton_form_set.html"
     form_class = CartonForm
@@ -599,7 +600,7 @@ class PackingPieceUpdateView(UpdateView):
         model.update_available_carton()
 
         messages.success(self.request, "تم تعديل التعبئة بنجاح.")
-        return redirect(reverse_lazy("model_detail_view", args=[model.id]))
+        return redirect(reverse_lazy("packingpiece_edit", args=[packing_piece.id]))
 
 class PackingPieceDeleteView(DeleteView):
     model = Packing
