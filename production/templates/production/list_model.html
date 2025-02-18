@@ -287,6 +287,10 @@
                                         <td>{{ carton_usage.name }}</td>
                                         <td>{{ carton_usage.used_carton }}</td>
                                     </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="text-center">لا يوجد عناصر</td>
+                                    </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
