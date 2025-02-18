@@ -74,8 +74,10 @@ class PDF(FPDF):
                 "الوزن": 20,
                 "التاريخ": 25,
                 "اسم المصبغة": 30,
-                "رقم الموديل": 30,
+                "رقم الموديل": 40,
                 "نوع الحركه": 25,
+                "مقاسات": 45,
+                "الكراتين": 45,
             }
             col_widths = [column_widths.get(header, 30) for header in headers]  # Default width = 30
             
