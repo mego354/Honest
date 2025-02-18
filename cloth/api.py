@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -22,10 +23,21 @@ class PopulateModelsView(APIView):
         if not isinstance(data, dict):
             return Response({"error": "Invalid data format. Expected a dictionary."}, status=status.HTTP_400_BAD_REQUEST)
 
-        Fabric.objects.all().delete()
-        CutTransfer.objects.all().delete()
-        ReturnTransfer.objects.all().delete()
-        Statistics.objects.all().delete()
+        refresh = request.GET.get('refresh')
+        if refresh:
+            days = 2
+            today = datetime.today().date()
+            start_date = today - timedelta(days=days)
+
+            Fabric.objects.filter(date__gte=start_date).delete()
+            CutTransfer.objects.filter(date__gte=start_date).delete()
+            ReturnTransfer.objects.filter(date__gte=start_date).delete()
+            Statistics.objects.filter(date__gte=start_date).delete()
+        else:
+            Fabric.objects.all().delete()
+            CutTransfer.objects.all().delete()
+            ReturnTransfer.objects.all().delete()
+            Statistics.objects.all().delete()
 
         errors = {}
         results = {}
