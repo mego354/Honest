@@ -73,7 +73,7 @@
                 </div>
             {% endif %}
 
-            {% with usage=model.get_usage_percentage %}
+            {% with usage=model.get_model_usage %}
                 <!-- Overall Usage Progress Bar -->
                 <div dir="ltr" class="progress mb-2 position-relative" style="border: 1px solid blue; border-radius: 5px; height: 18px;">
                     <div class="progress-bar progress-bar-striped {{ usage.production_percent_style }}" 
@@ -122,9 +122,15 @@
                         {% if model.is_active %} نشط {% else %} غير نشط {% endif %}
                     </span>
                 </h5>
-                <button class="btn btn-sm btn-primary oped_details_btn" onclick="toggleDetails('{{ model.id }}')">
-                    <span id="chevron-text-{{ model.id }}">عرض التفاصيل</span> 
-                    <i id="chevron-icon-{{ model.id }}" class="fas fa-chevron-down"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center pb-3">
+                <button class="btn btn-sm btn-primary oped_details_btn" onclick="togglePackingDetails('{{ model.id }}')">
+                    <span id="chevron-packing-text-{{ model.id }}">عرض التعبئة</span> 
+                    <i id="chevron-packing-icon-{{ model.id }}" class="fas fa-chevron-down"></i>
+                </button>
+                <button class="btn btn-sm btn-primary oped_details_btn" onclick="toggleProductionDetails('{{ model.id }}')">
+                    <span id="chevron-production-text-{{ model.id }}">عرض الانتاج</span> 
+                    <i id="chevron-production-icon-{{ model.id }}" class="fas fa-chevron-down"></i>
                 </button>
             </div>
             <div class="d-flex justify-content-between align-items-center">
@@ -162,8 +168,8 @@
             </div>
 
             
-            <!-- تفاصيل الموديل -->
-            <div id="details-{{ model.id }}" class="model-details-toggle mt-3">
+            <!-- تفاصيل الانتاج -->
+            <div id="details-production-{{ model.id }}" class="model-details-toggle mt-3">
                 <div class="card">
                     <div class="card-body">
                         <!-- Usage Progress Bars for Each Type -->
@@ -187,12 +193,10 @@
                                 </div>
                             </div>
                         {% endfor %}
-                    {% endwith %}
 
-                    <h5 class="text-dark my-3">تفاصيل الموديل</h6>
+                    <h5 class="text-dark my-3 text-center">تفاصيل الانتاج</h5>
                         <div class="d-flex justify-content-between align-items-center pb-3">
-                            <a href="{% url 'packing_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn">عرض التعبئة</a>
-                            <a href="{% url 'production_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn">عرض الانتاج</a>
+                            <a href="{% url 'production_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn">عرض سجلات الانتاج</a>
 
                             <!-- Button to trigger the notes of production -->
                             <button class="btn btn-sm btn-primary oped_details_btn" onclick="openModal('customModal_{{ model.id }}')">ملاحظات <span class="oped_details_count">{{model.comments_count}}<span></button>
@@ -227,8 +231,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
             
                         <div class="table-responsive">
@@ -258,6 +260,43 @@
                     </div>
                 </div>
             </div>
+            <!-- نهاية تفاصيل الانتاج -->
+
+            <!-- تفاصيل التعبئة -->
+            <div id="details-packing-{{ model.id }}" class="model-details-toggle mt-3">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h5 class="text-dark my-3 text-center">تفاصيل التعبئة</h5>
+                        <div class="d-flex justify-content-between align-items-center pb-3">
+                            <a href="{% url 'packing_list_view' %}?model_number={{model.model_number}}" class="btn btn-sm btn-primary oped_details_btn">عرض سجلات التعبئة</a>
+                            {% comment %} <h6 class="text-dark my-3">اجمالي الكراتين : {{ model.get_total_available_carton }}</h6> {% endcomment %}
+                        </div>
+            
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>الكرتونة</th>
+                                        <th>الكمية المستخدمة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for carton_usage in usage.packaging_carton_usage %}
+                                    <tr>
+                                        <td>{{ carton_usage.name }}</td>
+                                        <td>{{ carton_usage.used_carton }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- نهاية تفاصيل التعبئة -->
+            {% endwith %}
+
         </div>
         {% endfor %}
     </div>
@@ -338,20 +377,36 @@
     });
 </script> {% endcomment %}
 <script>
-    function toggleDetails(modelId) {
-        let details = document.getElementById('details-' + modelId);
-        let icon = document.getElementById('chevron-icon-' + modelId);
-        let text = document.getElementById('chevron-text-' + modelId);
+    function toggleProductionDetails(modelId) {
+        let details = document.getElementById('details-production-' + modelId);
+        let icon = document.getElementById('chevron-production-icon-' + modelId);
+        let text = document.getElementById('chevron-production-text-' + modelId);
         if (details.style.display === 'none' || details.style.display === '') {
             details.style.display = 'block';
             icon.classList.remove('fa-chevron-down');
             icon.classList.add('fa-chevron-up');
-            text.innerHTML = "اخفاء التفاصيل";
+            text.innerHTML = "اخفاء الانتاج";
         } else {
             details.style.display = 'none';
             icon.classList.remove('fa-chevron-up');
             icon.classList.add('fa-chevron-down');
-            text.innerHTML = "عرض التفاصيل";
+            text.innerHTML = "عرض الانتاج";
+        }        
+    }
+    function togglePackingDetails(modelId) {
+        let details = document.getElementById('details-packing-' + modelId);
+        let icon = document.getElementById('chevron-packing-icon-' + modelId);
+        let text = document.getElementById('chevron-packing-text-' + modelId);
+        if (details.style.display === 'none' || details.style.display === '') {
+            details.style.display = 'block';
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+            text.innerHTML = "اخفاء التعبئة";
+        } else {
+            details.style.display = 'none';
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+            text.innerHTML = "عرض التعبئة";
         }        
     }
     function confirmArchive(event, archiveUrl, isArchive) {

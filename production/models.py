@@ -70,7 +70,7 @@ class Model(models.Model):
         return self.size_amounts.aggregate(total=Sum('amount'))['total'] or 0
     
     # Usage Percentage Calculation
-    def get_usage_percentage(self):
+    def get_model_usage(self):
         sizes = self.size_amounts.all()
         pieces = self.pieces.all()
         sizes_count = sizes.count()
@@ -92,6 +92,9 @@ class Model(models.Model):
         packaging_used_carton = self.get_total_used_cartons()
         packaging_percent = (packaging_used_carton / packaging_total_carton * 100) if packaging_total_carton else 0
 
+        # Calculate usage for each carton
+        carton_usage = self._calculate_carton_usage(self.cartons.all())
+
         return {
             "production_total_amount": int(total_amount),
             "production_used_amount": int(used_amount),
@@ -102,6 +105,7 @@ class Model(models.Model):
             "packaging_used_amount": int(packaging_used_carton),
             "packaging_percent": int(packaging_percent),
             "packaging_percent_style": self.get_percentage_style(packaging_percent),
+            "packaging_carton_usage": carton_usage,
         }
     
     def _calculate_type_usage(self, pieces, total_amount, pieces_count):
@@ -123,6 +127,18 @@ class Model(models.Model):
             })
         
         return type_usage
+
+    def _calculate_carton_usage(self, carton_models):
+        carton_usage = []
+        
+        for carton_model in carton_models:
+
+            carton_usage.append({
+                "name": str(carton_model),
+                "used_carton": carton_model.get_carton_usage(),
+            })
+        
+        return carton_usage
     
     def _get_empty_usage_stats(self):
         return {
