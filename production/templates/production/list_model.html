@@ -278,6 +278,7 @@
                                 <thead>
                                     <tr>
                                         <th>الكرتونة</th>
+                                        <th>المقاسات</th>
                                         <th>الكمية المستخدمة</th>
                                     </tr>
                                 </thead>
@@ -285,6 +286,7 @@
                                     {% for carton_usage in usage.packaging_carton_usage %}
                                     <tr>
                                         <td>{{ carton_usage.name }}</td>
+                                        <td>{{ carton_usage.comment }}</td>
                                         <td>{{ carton_usage.used_carton }}</td>
                                     </tr>
                                     {% empty %}

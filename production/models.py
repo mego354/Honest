@@ -135,6 +135,7 @@ class Model(models.Model):
 
             carton_usage.append({
                 "name": str(carton_model),
+                "comment": carton_model.comment,
                 "used_carton": carton_model.get_carton_usage(),
             })
         
