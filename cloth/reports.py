@@ -4,7 +4,6 @@ from fpdf import FPDF
 import arabic_reshaper
 from bidi.algorithm import get_display
 from django.utils.timezone import localtime, now
-from datetime import datetime, date
 
 def format_arabic_text(text):
     """
