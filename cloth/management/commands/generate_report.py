@@ -14,14 +14,14 @@ class Command(BaseCommand):
     help = "Generates the daily production report"
 
     def handle(self, *args, **kwargs):
-        if datetime.today().weekday() == 4:
-            self.stdout.write(self.style.WARNING("Task skipped: Today is Friday."))
-            return
+        # if datetime.today().weekday() == 4:
+        #     self.stdout.write(self.style.WARNING("Task skipped: Today is Friday."))
+        #     return
 
         self.stdout.write(self.style.NOTICE("Generating the daily production report..."))
 
         # Fetch recent operations
-        days = 1
+        days = 2
         recent_cloth_operations = get_recent_cloth_operations(days=days)
         producion_models = get_producion_models(days=days)
         packing_models = get_packing_models(days=days)
@@ -38,7 +38,7 @@ class Command(BaseCommand):
         if generated:
             self.stdout.write(self.style.SUCCESS(f"Report saved at {full_path}"))
             try:
-                send_email_with_attachment()
+                # send_email_with_attachment()
                 self.stdout.write(self.style.SUCCESS("Report Sent Successfully"))
             except:
                 self.stdout.write(self.style.NOTICE("Error Sending The Report"))

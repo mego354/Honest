@@ -66,7 +66,7 @@ def get_packing_models(days=1):
             "carton": Packing.carton,
             "sizes": Packing.carton.comment,
             "model": str(Packing.model),
-            "created_at": Packing.created_at.strftime("%p %I:%M %Y/%m/%d"),
+            "created_at": Packing.created_at.strftime("%Y/%m/%d"),
         })
 
 

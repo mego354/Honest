@@ -36,7 +36,7 @@ def get_recent_cloth_operations(days=1):
     }
     operation_key = {
         "كود الخامه": "fabric_code",
-        "اسم الخامه": "model_number",
+        "اسم الخامه": "fabric_name",
         "اللون": "color",
         "عدد الاتواب": "roll",
         "الوزن": "weight",

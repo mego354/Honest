@@ -167,6 +167,7 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
                 
                     for op_detail in op['operations']:
                         op_detail["كود الخامه"] = op_detail.get("كود الخامه", "------")
+                        # op_detail["اسم الخامه"] = op_detail.get("اسم الخامه", "------")
                         table_data.append(list(op_detail.values()))
                 else:
                     table_data.append(list(op['operations'][0].values()))
@@ -230,7 +231,7 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
 
             # Display total used cartons per model
             pdf.chapter_body(["إجمالي الكمية المستخدمة من الكراتين:"])
-            total_headers = ["الموديل", "إجمالي الكراتين المستخدمة"]
+            total_headers = ["الموديل", "إجمالي الكراتين"]
             total_data = [[model_data['model'], model_data["totals"]]]
 
             pdf.add_table(total_headers, total_data)
