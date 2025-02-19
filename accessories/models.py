@@ -64,7 +64,7 @@ class BagBaseModel(IDBaseModel):
     bag_width = models.CharField("مقاس الكيس (العرض)", max_length=255, null=True, blank=True)
     weight = models.FloatField("الوزن", null=True, blank=True)
     bags_per_kilo = models.IntegerField("عدد الاكياس في الكيلو", null=True, blank=True)
-    total_bags = models.IntegerField("عدد الاكياس", null=True, blank=True)
+    weight = models.IntegerField("عدد الاكياس", null=True, blank=True)
 
     class Meta:
         abstract = True

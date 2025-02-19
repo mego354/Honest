@@ -69,19 +69,19 @@ class ReturnSizerAdmin(admin.ModelAdmin):
 # Bag Models
 @admin.register(BagSupplies)
 class BagSuppliesAdmin(admin.ModelAdmin):
-    list_display = ["date", "supplier_name", "bag_length", "bag_width", "weight", "bags_per_kilo", "total_bags"]
+    list_display = ["date", "supplier_name", "bag_length", "bag_width", "weight", "bags_per_kilo", "weight"]
 
 @admin.register(BagStock)
 class BagStockAdmin(admin.ModelAdmin):
-    list_display = ["bag_length", "bag_width", "weight", "bags_per_kilo", "total_bags"]
+    list_display = ["bag_length", "bag_width", "weight", "bags_per_kilo", "weight"]
 
 @admin.register(PackagingBag)
 class PackagingBagAdmin(admin.ModelAdmin):
-    list_display = ["date", "factory", "bag_length", "bag_width", "weight", "total_bags"]
+    list_display = ["date", "factory", "bag_length", "bag_width", "weight", "weight"]
 
 @admin.register(ReturnBag)
 class ReturnBagAdmin(admin.ModelAdmin):
-    list_display = ["date", "bag_length", "bag_width", "weight", "total_bags"]
+    list_display = ["date", "bag_length", "bag_width", "weight", "weight"]
 
 # HangTag Models
 @admin.register(HangTagSupplies)

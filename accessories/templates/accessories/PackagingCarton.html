@@ -1,0 +1,119 @@
+{% extends "accessories/layout.html" %}
+{% load static %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'CartonSuppliesView' %}">HONEST ACCESSORIES</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "accessories/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "accessories/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+    <h2 class="section-title pt-4">سجل رصيد القماش</h2>
+    <form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
+        {% for filter_field in filter_fields %}
+        <div class="form-group mb-3">
+            <label for="filter_{{ forloop.counter }}" class="form-label">{{ filter_field.verbose_name }}</label>
+            <input type="text" id="filter_{{ forloop.counter }}" name="{{ filter_field.field_name }}" 
+                   placeholder="فلتر ب {{ filter_field.verbose_name }}" 
+                   class="form-control" 
+                   value="{{ filter_field.value }}">
+        </div>
+        {% endfor %}
+        
+        <div class="submit-container">
+            <button type="submit" class="btn btn-primary submit-btn">تنفيذ</button>
+        </div>
+    </form>
+             
+    <!-- Responsive Table -->
+    <button onclick="generatePDF()" class="btn btn-success mb-3">تحميل PDF</button>
+    <div style="overflow-y: auto; max-height: 70vh; position: relative;" class="table-responsive mb-4">
+        <table id="data-table" class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th style="position: sticky; top: 0;" >التاريخ</th>
+                    <th style="position: sticky; top: 0;" >المصنع</th>
+                    <th style="position: sticky; top: 0;" >رقم الموديل</th>
+                    <th style="position: sticky; top: 0;" >الطول</th>
+                    <th style="position: sticky; top: 0;" >العرض</th>
+                    <th style="position: sticky; top: 0;" >الارتفاع</th>
+                    <th style="position: sticky; top: 0;" >عدد الكرتون</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in models %}
+                <tr>
+                    <td>{{ model.date|date:"d/m/Y" }}</td>
+                    <td>{{ model.factory }}</td>
+                    <td>{{ model.model_number }}</td>
+                    <td>{{ model.length }}</td>
+                    <td>{{ model.width }}</td>
+                    <td>{{ model.height }}</td>
+                    <td>{{ model.carton_count }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">لا يوجد عناصر</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock body %}
+{% block script %}
+<script>
+    async function generatePDF() {
+        console.log("Generating PDF...");
+
+        const table = document.getElementById("data-table");
+        const tableData = [];
+        for (const row of table.querySelectorAll("tbody tr")) {
+            const rowData = [];
+            for (const cell of row.querySelectorAll("td")) {
+                rowData.push(cell.textContent.trim());
+            }
+            tableData.push(rowData);
+        }
+
+        if (!tableData.length) {
+            alert("No data available in the table.");
+            return;
+        }
+
+        // Variables dynamically rendered from Django
+        const columns = {{ columns|safe }};
+        const footer = "{{ update|safe }}";
+        
+        try {
+            const response = await fetch("{% url 'generate_pdf' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ data: tableData, columns, footer })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server responded with status ${response.status}`);
+            }
+
+            const result = await response.blob();
+            const pdfURL = URL.createObjectURL(result);
+            const link = document.createElement("a");
+            link.href = pdfURL;
+            link.download = "fabric_record.pdf";
+            link.click();
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+            alert("An error occurred while generating the PDF. Please try again.");
+        }
+    }
+</script>
+{% endblock script %}
