@@ -23,6 +23,7 @@ if Hosted:
 
 # Application definition
 INSTALLED_APPS = [
+    'accessories',
     'production',
     'cloth',
     'django.contrib.admin',
