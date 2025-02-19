@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block body %}
-    <h2 class="section-title pt-4">سجل رصيد القماش</h2>
+    <h2 class="section-title pt-4">سجل رصيد الكرتون</h2>
     <form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
         {% for filter_field in filter_fields %}
         <div class="form-group mb-3">
@@ -55,7 +55,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="5" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>

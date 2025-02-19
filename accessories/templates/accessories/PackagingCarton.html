@@ -14,8 +14,8 @@
 {% endblock %}
 
 {% block body %}
-    <h2 class="section-title pt-4">سجل رصيد القماش</h2>
-    <form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
+<h2 class="section-title pt-4">سجل تعبئة الكرتون</h2>
+<form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
         {% for filter_field in filter_fields %}
         <div class="form-group mb-3">
             <label for="filter_{{ forloop.counter }}" class="form-label">{{ filter_field.verbose_name }}</label>
