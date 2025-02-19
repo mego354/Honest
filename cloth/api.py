@@ -70,7 +70,7 @@ class PopulateModelsView(APIView):
 
         refresh = request.GET.get('refresh')
         if refresh:
-            days = 2
+            days = 3
             today = datetime.today().date()
             start_date = today - timedelta(days=days)
 
