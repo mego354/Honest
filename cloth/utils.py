@@ -8,7 +8,7 @@ def parse_date(date_str):
     try:
         if not date_str or date_str.strip() == "":
             return None  # Return None if the string is empty
-        normalized_date = date_str.strip().replace("\\", "/")  # Remove spaces & fix slashes
+        normalized_date = date_str.strip().replace("\\", "/")
         return datetime.strptime(normalized_date, "%d/%m/%Y").date()
     except ValueError:
         return None  # Handle invalid date formats safely
