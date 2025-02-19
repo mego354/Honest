@@ -8,5 +8,6 @@ urlpatterns = [
     # path('', FabricView.as_view(), name='fabric_view'),
     path('cloth/', include('cloth.urls')),
     path('production/', include('production.urls')),
+    path('accessories/', include('accessories.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -14,7 +14,7 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 Hosted = True
-# Hosted = False 
+Hosted = False 
 if Hosted:
     DEBUG = False
     ALLOWED_HOSTS = ['honestfabrics.pythonanywhere.com', 'www.honestfactory.top']
@@ -23,6 +23,7 @@ if Hosted:
 
 # Application definition
 INSTALLED_APPS = [
+    'accessories',
     'production',
     'cloth',
     'django.contrib.admin',
