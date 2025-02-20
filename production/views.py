@@ -352,6 +352,12 @@ def load_sizes(request):
     sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount', 'Packing_per_carton')
     return JsonResponse({'sizes': list(sizes)})
 
+def load_model_Pieces_types(request):
+    model_id = request.GET.get('model_id')
+    model = Model.objects.get(id=model_id)
+    types = set(model.pieces.values_list("type", flat=True))
+    return JsonResponse({'types': list(types)})
+
 def load_pieces(request):
     size_amount_id = request.GET.get('size_amount_id')
     size = SizeAmount.objects.get(pk=size_amount_id)

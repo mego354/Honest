@@ -35,6 +35,7 @@ urlpatterns = [
     path('packing/<int:pk>/delete/', PackingPieceDeleteView.as_view(), name='packingpiece_delete'),
 
     path('load-sizes/', load_sizes, name='load_sizes'),
+    path('load-model-piece-types/', load_model_Pieces_types, name='load_model_piece_types'),
     path('load-pieces/', load_pieces, name='load_pieces'),
     path('load-carton/', load_carton, name='load_cartons'),
 ]
