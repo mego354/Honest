@@ -318,7 +318,6 @@ class ProductionFormView(FormView):
     form_class = ProductionForm
 
     def form_valid(self, form):
-
         model = form.cleaned_data['model']
         piece_type = form.cleaned_data['piece']
         factory = form.cleaned_data['factory']
@@ -332,6 +331,7 @@ class ProductionFormView(FormView):
                 size_id = key.replace("size_quantity_", "")
                 size = SizeAmount.objects.get(pk=size_id)
 
+                # Find the piece for the current size and piece type
                 piece = pieces.filter(size=size.size).first()
                 comment_key = f"comment_{size_id}"
                 comment = self.request.POST.get(comment_key, "")
@@ -339,14 +339,13 @@ class ProductionFormView(FormView):
                 try:
                     quantity = int(value)
 
-                    if quantity > 0:  # Only save if quantity is greater than zero
-                        for piece in pieces:
-                            ProductionPiece.objects.create(
-                                piece=piece,
-                                used_amount=quantity,
-                                factory=factory,
-                                comment=comment
-                            )
+                    if quantity > 0 and piece:  # Only save if quantity is greater than zero and piece exists
+                        ProductionPiece.objects.create(
+                            piece=piece,
+                            used_amount=quantity,
+                            factory=factory,
+                            comment=comment
+                        )
                 except (SizeAmount.DoesNotExist, ValueError):
                     messages.error(self.request, f"Invalid size selection or quantity for size ID {size_id}")
 
@@ -355,8 +354,7 @@ class ProductionFormView(FormView):
         model.save()
 
         messages.success(self.request, "تمت إضافة الانتاج بنجاح.")
-        return redirect(reverse_lazy("production_form"))
-    
+        return redirect(reverse_lazy("production_form"))    
     
     def form_invalid(self, form):
         messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
