@@ -36,7 +36,6 @@ class ProductionForm(forms.Form):
     model = forms.ModelChoiceField(
         queryset=Model.objects.filter(is_archive=False),
         label="اختر الموديل",
-        # widget=forms.Select(attrs={'class': 'form-control'})
         widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
     )
 
@@ -61,13 +60,12 @@ class ProductionForm(forms.Form):
             model_instance = Model.objects.get(id=model_id)
 
             # Populate piece choices based on the model
-            self.fields['piece'].choices = set([
-                piece.type for piece in model_instance.pieces.all()
-            ])
+            piece_types = set([piece.type for piece in model_instance.pieces.all()])
+            self.fields['piece'].choices = [(piece_type, piece_type) for piece_type in piece_types]
         else:
             # If no model is selected, set empty choices
             self.fields['piece'].choices = [("", "---------")]
-
+            
 ###############################################################################################################################
 class PackingPieceForm(forms.ModelForm):
     class Meta:
