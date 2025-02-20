@@ -36,38 +36,19 @@ class ProductionForm(forms.Form):
     model = forms.ModelChoiceField(
         queryset=Model.objects.filter(is_archive=False),
         label="اختر الموديل",
-        # widget=forms.Select(attrs={'class': 'form-control'})
         widget=forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'})
-    )
-
-    size_amount = forms.ChoiceField(
-        label="اختر المقاس",
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     piece = forms.ChoiceField(
         label="اختر القطعة",
-        required=True,
+        required=False,
         widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
-    used_amount = forms.IntegerField(
-        label="الكمية المراد استخدامها",
-        min_value=1,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'})
     )
 
     factory = forms.CharField(
         label="اسم المصنع",
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-
-    comment = forms.CharField(
-        label="الملاحظات",
-        required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control'})
     )
 
     def __init__(self, *args, **kwargs):
@@ -78,20 +59,13 @@ class ProductionForm(forms.Form):
             model_id = self.data.get('model')
             model_instance = Model.objects.get(id=model_id)
 
-            # Populate size_amount choices based on the model
-            self.fields['size_amount'].choices = [
-                (str(size.id), size.size) for size in model_instance.size_amounts.all()
-            ]
-
             # Populate piece choices based on the model
-            self.fields['piece'].choices = [
-                (str(piece.id), piece.type) for piece in model_instance.pieces.all()
-            ]
+            piece_types = set([piece.type for piece in model_instance.pieces.all()])
+            self.fields['piece'].choices = [(piece_type, piece_type) for piece_type in piece_types]
         else:
             # If no model is selected, set empty choices
-            self.fields['size_amount'].choices = [("", "---------")]
             self.fields['piece'].choices = [("", "---------")]
-
+            
 ###############################################################################################################################
 class PackingPieceForm(forms.ModelForm):
     class Meta:

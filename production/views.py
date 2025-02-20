@@ -317,40 +317,60 @@ class ProductionFormView(FormView):
     template_name = "production/production_form.html"
     form_class = ProductionForm
 
-            
     def form_valid(self, form):
-        piece_id = form.cleaned_data['piece']
-        used_amount = form.cleaned_data['used_amount']
+        model = form.cleaned_data['model']
+        piece_type = form.cleaned_data['piece']
         factory = form.cleaned_data['factory']
-        comment = form.cleaned_data['comment']
 
-        self.piece_instance = Piece.objects.get(id=piece_id)
-        ProductionPiece.objects.create(
-            piece=self.piece_instance,
-            used_amount=used_amount,
-            factory=factory,
-            comment=comment
-        )
+        # Get all pieces of the selected type for the model
+        pieces = Piece.objects.filter(model=model, type=piece_type)
 
-        model = self.piece_instance.model
-        model.ended_at = localtime(now())
+        # Handling the dynamically added size quantities and comments
+        for key, value in self.request.POST.items():
+            if key.startswith("size_quantity_"):  # Checking for size input fields
+                size_id = key.replace("size_quantity_", "")
+                size = SizeAmount.objects.get(pk=size_id)
+
+                # Find the piece for the current size and piece type
+                piece = pieces.filter(size=size.size).first()
+                comment_key = f"comment_{size_id}"
+                comment = self.request.POST.get(comment_key, "")
+
+                try:
+                    quantity = int(value)
+
+                    if quantity > 0 and piece:  # Only save if quantity is greater than zero and piece exists
+                        ProductionPiece.objects.create(
+                            piece=piece,
+                            used_amount=quantity,
+                            factory=factory,
+                            comment=comment
+                        )
+                except (SizeAmount.DoesNotExist, ValueError):
+                    messages.error(self.request, f"Invalid size selection or quantity for size ID {size_id}")
+
+        # Update the model timestamp
+        model.ended_at = now()
         model.save()
 
-        return self.get_success_url()
-
+        messages.success(self.request, "تمت إضافة الانتاج بنجاح.")
+        return redirect(reverse_lazy("production_form"))    
+    
     def form_invalid(self, form):
         messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
         return self.render_to_response(self.get_context_data(form=form))
-
-    def get_success_url(self):
-        messages.success(self.request, "تمت إضافة الانتاج بنجاح.")
-        return redirect(reverse_lazy("production_form"))
 
 
 def load_sizes(request):
     model_id = request.GET.get('model_id')
     sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount', 'Packing_per_carton')
     return JsonResponse({'sizes': list(sizes)})
+
+def load_model_Pieces_types(request):
+    model_id = request.GET.get('model_id')
+    model = Model.objects.get(id=model_id)
+    types = set(model.pieces.values_list("type", flat=True))
+    return JsonResponse({'types': list(types)})
 
 def load_pieces(request):
     size_amount_id = request.GET.get('size_amount_id')
