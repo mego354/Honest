@@ -586,33 +586,38 @@ class CartonDeleteView(DeleteView):
         return reverse_lazy("model_detail_view", args=[model.id])
 
 ###############################################################################################################################
-class PackingFormView(FormView):
     template_name = "production/packing_form.html"
     form_class = PackingForm
 
             
     def form_valid(self, form):
         model_instance = form.cleaned_data['model']
-        carton_id = form.cleaned_data['carton']
-        used_carton = form.cleaned_data['used_carton']
 
-        carton_instance = Carton.objects.get(id=carton_id)
-        Packing.objects.create(
-            model=model_instance,
-            carton=carton_instance,
-            used_carton=used_carton,
-        )
+        # Handling the dynamically added carton and quantities
+        for key, value in self.request.POST.items():
+            if key.startswith("carton_quantity_"):  # Checking for carton input fields
+                carton_id = key.replace("carton_quantity_", "")
+                carton_instance = Carton.objects.get(pk=carton_id)
 
-        model_instance.update_available_carton()
-        return self.get_success_url()
+                # Find the piece for the current size and piece type
+                amount_key = f"carton_quantity_{carton_id}"
+                amount = self.request.POST.get(amount_key, "")
+                used_carton = int(amount)
 
+                Packing.objects.create(
+                    model=model_instance,
+                    carton=carton_instance,
+                    used_carton=used_carton,
+                )
+
+
+        messages.success(self.request, "تمت إضافة التعبئة بنجاح.")
+        return redirect(reverse_lazy("production_form"))    
+    
     def form_invalid(self, form):
         messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
         return self.render_to_response(self.get_context_data(form=form))
 
-    def get_success_url(self):
-        messages.success(self.request, "تمت إضافة التعبئة بنجاح.")
-        return redirect(reverse_lazy("packing_form"))
 
 class PackingPieceUpdateView(UpdateView):
     model = Packing
