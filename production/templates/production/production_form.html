@@ -155,64 +155,64 @@
                     console.error("Error fetching sizes:", error); // Debugging: Log any errors
                 });
 
-                fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
-                .then(response => response.json())
-                .then(data => {
-                    const forms_container = document.getElementById('forms_container');
-                    forms_container.innerHTML = ''; // تنظيف الحاوية قبل إضافة حقول جديدة
-            
-                    if (data.sizes && data.sizes.length > 0) {
-                        data.sizes.forEach(size => {
-                            const formGroup = document.createElement("div");
-                            formGroup.classList.add("row", "mb-2");
-            
-                            // إنشاء عنصر select غير قابل للتحرير
-                            const selectCol = document.createElement("div");
-                            selectCol.classList.add("col");
-                            const select = document.createElement("select");
-                            select.classList.add("form-control");
-                            select.disabled = true;
-                            select.innerHTML = `<option value="${size.id}">${size.size}</option>`;
-                            selectCol.appendChild(select);
-            
-                            // إنشاء input number
-                            const inputCol = document.createElement("div");
-                            inputCol.classList.add("col");
-                            const input = document.createElement("input");
-                            input.type = "number";
-                            input.classList.add("form-control");
-                            input.min = 0;
-                            input.value = 0;
-                            input.name = `size_quantity_${size.id}`;
-                            input.required = true;
-                            inputCol.appendChild(input);
+            fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
+            .then(response => response.json())
+            .then(data => {
+                const forms_container = document.getElementById('forms_container');
+                forms_container.innerHTML = ''; // تنظيف الحاوية قبل إضافة حقول جديدة
+        
+                if (data.sizes && data.sizes.length > 0) {
+                    data.sizes.forEach(size => {
+                        const formGroup = document.createElement("div");
+                        formGroup.classList.add("row", "mb-2");
+        
+                        // إنشاء عنصر select غير قابل للتحرير
+                        const selectCol = document.createElement("div");
+                        selectCol.classList.add("col");
+                        const select = document.createElement("select");
+                        select.classList.add("form-control");
+                        select.disabled = true;
+                        select.innerHTML = `<option value="${size.id}">${size.size}</option>`;
+                        selectCol.appendChild(select);
+        
+                        // إنشاء input number
+                        const inputCol = document.createElement("div");
+                        inputCol.classList.add("col");
+                        const input = document.createElement("input");
+                        input.type = "number";
+                        input.classList.add("form-control");
+                        input.min = 0;
+                        input.value = 0;
+                        input.name = `size_quantity_${size.id}`;
+                        input.required = true;
+                        inputCol.appendChild(input);
 
-                            // إنشاء input comment
-                            const commentCol = document.createElement("div");
-                            commentCol.classList.add("col");
-                            const comment_input = document.createElement("input");
-                            comment_input.classList.add("form-control");
-                            comment_input.name = `comment_${size.id}`;
-                            comment_input.required = false;
-                            comment_input.placeholder = 'المقاسات';
-                            commentCol.appendChild(comment_input);
-            
-                            // إضافة العناصر إلى النموذج
-                            formGroup.appendChild(selectCol);
-                            formGroup.appendChild(inputCol);
-                            formGroup.appendChild(commentCol);
-                            forms_container.appendChild(formGroup);
-                        });
-                    } else {
-                        console.warn("No sizes found for the selected model.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching sizes:", error);
-                });
-
-
+                        // إنشاء input comment
+                        const commentCol = document.createElement("div");
+                        commentCol.classList.add("col");
+                        const comment_input = document.createElement("input");
+                        comment_input.classList.add("form-control");
+                        comment_input.name = `comment_${size.id}`;
+                        comment_input.required = false;
+                        comment_input.placeholder = 'المقاسات';
+                        commentCol.appendChild(comment_input);
+        
+                        // إضافة العناصر إلى النموذج
+                        formGroup.appendChild(selectCol);
+                        formGroup.appendChild(inputCol);
+                        formGroup.appendChild(commentCol);
+                        forms_container.appendChild(formGroup);
+                    });
+                } else {
+                    console.warn("No sizes found for the selected model.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching sizes:", error);
             });
+
+
+        });
     });
     
 </script>

@@ -29,19 +29,11 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-2">
-                <div class="col">
-                    {{ form.carton.label_tag }}
-                    {{ form.carton }}
-                </div>
+            <div id='forms_container'>
             </div>
-            <div class="row mb-2">
-                <div class="col">
-                    {{ form.used_carton.label_tag }}
-                    {{ form.used_carton }}
-                </div>
-            </div>
+            
         </div>
+
         <button type="submit" class="btn btn-primary w-100">حفظ الطلب</button>
     </form>
 </div>
@@ -123,7 +115,7 @@
         // Initialize the searchable dropdown for the model field
         createSearchableDropdown('model-search', 'model-dropdown', '{{ form.model.auto_id }}');
     
-        // Dynamic loading of sizes and pieces based on model and size selection
+        // Dynamic loading of cartons and pieces based on model and carton selection
         document.getElementById('{{ form.model.auto_id }}').addEventListener('change', function () {
             if (!this.value) {
                 // If the model is invalid, reset dependent fields
@@ -136,19 +128,46 @@
             fetch(`{% url 'load_cartons' %}?model_id=${this.value}`)
                 .then(response => response.json())
                 .then(data => {
-                    {% comment %} console.log("cartons Data:", data); // Debugging: Log the response {% endcomment %}
-                    const cartonField = document.getElementById('{{ form.carton.auto_id }}');
-                    cartonField.innerHTML = '<option value="">اختر الكرتونة</option>';
+                    const forms_container = document.getElementById('forms_container');
+                    forms_container.innerHTML = ''; // تنظيف الحاوية قبل إضافة حقول جديدة
+
                     if (data.cartons && data.cartons.length > 0) {
                         data.cartons.forEach(carton => {
-                            cartonField.innerHTML += `<option value="${carton.id}">${carton.length}*${carton.width}*${carton.height} (${carton.type})</option>`;
+                            const formGroup = document.createElement("div");
+                            formGroup.classList.add("row", "mb-2");
+            
+                            // إنشاء عنصر select غير قابل للتحرير
+                            const selectCol = document.createElement("div");
+                            selectCol.classList.add("col");
+                            const select = document.createElement("select");
+                            select.classList.add("form-control");
+                            select.disabled = true;
+                            select.innerHTML = `<option value="${carton.id}">${carton.length}*${carton.width}*${carton.height} (${carton.type})</option>`;
+                            selectCol.appendChild(select);
+            
+                            // إنشاء input number
+                            const inputCol = document.createElement("div");
+                            inputCol.classList.add("col");
+                            const input = document.createElement("input");
+                            input.type = "number";
+                            input.classList.add("form-control");
+                            input.min = 0;
+                            input.value = 0;
+                            input.name = `carton_quantity_${carton.id}`;
+                            input.required = true;
+                            inputCol.appendChild(input);
+
+                        // إضافة العناصر إلى النموذج
+                        formGroup.appendChild(selectCol);
+                        formGroup.appendChild(inputCol);
+                        forms_container.appendChild(formGroup);
                         });
                     } else {
-                        console.warn("No cartonس found for the selected model."); // Debugging: Log a warning
+                        console.warn("No carton found for the selected model."); // Debugging: Log a warning
                     }
                 })
                 .catch(error => {
-                    console.error("Error fetching sizes:", error); // Debugging: Log any errors
+                    console.error("Error fetching cartons:", error); // Debugging: Log any errors
                 });
                 
 
