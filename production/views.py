@@ -612,7 +612,7 @@ class PackingFormView(FormView):
 
 
         messages.success(self.request, "تمت إضافة التعبئة بنجاح.")
-        return redirect(reverse_lazy("production_form"))    
+        return redirect(reverse_lazy("packing_form"))    
     
     def form_invalid(self, form):
         messages.error(self.request, "هنالك عطل في النموذج, يرجي اصلاحه و المحاولة مرة اخري")
