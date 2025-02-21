@@ -586,9 +586,9 @@ class CartonDeleteView(DeleteView):
         return reverse_lazy("model_detail_view", args=[model.id])
 
 ###############################################################################################################################
+class PackingFormView(FormView):
     template_name = "production/packing_form.html"
     form_class = PackingForm
-
             
     def form_valid(self, form):
         model_instance = form.cleaned_data['model']
