@@ -15,7 +15,7 @@
 {% block body %}
 <h2 class="section-title pt-4">اضافة للتعبئة</h2>
 <div id="order-form-wrapper" class="container py-4">
-    <form method="post" id="order-form" class="mb-4 p-4 pt-0">
+    <form method="post" id="order-form" class="mb-4 p-1 pt-0">
         {% csrf_token %}
         <div class="container border rounded p-3 mb-3">
             <h3 class="section-title border-bottom-5 mb-2">اختر القطعة والكمية</h3>
@@ -138,7 +138,7 @@
             
                             // إنشاء عنصر select غير قابل للتحرير
                             const selectCol = document.createElement("div");
-                            selectCol.classList.add("col");
+                            selectCol.classList.add("col-8");
                             const select = document.createElement("select");
                             select.classList.add("form-control");
                             select.disabled = true;
@@ -147,7 +147,7 @@
             
                             // إنشاء input number
                             const inputCol = document.createElement("div");
-                            inputCol.classList.add("col");
+                            inputCol.classList.add("col-4");
                             const input = document.createElement("input");
                             input.type = "number";
                             input.classList.add("form-control");

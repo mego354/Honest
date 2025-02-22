@@ -23,39 +23,6 @@ def parse_date(date_str):
     except ValueError:
         return None  # Handle invalid date formats safely
 
-# Helper function to update or create a model instance
-def update_or_create_instance(model, unique_fields, row, serializer_class):
-    try:
-        instance = None
-
-        # Ensure required unique fields are present in the input
-        filter_criteria = {field: row.get(field) for field in unique_fields if row.get(field)}
-
-        if filter_criteria:
-            try:
-                instance = model.objects.get(**filter_criteria)
-            except model.DoesNotExist:
-                instance = None
-            except model.MultipleObjectsReturned:
-                logging.warning(f"Multiple records found for {model.__name__} with criteria {filter_criteria}. Using the first one.")
-                instance = model.objects.filter(**filter_criteria).first()
-
-        # Serialize & validate data
-        serializer = serializer_class(instance, data=row, partial=True) if instance else serializer_class(data=row)
-
-        if serializer.is_valid():
-            saved_instance = serializer.save()
-            return {"id": saved_instance.id, "message": "Updated" if instance else "Created"}
-        else:
-            return {"errors": serializer.errors}
-
-    except IntegrityError as e:
-        logging.error(f"Integrity error in {model.__name__}: {e}")
-        return {"error": str(e)}
-    except Exception as e:
-        logging.error(f"Unexpected error in {model.__name__}: {e}")
-        return {"error": str(e)}
-
 class PopulateModelsView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
@@ -104,35 +71,75 @@ class PopulateModelsView(APIView):
 
         # Process Fabric data
         for row in data.get('fabric_data', []):
-            result = update_or_create_instance(Fabric, ['fabric_code'], row, FabricSerializer)
-            if isinstance(result, dict) and 'errors' in result:
-                errors['fabric'].append(result)
-            else:
-                results['fabric'].append(result)
+            instance = Fabric.objects.filter(fabric_code=row['fabric_code']).first()
+            try:
+                if instance:
+                    # Update the existing instance with new data
+                    for field, value in row.items():
+                        setattr(instance, field, value)
+                    instance.save()
+                else:
+                    # Create a new instance if it doesn't exist
+                    row['id'] = None
+                    instance = Fabric.objects.create(**row)
+
+
+                results['fabric'].append({'updated': instance.fabric_code})
+            except Exception as e:
+                errors['fabric'].append({'failure': e})
 
         # Process CutTransfer data
         for row in data.get('cut_data', []):
-            result = update_or_create_instance(CutTransfer, ['fabric_code', 'model_number'], row, CutTransferSerializer)
-            if isinstance(result, dict) and 'errors' in result:
-                errors['cut_transfer'].append(result)
-            else:
-                results['cut_transfer'].append(result)
+            instance = CutTransfer.objects.filter(fabric_code=row['fabric_code'], model_number=row['model_number']).first()
+            try:
+                if instance:
+                    # Update the existing instance with new data
+                    for field, value in row.items():
+                        setattr(instance, field, value)
+                    instance.save()
+                else:
+                    # Create a new instance if it doesn't exist
+                    row['id'] = None
+                    instance = CutTransfer.objects.create(**row)
+
+                results['cut_transfer'].append({'updated': f"{instance.fabric_code} - {instance.model_number}"})
+            except Exception as e:
+                errors['cut_transfer'].append({'failure': e})
 
         # Process ReturnTransfer data
         for row in data.get('return_data', []):
-            result = update_or_create_instance(ReturnTransfer, ['fabric_code', 'model_number'], row, ReturnTransferSerializer)
-            if isinstance(result, dict) and 'errors' in result:
-                errors['return_transfer'].append(result)
-            else:
-                results['return_transfer'].append(result)
+            instance = ReturnTransfer.objects.filter(fabric_code=row['fabric_code'], model_number=row['model_number']).first()
+            try:
+                if instance:
+                    # Update the existing instance with new data
+                    for field, value in row.items():
+                        setattr(instance, field, value)
+                    instance.save()
+                else:
+                    # Create a new instance if it doesn't exist
+                    row['id'] = None
+                    instance = ReturnTransfer.objects.create(**row)
+
+                results['return_transfer'].append({'updated': f"{instance.fabric_code} - {instance.model_number}"})
+            except Exception as e:
+                errors['return_transfer'].append({'failure': e})
 
         # Process Statistics data
         for row in data.get('statistics_data', []):
-            result = update_or_create_instance(Statistics, [], row, StatisticsSerializer)
-            if isinstance(result, dict) and 'errors' in result:
-                errors['statistics'].append(result)
-            else:
-                results['statistics'].append(result)
+            instance = Statistics.objects.filter(id=row['id']).first()
+            try:
+                if instance:
+                    # Update the existing instance with new data
+                    for field, value in row.items():
+                        setattr(instance, field, value)
+                    instance.save()
+                else:
+                    # Create a new instance if it doesn't exist
+                    instance = Statistics.objects.create(**row)
+
+                results['statistics'].append({'updated': f"{instance.id} - {instance.movement_type}"})
+            except Exception as e:
+                errors['statistics'].append({'failure': e})
 
         if any(errors[key] for key in errors):
             logging.error("Errors during processing: %s", errors)

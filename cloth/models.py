@@ -1,7 +1,7 @@
 from django.db import models
 
 class Base(models.Model):
-    id = models.IntegerField(primary_key=True, verbose_name="الرمز")
+    id = models.AutoField(primary_key=True, verbose_name="الرمز")
     fabric_code = models.CharField(max_length=100, verbose_name="كود الخامه", db_index=True, null=True, blank=True)
     fabric_name = models.CharField(max_length=200, verbose_name="اسم الخامه", null=True, blank=True)
     color = models.CharField(max_length=100, verbose_name="اللون", null=True, blank=True)
