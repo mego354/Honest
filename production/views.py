@@ -371,15 +371,6 @@ def load_model_Pieces_types(request):
     model = Model.objects.get(id=model_id)
     types = set(model.pieces.values_list("type", flat=True))
     return JsonResponse({'types': list(types)})
-# def load_model_Pieces_types(request):
-#     model_id = request.GET.get('model_id')
-#     model = Model.objects.get(id=model_id)
-#     types = set(model.pieces.values_list("type", flat=True))
-#     types_avail_amounts = []
-#     for type in types:
-#         piece_model = Piece.objects.filter(model=model, type=type).first()
-#         types_avail_amounts.append({"type": type, "available_amount": piece_model.available_amount})
-#     return JsonResponse({'types': list(types)})
 
 def load_pieces(request):
     size_amount_id = request.GET.get('size_amount_id')
