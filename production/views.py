@@ -372,12 +372,7 @@ def load_sizes(request):
         model = Model.objects.get(pk=model_id)
         typed_sizes = []
         for size in sizes:
-            print(size['size'])
             piece = Piece.objects.get(model=model, size=size['size'], type__icontains=type_name)
-            print(repr(type_name))  # لعرض القيم مع الفواصل والمسافات إن وجدت
-            print(repr(piece.type))
-            print(type(piece.type), type(type_name))
-            print(piece.type == str(type_name))
             typed_sizes.append({
                 "size": size,
                 "type_available_amount": piece.available_amount,
