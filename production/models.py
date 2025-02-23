@@ -57,6 +57,8 @@ class Model(models.Model):
         super().save(*args, **kwargs)
     
     def get_total_available_carton(self):
+        # if self.model_number == '36DG':
+        #     print(SizeAmount.objects.filter(model=self).values_list('amount', 'Packing_per_carton'))
         return int(SizeAmount.objects.filter(model=self).aggregate(
             total_cartons=Sum(Cast(F('amount'), FloatField()) / Cast(F('Packing_per_carton'), FloatField()))
         )['total_cartons'] or 0)
