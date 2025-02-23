@@ -364,7 +364,25 @@ class ProductionFormView(FormView):
 def load_sizes(request):
     model_id = request.GET.get('model_id')
     sizes = SizeAmount.objects.filter(model_id=model_id).values('id', 'size', 'amount', 'Packing_per_carton')
-    return JsonResponse({'sizes': list(sizes)})
+
+    type_name = request.GET.get('type')
+    if not type_name:
+        return JsonResponse({'sizes': list(sizes)})
+    else:
+        model = Model.objects.get(pk=model_id)
+        typed_sizes = []
+        for size in sizes:
+            print(size['size'])
+            piece = Piece.objects.get(model=model, size=size['size'], type__icontains=type_name)
+            print(repr(type_name))  # لعرض القيم مع الفواصل والمسافات إن وجدت
+            print(repr(piece.type))
+            print(type(piece.type), type(type_name))
+            print(piece.type == str(type_name))
+            typed_sizes.append({
+                "size": size,
+                "type_available_amount": piece.available_amount,
+            })
+        return JsonResponse({'sizes': typed_sizes})
 
 def load_model_Pieces_types(request):
     model_id = request.GET.get('model_id')

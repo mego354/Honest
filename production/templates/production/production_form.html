@@ -155,7 +155,12 @@
                     console.error("Error fetching sizes:", error); // Debugging: Log any errors
                 });
 
-            fetch(`{% url 'load_sizes' %}?model_id=${this.value}`)
+
+        });
+        document.getElementById('{{ form.piece.auto_id }}').addEventListener('change', function () {
+            model_id = document.getElementById('{{ form.model.auto_id }}').value
+            
+            fetch(`{% url 'load_sizes' %}?model_id=${model_id}&type=${this.value}`)
             .then(response => response.json())
             .then(data => {
                 const forms_container = document.getElementById('forms_container');
@@ -172,7 +177,7 @@
                         const select = document.createElement("select");
                         select.classList.add("form-control");
                         select.disabled = true;
-                        select.innerHTML = `<option value="${size.id}">${size.size}</option>`;
+                        select.innerHTML = `<option value="${size.size.id}">${size.size.size} (المتبقي ${size.type_available_amount})</option>`;
                         selectCol.appendChild(select);
         
                         // إنشاء input number
@@ -183,7 +188,7 @@
                         input.classList.add("form-control");
                         input.min = 0;
                         input.value = 0;
-                        input.name = `size_quantity_${size.id}`;
+                        input.name = `size_quantity_${size.size.id}`;
                         input.required = true;
                         inputCol.appendChild(input);
 
@@ -192,7 +197,7 @@
                         commentCol.classList.add("col");
                         const comment_input = document.createElement("input");
                         comment_input.classList.add("form-control");
-                        comment_input.name = `comment_${size.id}`;
+                        comment_input.name = `comment_${size.size.id}`;
                         comment_input.required = false;
                         comment_input.placeholder = 'الملاحظات';
                         commentCol.appendChild(comment_input);
@@ -213,6 +218,7 @@
 
 
         });
+
     });
     
 </script>
