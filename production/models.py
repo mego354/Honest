@@ -8,11 +8,6 @@ from django.db.models import Sum
 from django.utils.timezone import now
 
 
-from django.db import models
-from django.utils.timezone import now
-from django.db.models import Sum, F, FloatField
-from django.db.models.functions import Cast
-
 class Model(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="الرمز")
     model_number = models.CharField(max_length=50, verbose_name="رقم الموديل", unique=True)
@@ -59,10 +54,15 @@ class Model(models.Model):
     def get_total_available_carton(self):
         # if self.model_number == '36DG':
         #     print(SizeAmount.objects.filter(model=self).values_list('amount', 'Packing_per_carton'))
-        return int(SizeAmount.objects.filter(model=self).aggregate(
-            total_cartons=Sum(Cast(F('amount'), FloatField()) / Cast(F('Packing_per_carton'), FloatField()))
-        )['total_cartons'] or 0)
-    
+        # return int(SizeAmount.objects.filter(model=self, Packing_per_carton__gt=0).aggregate(
+        #     total_cartons=Sum(Cast(F('amount'), FloatField()) / Cast(F('Packing_per_carton'), FloatField()))
+        # )['total_cartons'] or 0)
+        total = 0
+        for item in SizeAmount.objects.filter(model=self):
+            total += float(item.amount) / float(item.Packing_per_carton)
+        return int(total)
+
+
     def get_total_used_cartons(self):
         return Packing.objects.filter(model=self).aggregate(
             used_cartons=Sum('used_carton')
