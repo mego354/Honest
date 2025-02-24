@@ -157,33 +157,33 @@ class ReturnHangerView(FilterableListView):
     template_name = "accessories/ReturnHanger.html"
     model = ReturnHanger
     filter_fields = ['fabric_code', 'model_number']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
+    columns = ["المقاس","اللون","عدد السيزر","اللون","اللون","الوزن","المصبغة"]
 
 
 class SizerSuppliesView(FilterableListView):
     template_name = "accessories/SizerSupplies.html"
     model = SizerSupplies
-    filter_fields = ['fabric_code', 'model_number', 'fabric_name', 'color']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
+    filter_fields = ['size', 'color']
+    columns = ["المقاس","اللون","عدد السيزر","اسم المورد","التاريخ"]
 
 class SizerStockView(FilterableListView):
     template_name = "accessories/SizerStock.html"
     model = SizerStock
-    filter_fields = ['fabric_code', 'model_number', 'fabric_name', 'color']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
+    filter_fields = ['size', 'color']
+    columns = ["المقاس","اللون","عدد السيزر"]
 
 class PackagingSizerView(FilterableListView):
     template_name = "accessories/PackagingSizer.html"
     model = PackagingSizer
-    filter_fields = ['fabric_code', 'fabric_name', 'color']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
+    filter_fields = ['size', 'color']
+    columns = ["المقاس","اللون","عدد السيزر","المصنع","التاريخ"]
 
 
 class ReturnSizerView(FilterableListView):
     template_name = "accessories/ReturnSizer.html"
     model = ReturnSizer
-    filter_fields = ['fabric_code', 'model_number']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
+    filter_fields = ['size', 'color']
+    columns = ["المقاس","اللون","عدد السيزر","التاريخ"]
 
 
 class BagSuppliesView(FilterableListView):
