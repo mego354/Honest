@@ -42,6 +42,10 @@ def update_or_create_instance(model, unique_fields, row, serializer_class):
     try:
         instance = None
 
+        # Convert 'date' to date if it's a string
+        if 'date' in row.keys():
+            row['date'] = parse_date(row['date'])
+
         # Ensure required unique fields are present in the input
         filter_criteria = {field: row.get(field) for field in unique_fields if row.get(field)}
 
