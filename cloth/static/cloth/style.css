@@ -47,7 +47,7 @@ body {
 }
 
 #navbar, #navbar a, #navbar-menu-body, #navbar-menu-body a {
-    color: var(--light-text) !important;
+    color: var(--light-text);
 }
 
 .custom-toggler-icon {
@@ -59,7 +59,7 @@ body {
 }
 
 #navbar .nav-item:hover a {
-    color: var(--golden-text) !important;
+    color: var(--golden-text);
 }
 
 .messages {
@@ -534,3 +534,15 @@ body {
     overflow-y: hidden;
     max-width: 100%;
   }
+
+.nav_link_active {
+    background-color: var(--light-bg) !important;
+}
+.nav_link_active a{
+    color: var(--dark-bg) !important;
+    padding-inline: 15px;
+    font-weight: 600;
+}
+.nav_link_active a:hover{
+    color: var(--dark-bg) !important;
+}

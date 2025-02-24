@@ -11,9 +11,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
     <!-- Custom CSS -->
-    <link rel="stylesheet" href={% static "cloth/styles.css" %}>
+    <link rel="stylesheet" href={% static "cloth/style.css" %}>
 </head>
-<body>
+<body style="margin-top: 110px;">
     {% if messages %}
         <ul class="messages">
         {% for message in messages %}
@@ -45,18 +45,23 @@
                 </div>
             </div>
             
-            <!-- Normal navbar menu for large screens -->
-            <div class="d-none d-lg-flex">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
+            {% block home_page %}
+            {% endblock %}
+        </div>
+    </nav>
+    <!-- Navbar For Model-->
+    <nav id="navbar"  class="navbar bg-body-tertiary fixed-top" style="margin-top:50px; padding-block:0; z-index:1000;">
+        <div class="container-fluid">
+            <!-- Normal navbar menu for Model -->
+            <div class="d-flex mx-auto" style="padding-bottom:-5px">
+                <ul class="navbar-nav me-auto pb-0 d-flex flex-row h-100">
                     {% block navbar_links_small %}
                     {% endblock %}
                 </ul>
             </div>
-            {% block home_page %}
-            {% endblock %}
-
         </div>
     </nav>
+    
 
     <!-- Main Content -->
     <div class="body-div container">
