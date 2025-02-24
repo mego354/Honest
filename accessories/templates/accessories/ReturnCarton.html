@@ -10,7 +10,19 @@
 {% endblock %}
 
 {% block navbar_links_small %}
-{% include "accessories/nav_links.html" %}
+{% comment %} {% include "accessories/nav_links.html" %} {% endcomment %}
+<li class="p-2 nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'CartonStockView' %}">رصيد</a>
+</li>
+<li class="p-2 nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'CartonSuppliesView' %}">وارد</a>
+</li>
+<li class="p-2 nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'PackagingCartonView' %}">تعبئة</a>
+</li>
+<li class="p-2 nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'ReturnCartonView' %}">مرتجع</a>
+</li>
 {% endblock %}
 
 {% block body %}
@@ -39,9 +51,7 @@
                 <tr>
                     <th style="position: sticky; top: 0;" >التاريخ</th>
                     <th style="position: sticky; top: 0;" >رقم الموديل</th>
-                    <th style="position: sticky; top: 0;" >الطول</th>
-                    <th style="position: sticky; top: 0;" >العرض</th>
-                    <th style="position: sticky; top: 0;" >الارتفاع</th>
+                    <th style="position: sticky; top: 0;" >المقاس</th>
                     <th style="position: sticky; top: 0;" >العدد الإجمالي</th>
                     <th style="position: sticky; top: 0;" >عدد الكرتون</th>
                 </tr>
@@ -51,15 +61,13 @@
                 <tr>
                     <td>{{ model.date|date:"d/m/Y" }}</td>
                     <td>{{ model.model_number }}</td>
-                    <td>{{ model.length }}</td>
-                    <td>{{ model.width }}</td>
-                    <td>{{ model.height }}</td>
+                    <td>{{ model.length }}*{{ model.width }}*{{ model.height }}</td>
                     <td>{{ model.total_quantity }}</td>
                     <td>{{ model.carton_count }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="5" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>
