@@ -58,7 +58,7 @@
             <tbody>
                 {% for model in models %}
                 <tr>
-                    <td>{{ model.date }}</td>
+                    <td>{{ model.date|date:"Y/m/d" }}</td>
                     <td>{{ model.size }}</td>
                     <td>{{ model.color }}</td>
                     <td>{{ model.sizer_count }}</td>
