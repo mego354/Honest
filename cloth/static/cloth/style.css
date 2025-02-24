@@ -51,7 +51,8 @@ body {
 }
 
 .custom-toggler-icon {
-    background-color: #f0f0f0;
+    /* background-color: var(--white-color) !important; */
+    background-color: #f0f0f0 !important;
 }
 
 #navbar .nav-item:hover {
