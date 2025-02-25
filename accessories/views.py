@@ -268,29 +268,27 @@ class ReturnHeatSealView(FilterableListView):
 class TicketSatanSuppliesView(FilterableListView):
     template_name = "accessories/TicketSatanSupplies.html"
     model = TicketSatanSupplies
-    filter_fields = ['fabric_code', 'model_number', 'fabric_name', 'color']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
+    filter_fields = ['model_number', 'size', 'upc_number']
+    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع","اسم المورد","التاريخ"]
 
 class TicketSatanStockView(FilterableListView):
     template_name = "accessories/TicketSatanStock.html"
     model = TicketSatanStock
-    filter_fields = ['fabric_code', 'fabric_name', 'color']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
-
+    filter_fields = ['model_number', 'size', 'upc_number']
+    # columns = ["الرمز","رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع"]
+    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع"]
 
 class PackagingTicketSatanView(FilterableListView):
     template_name = "accessories/PackagingTicketSatan.html"
     model = PackagingTicketSatan
-    filter_fields = ['fabric_code', 'model_number']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
-
+    filter_fields = ['model_number', 'size', 'upc_number']
+    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع","اسم المصنع","التاريخ"]
 
 class ReturnTicketSatanView(FilterableListView):
     template_name = "accessories/ReturnTicketSatan.html"
     model = ReturnTicketSatan
-    filter_fields = ['fabric_code', 'model_number']
-    columns = ["التاريخ","اللون","اللون","اللون","اللون","الوزن","المصبغة"]
-
+    filter_fields = ['model_number', 'size', 'upc_number']
+    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع","التاريخ"]
 
 class TicketSuppliesView(FilterableListView):
     template_name = "accessories/TicketSupplies.html"
