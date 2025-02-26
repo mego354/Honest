@@ -11,23 +11,23 @@
 
 {% block navbar_links_small %}
 {% comment %} {% include "accessories/nav_links.html" %} {% endcomment %}
-<li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'CartonStockView' %}">رصيد</a>
-</li>
-<li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'CartonSuppliesView' %}">وارد</a>
-</li>
-<li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'PackagingCartonView' %}">تعبئة</a>
-</li>
 <li class="p-2 nav-item nav_link_active">
-    <a class="nav-link active" aria-current="page" href="{% url 'ReturnCartonView' %}">مرتجع</a>
+    <a class="nav-link" aria-current="page" href="{% url 'HangTagStockView' %}">رصيد</a>
+</li>
+<li class="p-2 nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'HangTagSuppliesView' %}">وارد</a>
+</li>
+<li class="p-2 nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'PackagingHangTagView' %}">تعبئة</a>
+</li>
+<li class="p-2 nav-item">
+    <a class="nav-link active" aria-current="page" href="{% url 'ReturnHangTagView' %}">مرتجع</a>
 </li>
 {% endblock %}
 
 {% block body %}
-<h2 class="section-title pt-4">سجل مرتجع الكرتون</h2>
-<form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
+    <h2 class="section-title pt-4">سجل رصيد هانج تاج</h2>
+    <form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
         {% for filter_field in filter_fields %}
         <div class="form-group mb-3">
             <label for="filter_{{ forloop.counter }}" class="form-label">{{ filter_field.verbose_name }}</label>
@@ -49,25 +49,19 @@
         <table id="data-table" class="table table-striped">
             <thead class="table-dark">
                 <tr>
-                    <th style="position: sticky; top: 0;" >التاريخ</th>
-                    <th style="position: sticky; top: 0;" >رقم الموديل</th>
-                    <th style="position: sticky; top: 0;" >المقاس</th>
-                    <th style="position: sticky; top: 0;" >العدد الإجمالي</th>
-                    <th style="position: sticky; top: 0;" >عدد الكرتون</th>
+                    <th style="position: sticky; top: 0;" >النوع</th>
+                    <th style="position: sticky; top: 0;" >العدد</th>
                 </tr>
             </thead>
             <tbody>
                 {% for model in models %}
                 <tr>
-                    <td>{{ model.date|date:"Y/m/d" }}</td>
-                    <td>{{ model.model_number }}</td>
-                    <td>{{ model.length }}*{{ model.width }}*{{ model.height }}</td>
-                    <td>{{ model.total_quantity }}</td>
-                    <td>{{ model.carton_count }}</td>
+                    <td>{{ model.type }}</td>
+                    <td>{{ model.quantity }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="2" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>
