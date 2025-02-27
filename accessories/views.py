@@ -124,7 +124,7 @@ class PackagingCartonView(FilterableListView):
     template_name = "accessories/PackagingCarton.html"
     model = PackagingCarton
     filter_fields = ['model_number', 'length', 'width', 'height']
-    columns = ["التاريخ","رقم الموديل","المقاس","عدد الكرتون","المصنع"]
+    columns = ["التاريخ","المصنع","رقم الموديل","المقاس","عدد الكرتون"]
 
 
 class ReturnCartonView(FilterableListView):
@@ -138,7 +138,7 @@ class HangerSuppliesView(FilterableListView):
     template_name = "accessories/HangerSupplies.html"
     model = HangerSupplies
     filter_fields = ['hanger_number', 'color']
-    columns = ["رقم الشماعة","اللون","عدد الدست","عدد الشماعات","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","رقم الشماعة","اللون","عدد الدست","عدد الشماعات"]
 
 class HangerStockView(FilterableListView):
     template_name = "accessories/HangerStock.html"
@@ -151,21 +151,21 @@ class PackagingHangerView(FilterableListView):
     template_name = "accessories/PackagingHanger.html"
     model = PackagingHanger
     filter_fields = ['hanger_number', 'color']
-    columns = ["رقم الشماعة","اللون","عدد الدست","عدد الشماعات","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","رقم الشماعة","اللون","عدد الدست","عدد الشماعات"]
 
 
 class ReturnHangerView(FilterableListView):
     template_name = "accessories/ReturnHanger.html"
     model = ReturnHanger
     filter_fields = ['hanger_number', 'color']
-    columns = ["رقم الشماعة","اللون","عدد الدست","عدد الشماعات","التاريخ"]
+    columns = ["التاريخ","رقم الشماعة","اللون","عدد الدست","عدد الشماعات"]
 
 ###############################################################################################################################
 class SizerSuppliesView(FilterableListView):
     template_name = "accessories/SizerSupplies.html"
     model = SizerSupplies
     filter_fields = ['size', 'color']
-    columns = ["المقاس","اللون","عدد السيزر","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","المقاس","اللون","عدد السيزر"]
 
 class SizerStockView(FilterableListView):
     template_name = "accessories/SizerStock.html"
@@ -177,20 +177,20 @@ class PackagingSizerView(FilterableListView):
     template_name = "accessories/PackagingSizer.html"
     model = PackagingSizer
     filter_fields = ['size', 'color']
-    columns = ["المقاس","اللون","عدد السيزر","المصنع","التاريخ"]
+    columns = ["التاريخ","المصنع","المقاس","اللون","عدد السيزر"]
 
 class ReturnSizerView(FilterableListView):
     template_name = "accessories/ReturnSizer.html"
     model = ReturnSizer
     filter_fields = ['size', 'color']
-    columns = ["المقاس","اللون","عدد السيزر","التاريخ"]
+    columns = ["التاريخ","المقاس","اللون","عدد السيزر"]
 
 ###############################################################################################################################
 class BagSuppliesView(FilterableListView):
     template_name = "accessories/BagSupplies.html"
     model = BagSupplies
     filter_fields = ['bag_length', 'bag_width', 'weight']
-    columns = ["الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس"]
 
 
 class BagStockView(FilterableListView):
@@ -203,20 +203,20 @@ class PackagingBagView(FilterableListView):
     template_name = "accessories/PackagingBag.html"
     model = PackagingBag
     filter_fields = ['bag_length', 'bag_width', 'weight']
-    columns = ["الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس","المصنع","التاريخ"]
+    columns = ["التاريخ","المصنع","الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس"]
 
 class ReturnBagView(FilterableListView):
     template_name = "accessories/ReturnBag.html"
     model = ReturnBag
     filter_fields = ['bag_length', 'bag_width', 'weight']
-    columns = ["الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس","التاريخ"]
+    columns = ["التاريخ","الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس"]
 
 ###############################################################################################################################
 class HangTagSuppliesView(FilterableListView):
     template_name = "accessories/HangTagSupplies.html"
     model = HangTagSupplies
     filter_fields = ['type']
-    columns = ["النوع","العدد","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","النوع","العدد"]
 
 class HangTagStockView(FilterableListView):
     template_name = "accessories/HangTagStock.html"
@@ -228,45 +228,45 @@ class PackagingHangTagView(FilterableListView):
     template_name = "accessories/PackagingHangTag.html"
     model = PackagingHangTag
     filter_fields = ['type']
-    columns = ["النوع","العدد","المصنع","التاريخ"]
+    columns = ["التاريخ","المصنع","النوع","العدد"]
 
 class ReturnHangTagView(FilterableListView):
     template_name = "accessories/ReturnHangTag.html"
     model = ReturnHangTag
     filter_fields = ['type']
-    columns = ["النوع","العدد","التاريخ"]
+    columns = ["التاريخ","النوع","العدد"]
 
 ###############################################################################################################################
 class HeatSealSuppliesView(FilterableListView):
     template_name = "accessories/HeatSealSupplies.html"
     model = HeatSealSupplies
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","العدد","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","النوع","المقاس","العدد"]
 
 class HeatSealStockView(FilterableListView):
     template_name = "accessories/HeatSealStock.html"
     model = HeatSealStock
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","العدد","اسم المورد"]
+    columns = ["النوع","المقاس","العدد"]
 
 class PackagingHeatSealView(FilterableListView):
     template_name = "accessories/PackagingHeatSeal.html"
     model = PackagingHeatSeal
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","العدد","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","النوع","المقاس","العدد"]
 
 class ReturnHeatSealView(FilterableListView):
     template_name = "accessories/ReturnHeatSeal.html"
     model = ReturnHeatSeal
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","العدد","التاريخ"]
+    columns = ["التاريخ","النوع","المقاس","العدد"]
 
 ###############################################################################################################################
 class TicketSatanSuppliesView(FilterableListView):
     template_name = "accessories/TicketSatanSupplies.html"
     model = TicketSatanSupplies
     filter_fields = ['model_number', 'size', 'upc_number']
-    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع"]
 
 class TicketSatanStockView(FilterableListView):
     template_name = "accessories/TicketSatanStock.html"
@@ -278,20 +278,20 @@ class PackagingTicketSatanView(FilterableListView):
     template_name = "accessories/PackagingTicketSatan.html"
     model = PackagingTicketSatan
     filter_fields = ['model_number', 'size', 'upc_number']
-    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع"]
 
 class ReturnTicketSatanView(FilterableListView):
     template_name = "accessories/ReturnTicketSatan.html"
     model = ReturnTicketSatan
     filter_fields = ['model_number', 'size', 'upc_number']
-    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع","التاريخ"]
+    columns = ["التاريخ","رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع"]
 
 ###############################################################################################################################
 class TicketSuppliesView(FilterableListView):
     template_name = "accessories/TicketSupplies.html"
     model = TicketSupplies
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","عدد القطع","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","النوع","المقاس","عدد القطع"]
 
 class TicketStockView(FilterableListView):
     template_name = "accessories/TicketStock.html"
@@ -303,20 +303,20 @@ class PackagingTicketView(FilterableListView):
     template_name = "accessories/PackagingTicket.html"
     model = PackagingTicket
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","عدد القطع","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","النوع","المقاس","عدد القطع"]
 
 class ReturnTicketView(FilterableListView):
     template_name = "accessories/ReturnTicket.html"
     model = ReturnTicket
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","عدد القطع","التاريخ"]
+    columns = ["التاريخ","النوع","المقاس","عدد القطع"]
 
 ###############################################################################################################################
 class TicketPriceSuppliesView(FilterableListView):
     template_name = "accessories/TicketPriceSupplies.html"
     model = TicketPriceSupplies
     filter_fields = ['model_number', 'size']
-    columns = ["الاجمالي","المقاس","رقم الموديل","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","الاجمالي","المقاس","رقم الموديل"]
 
 class TicketPriceStockView(FilterableListView):
     template_name = "accessories/TicketPriceStock.html"
@@ -328,20 +328,20 @@ class PackagingTicketPriceView(FilterableListView):
     template_name = "accessories/PackagingTicketPrice.html"
     model = PackagingTicketPrice
     filter_fields = ['model_number', 'size']
-    columns = ["الاجمالي","المقاس","رقم الموديل","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","الاجمالي","المقاس","رقم الموديل"]
 
 class ReturnTicketPriceView(FilterableListView):
     template_name = "accessories/ReturnTicketPrice.html"
     model = ReturnTicketPrice
     filter_fields = ['model_number', 'size']
-    columns = ["الاجمالي","المقاس","رقم الموديل","التاريخ"]
+    columns = ["التاريخ","الاجمالي","المقاس","رقم الموديل"]
 
 ###############################################################################################################################
 class KardonSuppliesView(FilterableListView):
     template_name = "accessories/KardonSupplies.html"
     model = KardonSupplies
     filter_fields = ['color']
-    columns = ["عدد الامتار","اللون","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","عدد الامتار","اللون"]
 
 class KardonStockView(FilterableListView):
     template_name = "accessories/KardonStock.html"
@@ -353,45 +353,45 @@ class PackagingKardonView(FilterableListView):
     template_name = "accessories/PackagingKardon.html"
     model = PackagingKardon
     filter_fields = ['color']
-    columns = ["عدد الامتار","اللون","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","عدد الامتار","اللون"]
 
 class ReturnKardonView(FilterableListView):
     template_name = "accessories/ReturnKardon.html"
     model = ReturnKardon
     filter_fields = ['color']
-    columns = ["عدد الامتار","اللون","التاريخ"]
+    columns = ["التاريخ","عدد الامتار","اللون"]
 
 ###############################################################################################################################
 class RubberSuppliesView(FilterableListView):
     template_name = "accessories/RubberSupplies.html"
     model = RubberSupplies
     filter_fields = ['width']
-    columns = ["الوزن الاجمالي","عرض الاستك","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","الوزن الاجمالي","عرض الاستك"]
 
 class RubberStockView(FilterableListView):
     template_name = "accessories/RubberStock.html"
     model = RubberStock
     filter_fields = ['width']
-    columns = ["الوزن الاجمالي","عرض الاستك","اسم المورد"]
+    columns = ["الوزن الاجمالي","عرض الاستك"]
 
 class PackagingRubberView(FilterableListView):
     template_name = "accessories/PackagingRubber.html"
     model = PackagingRubber
     filter_fields = ['width']
-    columns = ["الوزن الاجمالي","عرض الاستك","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","الوزن الاجمالي","عرض الاستك"]
 
 class ReturnRubberView(FilterableListView):
     template_name = "accessories/ReturnRubber.html"
     model = ReturnRubber
     filter_fields = ['width']
-    columns = ["الوزن الاجمالي","عرض الاستك","التاريخ"]
+    columns = ["التاريخ","الوزن الاجمالي","عرض الاستك"]
 
 ###############################################################################################################################
 class ThreadSuppliesView(FilterableListView):
     template_name = "accessories/ThreadSupplies.html"
     model = ThreadSupplies
     filter_fields = ['thread_code', 'color']
-    columns = ["عدد البكر","اللون","كود الخيط","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","عدد البكر","اللون","كود الخيط"]
 
 class ThreadStockView(FilterableListView):
     template_name = "accessories/ThreadStock.html"
@@ -404,26 +404,26 @@ class PackagingThreadView(FilterableListView):
     template_name = "accessories/PackagingThread.html"
     model = PackagingThread
     filter_fields = ['thread_code', 'color']
-    columns = ["عدد البكر","اللون","كود الخيط","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","عدد البكر","اللون","كود الخيط"]
 
 ###############################################################################################################################
 class GlueSuppliesView(FilterableListView):
     template_name = "accessories/GlueSupplies.html"
     model = GlueSupplies
     filter_fields = ['width']
-    columns = ["عدد الكراتين","عرض اللزق","اسم المورد","التاريخ"]
+    columns = ["التاريخ","اسم المورد","عدد الكراتين","عرض اللزق"]
 
 
 class GlueStockView(FilterableListView):
     template_name = "accessories/GlueStock.html"
     model = GlueStock
     filter_fields = ['width']
-    columns = ["عدد الكراتين","عرض اللزق","اسم المورد"]
+    columns = ["عدد الكراتين","عرض اللزق"]
 
 class PackagingGlueView(FilterableListView):
     template_name = "accessories/PackagingGlue.html"
     model = PackagingGlue
     filter_fields = ['width']
-    columns = ["عدد الكراتين","عرض اللزق","اسم المصنع","التاريخ"]
+    columns = ["التاريخ","اسم المصنع","عدد الكراتين","عرض اللزق"]
 
 ###############################################################################################################################
