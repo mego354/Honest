@@ -12,21 +12,21 @@
 {% block navbar_links_small %}
 {% comment %} {% include "accessories/nav_links.html" %} {% endcomment %}
 <li class="p-2 nav-item nav_link_active">
-    <a class="nav-link" aria-current="page" href="{% url 'HangTagStockView' %}">رصيد</a>
+    <a class="nav-link" aria-current="page" href="{% url 'KardonStockView' %}">رصيد</a>
 </li>
 <li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'HangTagSuppliesView' %}">وارد</a>
+    <a class="nav-link active" aria-current="page" href="{% url 'KardonSuppliesView' %}">وارد</a>
 </li>
 <li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'PackagingHangTagView' %}">تعبئة</a>
+    <a class="nav-link active" aria-current="page" href="{% url 'PackagingKardonView' %}">تعبئة</a>
 </li>
 <li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'ReturnHangTagView' %}">مرتجع</a>
+    <a class="nav-link active" aria-current="page" href="{% url 'ReturnKardonView' %}">مرتجع</a>
 </li>
 {% endblock %}
 
 {% block body %}
-    <h2 class="section-title pt-4">سجل رصيد هانج تاج</h2>
+    <h2 class="section-title pt-4">سجل رصيد كاردون</h2>
     <form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
         {% for filter_field in filter_fields %}
         <div class="form-group mb-3">
@@ -49,15 +49,15 @@
         <table id="data-table" class="table table-striped">
             <thead class="table-dark">
                 <tr>
-                    <th style="position: sticky; top: 0;" >النوع</th>
-                    <th style="position: sticky; top: 0;" >العدد</th>
+                    <th style="position: sticky; top: 0;" >اللون</th>
+                    <th style="position: sticky; top: 0;" >عدد الامتار</th>
                 </tr>
             </thead>
             <tbody>
                 {% for model in models %}
                 <tr>
-                    <td>{{ model.type }}</td>
-                    <td>{{ model.quantity }}</td>
+                    <td>{{ model.color }}</td>
+                    <td>{{ model.meters_count }}</td>
                 </tr>
                 {% empty %}
                 <tr>

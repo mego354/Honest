@@ -12,21 +12,18 @@
 {% block navbar_links_small %}
 {% comment %} {% include "accessories/nav_links.html" %} {% endcomment %}
 <li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'HangTagStockView' %}">رصيد</a>
+    <a class="nav-link active" aria-current="page" href="{% url 'GlueStockView' %}">رصيد</a>
 </li>
 <li class="p-2 nav-item nav_link_active">
-    <a class="nav-link active" aria-current="page" href="{% url 'HangTagSuppliesView' %}">وارد</a>
+    <a class="nav-link active" aria-current="page" href="{% url 'GlueSuppliesView' %}">وارد</a>
 </li>
 <li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'PackagingHangTagView' %}">تعبئة</a>
-</li>
-<li class="p-2 nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'ReturnHangTagView' %}">مرتجع</a>
+    <a class="nav-link active" aria-current="page" href="{% url 'PackagingGlueView' %}">تعبئة</a>
 </li>
 {% endblock %}
 
 {% block body %}
-<h2 class="section-title pt-4">سجل وارد هانج تاج</h2>
+<h2 class="section-title pt-4">سجل وارد اللزق</h2>
 <form method="get" class="filter-form-flex mb-4 p-4 rounded shadow-sm">
         {% for filter_field in filter_fields %}
         <div class="form-group mb-3">
@@ -51,8 +48,8 @@
                 <tr>
                     <th style="position: sticky; top: 0;" >التاريخ</th>
                     <th style="position: sticky; top: 0;" >اسم المورد</th>
-                    <th style="position: sticky; top: 0;" >النوع</th>
-                    <th style="position: sticky; top: 0;" >العدد</th>
+                    <th style="position: sticky; top: 0;" >عرض اللزق</th>
+                    <th style="position: sticky; top: 0;" >عدد الكراتين</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,8 +57,8 @@
                 <tr>
                     <td>{{ model.date|date:"Y/m/d" }}</td>
                     <td>{{ model.supplier_name }}</td>
-                    <td>{{ model.type }}</td>
-                    <td>{{ model.quantity }}</td>
+                    <td>{{ model.width }}</td>
+                    <td>{{ model.cartons_count }}</td>
                 </tr>
                 {% empty %}
                 <tr>
