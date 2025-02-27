@@ -110,7 +110,7 @@ class CartonSuppliesView(FilterableListView):
     template_name = "accessories/CartonSupplies.html"
     model = CartonSupplies
     filter_fields = ['model_number', 'length', 'width', 'height']
-    columns = ["التاريخ","اسم المورد","رقم الموديل","المقاس","العدد الإجمالي","عدد الربط","الكمية في الربطة","الفرط","العدد الإجمالي"]
+    columns = ["التاريخ","اسم المورد","رقم الموديل","المقاس","عدد الربط","الكمية في الربطة","الفرط","العدد الإجمالي"]
 
 
 class CartonStockView(FilterableListView):
