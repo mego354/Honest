@@ -110,28 +110,28 @@ class CartonSuppliesView(FilterableListView):
     template_name = "accessories/CartonSupplies.html"
     model = CartonSupplies
     filter_fields = ['model_number', 'length', 'width', 'height']
-    columns = ["التاريخ","اسم المورد","رقم الموديل","المقاس (الطول)","المقاس (العرض)","المقاس (الارتفاع)","العدد الإجمالي","عدد الربط","الكمية في الربطة","الفرط","العدد الإجمالي"]
+    columns = ["التاريخ","اسم المورد","رقم الموديل","المقاس","العدد الإجمالي","عدد الربط","الكمية في الربطة","الفرط","العدد الإجمالي"]
 
 
 class CartonStockView(FilterableListView):
     template_name = "accessories/CartonStock.html"
     model = CartonStock
     filter_fields = ['model_number', 'length', 'width', 'height']
-    columns = ["رقم الموديل","المقاس (الطول)","المقاس (العرض)","المقاس (الارتفاع)","العدد الإجمالي"]
+    columns = ["رقم الموديل","المقاس","العدد الإجمالي"]
 
 
 class PackagingCartonView(FilterableListView):
     template_name = "accessories/PackagingCarton.html"
     model = PackagingCarton
     filter_fields = ['model_number', 'length', 'width', 'height']
-    columns = ["التاريخ","رقم الموديل","المقاس (الطول)","المقاس (العرض)","المقاس (الارتفاع)","عدد الكرتون","المصنع"]
+    columns = ["التاريخ","رقم الموديل","المقاس","عدد الكرتون","المصنع"]
 
 
 class ReturnCartonView(FilterableListView):
     template_name = "accessories/ReturnCarton.html"
     model = ReturnCarton
     filter_fields = ['model_number', 'length', 'width', 'height']
-    columns = ["التاريخ","رقم الموديل","المقاس (الطول)","المقاس (العرض)","المقاس (الارتفاع)","عدد الكرتون","العدد الإجمالي"]
+    columns = ["التاريخ","رقم الموديل","المقاس","عدد الكرتون","العدد الإجمالي"]
 
 ###############################################################################################################################
 class HangerSuppliesView(FilterableListView):
