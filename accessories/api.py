@@ -96,54 +96,54 @@ class PopulateModelsView(APIView):
                 model.objects.filter(date__gte=start_date, date__lte=today).delete()
 
             safe_delete(CartonSupplies)
-            #ssttoocckk safe_delete(CartonStock)
+            safe_delete(CartonStock)
             safe_delete(PackagingCarton)
             safe_delete(ReturnCarton)
             safe_delete(HangerSupplies)
-            #ssttoocckk safe_delete(HangerStock)
+            safe_delete(HangerStock)
             safe_delete(PackagingHanger)
             safe_delete(ReturnHanger)
             safe_delete(SizerSupplies)
-            #ssttoocckk safe_delete(SizerStock)
+            safe_delete(SizerStock)
             safe_delete(PackagingSizer)
             safe_delete(ReturnSizer)
             safe_delete(BagSupplies)
-            #ssttoocckk safe_delete(BagStock)
+            safe_delete(BagStock)
             safe_delete(PackagingBag)
             safe_delete(ReturnBag)
             safe_delete(HangTagSupplies)
-            #ssttoocckk safe_delete(HangTagStock)
+            safe_delete(HangTagStock)
             safe_delete(PackagingHangTag)
             safe_delete(ReturnHangTag)
             safe_delete(HeatSealSupplies)
-            #ssttoocckk safe_delete(HeatSealStock)
+            safe_delete(HeatSealStock)
             safe_delete(PackagingHeatSeal)
             safe_delete(ReturnHeatSeal)
             safe_delete(TicketSatanSupplies)
-            #ssttoocckk safe_delete(TicketSatanStock)
+            safe_delete(TicketSatanStock)
             safe_delete(PackagingTicketSatan)
             safe_delete(ReturnTicketSatan)
             safe_delete(TicketSupplies)
-            #ssttoocckk safe_delete(TicketStock)
+            safe_delete(TicketStock)
             safe_delete(PackagingTicket)
             safe_delete(ReturnTicket)
             safe_delete(TicketPriceSupplies)
-            #ssttoocckk safe_delete(TicketPriceStock)
+            safe_delete(TicketPriceStock)
             safe_delete(PackagingTicketPrice)
             safe_delete(ReturnTicketPrice)
             safe_delete(KardonSupplies)
-            #ssttoocckk safe_delete(KardonStock)
+            safe_delete(KardonStock)
             safe_delete(PackagingKardon)
             safe_delete(ReturnKardon)
             safe_delete(RubberSupplies)
-            #ssttoocckk safe_delete(RubberStock)
+            safe_delete(RubberStock)
             safe_delete(PackagingRubber)
             safe_delete(ReturnRubber)
             safe_delete(ThreadSupplies)
-            #ssttoocckk safe_delete(ThreadStock)
+            safe_delete(ThreadStock)
             safe_delete(PackagingThread)
             safe_delete(GlueSupplies)
-            #ssttoocckk safe_delete(GlueStock)
+            safe_delete(GlueStock)
             safe_delete(PackagingGlue)
         else:
             CartonSupplies.objects.all().delete()
@@ -302,188 +302,187 @@ class PopulateModelsView(APIView):
             'PackagingGlue': [],
         }
 
-        if not refresh:
-            # Process CartonStock data
+        # Process CartonStock data
 
-            for row in data.get('CartonStock', []):
+        for row in data.get('CartonStock', []):
 
-                result = update_or_create_instance(CartonStock, ['model_number', 'length', 'width', 'height'], row, CartonStockSerializer)
+            result = update_or_create_instance(CartonStock, ['model_number', 'length', 'width', 'height'], row, CartonStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['CartonStock'].append(result)
+                errors['CartonStock'].append(result)
 
-                else:
+            else:
 
-                    results['CartonStock'].append(result)
+                results['CartonStock'].append(result)
 
-            # Process HangerStock data
+        # Process HangerStock data
 
-            for row in data.get('HangerStock', []):
+        for row in data.get('HangerStock', []):
 
-                result = update_or_create_instance(HangerStock, ['hanger_number', 'color'], row, HangerStockSerializer)
+            result = update_or_create_instance(HangerStock, ['hanger_number', 'color'], row, HangerStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['HangerStock'].append(result)
+                errors['HangerStock'].append(result)
 
-                else:
+            else:
 
-                    results['HangerStock'].append(result)
+                results['HangerStock'].append(result)
 
-            # Process SizerStock data
+        # Process SizerStock data
 
-            for row in data.get('SizerStock', []):
+        for row in data.get('SizerStock', []):
 
-                result = update_or_create_instance(SizerStock, ['size', 'color'], row, SizerStockSerializer)
+            result = update_or_create_instance(SizerStock, ['size', 'color'], row, SizerStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['SizerStock'].append(result)
+                errors['SizerStock'].append(result)
 
-                else:
+            else:
 
-                    results['SizerStock'].append(result)
+                results['SizerStock'].append(result)
 
-            # Process BagStock data
+        # Process BagStock data
 
-            for row in data.get('BagStock', []):
+        for row in data.get('BagStock', []):
 
-                result = update_or_create_instance(BagStock, ['bag_length', 'bag_width'], row, BagStockSerializer)
+            result = update_or_create_instance(BagStock, ['bag_length', 'bag_width'], row, BagStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['BagStock'].append(result)
+                errors['BagStock'].append(result)
 
-                else:
+            else:
 
-                    results['BagStock'].append(result)
+                results['BagStock'].append(result)
 
-            # Process HangTagStock data
+        # Process HangTagStock data
 
-            for row in data.get('HangTagStock', []):
+        for row in data.get('HangTagStock', []):
 
-                result = update_or_create_instance(HangTagStock, ['type'], row, HangTagStockSerializer)
+            result = update_or_create_instance(HangTagStock, ['type'], row, HangTagStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['HangTagStock'].append(result)
+                errors['HangTagStock'].append(result)
 
-                else:
+            else:
 
-                    results['HangTagStock'].append(result)
+                results['HangTagStock'].append(result)
 
-            # Process HeatSealStock data
+        # Process HeatSealStock data
 
-            for row in data.get('HeatSealStock', []):
+        for row in data.get('HeatSealStock', []):
 
-                result = update_or_create_instance(HeatSealStock, ['type'], row, HeatSealStockSerializer)
+            result = update_or_create_instance(HeatSealStock, ['type'], row, HeatSealStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['HeatSealStock'].append(result)
+                errors['HeatSealStock'].append(result)
 
-                else:
+            else:
 
-                    results['HeatSealStock'].append(result)
+                results['HeatSealStock'].append(result)
 
-            # Process TicketSatanStock data
+        # Process TicketSatanStock data
 
-            for row in data.get('TicketSatanStock', []):
+        for row in data.get('TicketSatanStock', []):
 
-                result = update_or_create_instance(TicketSatanStock, ['model_number', 'size', 'cotton_percentage', 'polyester_percentage', 'upc_number'], row, TicketSatanStockSerializer)
+            result = update_or_create_instance(TicketSatanStock, ['model_number', 'size', 'cotton_percentage', 'polyester_percentage', 'upc_number'], row, TicketSatanStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['TicketSatanStock'].append(result)
+                errors['TicketSatanStock'].append(result)
 
-                else:
+            else:
 
-                    results['TicketSatanStock'].append(result)
+                results['TicketSatanStock'].append(result)
 
-            # Process TicketStock data
+        # Process TicketStock data
 
-            for row in data.get('TicketStock', []):
+        for row in data.get('TicketStock', []):
 
-                result = update_or_create_instance(TicketStock, ['type', 'size'], row, TicketStockSerializer)
+            result = update_or_create_instance(TicketStock, ['type', 'size'], row, TicketStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['TicketStock'].append(result)
+                errors['TicketStock'].append(result)
 
-                else:
+            else:
 
-                    results['TicketStock'].append(result)
+                results['TicketStock'].append(result)
 
-            # Process TicketPriceStock data
+        # Process TicketPriceStock data
 
-            for row in data.get('TicketPriceStock', []):
+        for row in data.get('TicketPriceStock', []):
 
-                result = update_or_create_instance(TicketPriceStock, ['model_number'], row, TicketPriceStockSerializer)
+            result = update_or_create_instance(TicketPriceStock, ['model_number'], row, TicketPriceStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['TicketPriceStock'].append(result)
+                errors['TicketPriceStock'].append(result)
 
-                else:
+            else:
 
-                    results['TicketPriceStock'].append(result)
+                results['TicketPriceStock'].append(result)
 
-            # Process KardonStock data
+        # Process KardonStock data
 
-            for row in data.get('KardonStock', []):
+        for row in data.get('KardonStock', []):
 
-                result = update_or_create_instance(KardonStock, ['color'], row, KardonStockSerializer)
+            result = update_or_create_instance(KardonStock, ['color'], row, KardonStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['KardonStock'].append(result)
+                errors['KardonStock'].append(result)
 
-                else:
+            else:
 
-                    results['KardonStock'].append(result)
+                results['KardonStock'].append(result)
 
-            # Process RubberStock data
+        # Process RubberStock data
 
-            for row in data.get('RubberStock', []):
+        for row in data.get('RubberStock', []):
 
-                result = update_or_create_instance(RubberStock, ['width'], row, RubberStockSerializer)
+            result = update_or_create_instance(RubberStock, ['width'], row, RubberStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['RubberStock'].append(result)
+                errors['RubberStock'].append(result)
 
-                else:
+            else:
 
-                    results['RubberStock'].append(result)
+                results['RubberStock'].append(result)
 
-            # Process ThreadStock data
+        # Process ThreadStock data
 
-            for row in data.get('ThreadStock', []):
+        for row in data.get('ThreadStock', []):
 
-                result = update_or_create_instance(ThreadStock, ['thread_code'], row, ThreadStockSerializer)
+            result = update_or_create_instance(ThreadStock, ['thread_code'], row, ThreadStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['ThreadStock'].append(result)
+                errors['ThreadStock'].append(result)
 
-                else:
+            else:
 
-                    results['ThreadStock'].append(result)
+                results['ThreadStock'].append(result)
 
-            # Process GlueStock data
+        # Process GlueStock data
 
-            for row in data.get('GlueStock', []):
+        for row in data.get('GlueStock', []):
 
-                result = update_or_create_instance(GlueStock, ['width'], row, GlueStockSerializer)
+            result = update_or_create_instance(GlueStock, ['width'], row, GlueStockSerializer)
 
-                if isinstance(result, dict) and 'errors' in result:
+            if isinstance(result, dict) and 'errors' in result:
 
-                    errors['GlueStock'].append(result)
+                errors['GlueStock'].append(result)
 
-                else:
+            else:
 
-                    results['GlueStock'].append(result)
+                results['GlueStock'].append(result)
 
         # Process CartonSupplies data
         for row in data.get('CartonSupplies', []):
