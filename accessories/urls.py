@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import *
-from .api import PopulateModelsView
+from .api import PopulateModelsView_1,PopulateModelsView_2
 
 
 urlpatterns = [
@@ -56,6 +56,7 @@ urlpatterns = [
     path('GlueStock/', GlueStockView.as_view(), name='GlueStockView'),
     path('PackagingGlue/', PackagingGlueView.as_view(), name='PackagingGlueView'),
 
-    path('api/populate-models/', PopulateModelsView.as_view(), name='populate-models'),
+    path('api/populate-models/1', PopulateModelsView_1.as_view(), name='populate-models'),
+    path('api/populate-models/2', PopulateModelsView_2.as_view(), name='populate-models'),
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
 ]

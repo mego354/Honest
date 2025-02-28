@@ -74,7 +74,7 @@ def update_or_create_instance(model, unique_fields, row, serializer_class):
         logging.error(f"Unexpected error in {model.__name__}: {e}")
         return {"error": str(e)}
 
-class PopulateModelsView(APIView):
+class PopulateModelsView_1(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -135,16 +135,6 @@ class PopulateModelsView(APIView):
             safe_delete(KardonStock)
             safe_delete(PackagingKardon)
             safe_delete(ReturnKardon)
-            safe_delete(RubberSupplies)
-            safe_delete(RubberStock)
-            safe_delete(PackagingRubber)
-            safe_delete(ReturnRubber)
-            safe_delete(ThreadSupplies)
-            safe_delete(ThreadStock)
-            safe_delete(PackagingThread)
-            safe_delete(GlueSupplies)
-            safe_delete(GlueStock)
-            safe_delete(PackagingGlue)
         else:
             CartonSupplies.objects.all().delete()
             CartonStock.objects.all().delete()
@@ -186,16 +176,6 @@ class PopulateModelsView(APIView):
             KardonStock.objects.all().delete()
             PackagingKardon.objects.all().delete()
             ReturnKardon.objects.all().delete()
-            RubberSupplies.objects.all().delete()
-            RubberStock.objects.all().delete()
-            PackagingRubber.objects.all().delete()
-            ReturnRubber.objects.all().delete()
-            ThreadSupplies.objects.all().delete()
-            ThreadStock.objects.all().delete()
-            PackagingThread.objects.all().delete()
-            GlueSupplies.objects.all().delete()
-            GlueStock.objects.all().delete()
-            PackagingGlue.objects.all().delete()
 
         errors = {
             'CartonSupplies': [],
@@ -238,16 +218,6 @@ class PopulateModelsView(APIView):
             'KardonStock': [],
             'PackagingKardon': [],
             'ReturnKardon': [],
-            'RubberSupplies': [],
-            'RubberStock': [],
-            'PackagingRubber': [],
-            'ReturnRubber': [],
-            'ThreadSupplies': [],
-            'ThreadStock': [],
-            'PackagingThread': [],
-            'GlueSupplies': [],
-            'GlueStock': [],
-            'PackagingGlue': [],
         }
         results = {
             'CartonSupplies': [],
@@ -290,16 +260,6 @@ class PopulateModelsView(APIView):
             'KardonStock': [],
             'PackagingKardon': [],
             'ReturnKardon': [],
-            'RubberSupplies': [],
-            'RubberStock': [],
-            'PackagingRubber': [],
-            'ReturnRubber': [],
-            'ThreadSupplies': [],
-            'ThreadStock': [],
-            'PackagingThread': [],
-            'GlueSupplies': [],
-            'GlueStock': [],
-            'PackagingGlue': [],
         }
 
         # Process CartonStock data
@@ -441,48 +401,6 @@ class PopulateModelsView(APIView):
             else:
 
                 results['KardonStock'].append(result)
-
-        # Process RubberStock data
-
-        for row in data.get('RubberStock', []):
-
-            result = update_or_create_instance(RubberStock, ['width'], row, RubberStockSerializer)
-
-            if isinstance(result, dict) and 'errors' in result:
-
-                errors['RubberStock'].append(result)
-
-            else:
-
-                results['RubberStock'].append(result)
-
-        # Process ThreadStock data
-
-        for row in data.get('ThreadStock', []):
-
-            result = update_or_create_instance(ThreadStock, ['thread_code'], row, ThreadStockSerializer)
-
-            if isinstance(result, dict) and 'errors' in result:
-
-                errors['ThreadStock'].append(result)
-
-            else:
-
-                results['ThreadStock'].append(result)
-
-        # Process GlueStock data
-
-        for row in data.get('GlueStock', []):
-
-            result = update_or_create_instance(GlueStock, ['width'], row, GlueStockSerializer)
-
-            if isinstance(result, dict) and 'errors' in result:
-
-                errors['GlueStock'].append(result)
-
-            else:
-
-                results['GlueStock'].append(result)
 
         # Process CartonSupplies data
         for row in data.get('CartonSupplies', []):
@@ -733,6 +651,129 @@ class PopulateModelsView(APIView):
                 errors['ReturnKardon'].append(result)
             else:
                 results['ReturnKardon'].append(result)
+
+        if any(errors[key] for key in errors):
+            logging.error("Errors during processing: %s", errors)
+            return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        Updates.objects.create()
+        return Response({"results": results}, status=status.HTTP_201_CREATED)
+    
+#######################################################################################
+#######################################################################################
+#######################################################################################
+#######################################################################################
+#######################################################################################
+class PopulateModelsView_2(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        passcode = request.headers.get('X-API-PASSCODE')
+        if not passcode or passcode != settings.SECURE_API_PASSCODE:
+            return Response({"error": "Forbidden: Invalid passcode."}, status=status.HTTP_403_FORBIDDEN)
+
+        data = request.data
+        # logging.debug("Received data: %s", data)
+
+        refresh = request.GET.get('refresh')
+        if refresh:
+            days = 10
+            today = datetime.today().date()
+            start_date = today - timedelta(days=days)
+
+            def safe_delete(model):
+                model.objects.filter(date__gte=start_date, date__lte=today).delete()
+
+            safe_delete(RubberSupplies)
+            safe_delete(RubberStock)
+            safe_delete(PackagingRubber)
+            safe_delete(ReturnRubber)
+            safe_delete(ThreadSupplies)
+            safe_delete(ThreadStock)
+            safe_delete(PackagingThread)
+            safe_delete(GlueSupplies)
+            safe_delete(GlueStock)
+            safe_delete(PackagingGlue)
+        else:
+            RubberSupplies.objects.all().delete()
+            RubberStock.objects.all().delete()
+            PackagingRubber.objects.all().delete()
+            ReturnRubber.objects.all().delete()
+            ThreadSupplies.objects.all().delete()
+            ThreadStock.objects.all().delete()
+            PackagingThread.objects.all().delete()
+            GlueSupplies.objects.all().delete()
+            GlueStock.objects.all().delete()
+            PackagingGlue.objects.all().delete()
+
+        errors = {
+            'RubberSupplies': [],
+            'RubberStock': [],
+            'PackagingRubber': [],
+            'ReturnRubber': [],
+            'ThreadSupplies': [],
+            'ThreadStock': [],
+            'PackagingThread': [],
+            'GlueSupplies': [],
+            'GlueStock': [],
+            'PackagingGlue': [],
+        }
+        results = {
+            'RubberSupplies': [],
+            'RubberStock': [],
+            'PackagingRubber': [],
+            'ReturnRubber': [],
+            'ThreadSupplies': [],
+            'ThreadStock': [],
+            'PackagingThread': [],
+            'GlueSupplies': [],
+            'GlueStock': [],
+            'PackagingGlue': [],
+        }
+
+        # Process RubberStock data
+
+        for row in data.get('RubberStock', []):
+
+            result = update_or_create_instance(RubberStock, ['width'], row, RubberStockSerializer)
+
+            if isinstance(result, dict) and 'errors' in result:
+
+                errors['RubberStock'].append(result)
+
+            else:
+
+                results['RubberStock'].append(result)
+
+        # Process ThreadStock data
+
+        for row in data.get('ThreadStock', []):
+
+            result = update_or_create_instance(ThreadStock, ['thread_code'], row, ThreadStockSerializer)
+
+            if isinstance(result, dict) and 'errors' in result:
+
+                errors['ThreadStock'].append(result)
+
+            else:
+
+                results['ThreadStock'].append(result)
+
+        # Process GlueStock data
+
+        for row in data.get('GlueStock', []):
+
+            result = update_or_create_instance(GlueStock, ['width'], row, GlueStockSerializer)
+
+            if isinstance(result, dict) and 'errors' in result:
+
+                errors['GlueStock'].append(result)
+
+            else:
+
+                results['GlueStock'].append(result)
+
 
         # Process RubberSupplies data
         for row in data.get('RubberSupplies', []):
