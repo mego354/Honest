@@ -49,6 +49,7 @@
         <table id="data-table" class="table table-striped">
             <thead class="table-dark">
                 <tr>
+                    <th style="position: sticky; top: 0;" >التاريخ</th>
                     <th style="position: sticky; top: 0;" >عرض الاستك</th>
                     <th style="position: sticky; top: 0;" >الوزن الاجمالي</th>
                 </tr>
@@ -56,12 +57,13 @@
             <tbody>
                 {% for model in models %}
                 <tr>
+                    <td>{{ model.date|date:"Y/m/d" }}</td>
                     <td>{{ model.width }}</td>
                     <td>{{ model.total_weight }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="2" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="3" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>

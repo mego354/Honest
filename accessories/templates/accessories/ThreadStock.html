@@ -46,6 +46,7 @@
         <table id="data-table" class="table table-striped">
             <thead class="table-dark">
                 <tr>
+                    <th style="position: sticky; top: 0;" >التاريخ</th>
                     <th style="position: sticky; top: 0;" >كود الخيط</th>
                     <th style="position: sticky; top: 0;" >اللون</th>
                     <th style="position: sticky; top: 0;" >عدد البكر</th>
@@ -54,13 +55,14 @@
             <tbody>
                 {% for model in models %}
                 <tr>
+                    <td>{{ model.date|date:"Y/m/d" }}</td>
                     <td>{{ model.thread_code }}</td>
                     <td>{{ model.color }}</td>
                     <td>{{ model.spools_count }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="4" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>

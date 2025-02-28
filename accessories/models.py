@@ -64,8 +64,7 @@ class BagBaseModel(IDBaseModel):
     bag_width = models.CharField("مقاس الكيس (العرض)", max_length=255, null=True, blank=True)
     weight = models.FloatField("الوزن", null=True, blank=True)
     bags_per_kilo = models.IntegerField("عدد الاكياس في الكيلو", null=True, blank=True)
-    weight = models.IntegerField("عدد الاكياس", null=True, blank=True)
-    # quantity = models.IntegerField("عدد الاكياس", null=True, blank=True)
+    bags_quantity = models.IntegerField("عدد الاكياس", null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -147,7 +146,7 @@ class CartonSupplies(SupplierBaseModel, CartonBaseModel):
     quantity_per_bundle = models.IntegerField("الكمية في الربطة", null=True, blank=True)
     excess = models.IntegerField("الفرط", null=True, blank=True)
 
-class CartonStock(CartonBaseModel):
+class CartonStock(BaseModel, CartonBaseModel):
     pass
 
 class PackagingCarton(PackagingBaseModel, CartonBaseModel):
@@ -160,7 +159,7 @@ class ReturnCarton(BaseModel, CartonBaseModel):
 class HangerSupplies(SupplierBaseModel, HangerBaseModel):
     pass
 
-class HangerStock(HangerBaseModel):
+class HangerStock(BaseModel, HangerBaseModel):
     pass
 
 class PackagingHanger(PackagingBaseModel, HangerBaseModel):
@@ -173,7 +172,7 @@ class ReturnHanger(BaseModel, HangerBaseModel):
 class SizerSupplies(SupplierBaseModel, SizerBaseModel):
     pass
 
-class SizerStock(SizerBaseModel):
+class SizerStock(BaseModel, SizerBaseModel):
     pass
 
 class PackagingSizer(PackagingBaseModel, SizerBaseModel):
@@ -186,7 +185,7 @@ class ReturnSizer(BaseModel, SizerBaseModel):
 class BagSupplies(SupplierBaseModel, BagBaseModel):
     pass
 
-class BagStock(BagBaseModel):
+class BagStock(BaseModel, BagBaseModel):
     pass
 
 class PackagingBag(PackagingBaseModel, BagBaseModel):
@@ -199,7 +198,7 @@ class ReturnBag(BaseModel, BagBaseModel):
 class HangTagSupplies(SupplierBaseModel, HangTagBaseModel):
     pass
 
-class HangTagStock(HangTagBaseModel):
+class HangTagStock(BaseModel, HangTagBaseModel):
     pass
 
 class PackagingHangTag(PackagingBaseModel, HangTagBaseModel):
@@ -212,7 +211,7 @@ class ReturnHangTag(BaseModel, HangTagBaseModel):
 class HeatSealSupplies(SupplierBaseModel, HeatSealBaseModel):
     pass
 
-class HeatSealStock(HeatSealBaseModel):
+class HeatSealStock(BaseModel, HeatSealBaseModel):
     pass
 
 class PackagingHeatSeal(PackagingBaseModel, HeatSealBaseModel):
@@ -225,7 +224,7 @@ class ReturnHeatSeal(BaseModel, HeatSealBaseModel):
 class TicketSatanSupplies(SupplierBaseModel, TicketSatanBaseModel):
     pass
 
-class TicketSatanStock(TicketSatanBaseModel):
+class TicketSatanStock(BaseModel, TicketSatanBaseModel):
     code = models.CharField("الرمز", max_length=255, null=True, blank=True)
 
 class PackagingTicketSatan(PackagingBaseModel, TicketSatanBaseModel):
@@ -238,7 +237,7 @@ class ReturnTicketSatan(BaseModel, TicketSatanBaseModel):
 class TicketSupplies(SupplierBaseModel, TicketBaseModel):
     pass
 
-class TicketStock(TicketBaseModel):
+class TicketStock(BaseModel, TicketBaseModel):
     pass
 
 class PackagingTicket(PackagingBaseModel, TicketBaseModel):
@@ -251,7 +250,7 @@ class ReturnTicket(BaseModel, TicketBaseModel):
 class TicketPriceSupplies(SupplierBaseModel, TicketPriceBaseModel):
     pass
 
-class TicketPriceStock(TicketPriceBaseModel):
+class TicketPriceStock(BaseModel, TicketPriceBaseModel):
     pass
 
 class PackagingTicketPrice(PackagingBaseModel, TicketPriceBaseModel):
@@ -264,7 +263,7 @@ class ReturnTicketPrice(BaseModel, TicketPriceBaseModel):
 class KardonSupplies(SupplierBaseModel, KardonBaseModel):
     pass
 
-class KardonStock(KardonBaseModel):
+class KardonStock(BaseModel, KardonBaseModel):
     pass
 
 class PackagingKardon(PackagingBaseModel, KardonBaseModel):
@@ -277,7 +276,7 @@ class ReturnKardon(BaseModel, KardonBaseModel):
 class RubberSupplies(SupplierBaseModel, RubberBaseModel):
     pass
 
-class RubberStock(RubberBaseModel):
+class RubberStock(BaseModel, RubberBaseModel):
     pass
 
 class PackagingRubber(PackagingBaseModel, RubberBaseModel):
@@ -290,7 +289,7 @@ class ReturnRubber(BaseModel, RubberBaseModel):
 class ThreadSupplies(SupplierBaseModel, ThreadBaseModel):
     pass
 
-class ThreadStock(ThreadBaseModel):
+class ThreadStock(BaseModel, ThreadBaseModel):
     pass
 
 class PackagingThread(PackagingBaseModel, ThreadBaseModel):
@@ -300,7 +299,7 @@ class PackagingThread(PackagingBaseModel, ThreadBaseModel):
 class GlueSupplies(SupplierBaseModel, GlueBaseModel):
     pass
 
-class GlueStock(GlueBaseModel):
+class GlueStock(BaseModel, GlueBaseModel):
     pass
 
 class PackagingGlue(PackagingBaseModel, GlueBaseModel):

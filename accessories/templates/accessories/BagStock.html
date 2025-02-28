@@ -49,6 +49,7 @@
         <table id="data-table" class="table table-striped">
             <thead class="table-dark">
                 <tr>
+                    <th style="position: sticky; top: 0;" >التاريخ</th>
                     <th style="position: sticky; top: 0;" >الطول</th>
                     <th style="position: sticky; top: 0;" >العرض</th>
                     <th style="position: sticky; top: 0;" >الوزن</th>
@@ -59,15 +60,16 @@
             <tbody>
                 {% for model in models %}
                 <tr>
+                    <td>{{ model.date|date:"Y/m/d" }}</td>
                     <td>{{ model.bag_length }}</td>
                     <td>{{ model.bag_width }}</td>
                     <td>{{ model.weight }}</td>
                     <td>{{ model.bags_per_kilo }}</td>
-                    <td>{{ model.weight }}</td>
+                    <td>{{ model.bags_quantity }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="6" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -49,6 +49,7 @@
         <table id="data-table" class="table table-striped">
             <thead class="table-dark">
                 <tr>
+                    <th style="position: sticky; top: 0;" >التاريخ</th>
                     <th style="position: sticky; top: 0;" >رقم الشماعة</th>
                     <th style="position: sticky; top: 0;" >اللون</th>
                     <th style="position: sticky; top: 0;" >عدد الدست</th>
@@ -58,6 +59,7 @@
             <tbody>
                 {% for model in models %}
                 <tr>
+                    <td>{{ model.date|date:"Y/m/d" }}</td>
                     <td>{{ model.hanger_number }}</td>
                     <td>{{ model.color }}</td>
                     <td>{{ model.sets_count }}</td>
@@ -65,7 +67,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="5" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>
