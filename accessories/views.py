@@ -117,7 +117,7 @@ class CartonStockView(FilterableListView):
     template_name = "accessories/CartonStock.html"
     model = CartonStock
     filter_fields = ['model_number', 'length', 'width', 'height']
-    columns = ["رقم الموديل","المقاس","العدد الإجمالي"]
+    columns = ["التاريخ","رقم الموديل","المقاس","العدد الإجمالي"]
 
 
 class PackagingCartonView(FilterableListView):
@@ -144,7 +144,7 @@ class HangerStockView(FilterableListView):
     template_name = "accessories/HangerStock.html"
     model = HangerStock
     filter_fields = ['hanger_number', 'color']
-    columns = ["رقم الشماعة","اللون","عدد الدست","عدد الشماعات",]
+    columns = ["التاريخ","رقم الشماعة","اللون","عدد الدست","عدد الشماعات",]
 
 
 class PackagingHangerView(FilterableListView):
@@ -171,7 +171,7 @@ class SizerStockView(FilterableListView):
     template_name = "accessories/SizerStock.html"
     model = SizerStock
     filter_fields = ['size', 'color']
-    columns = ["المقاس","اللون","عدد السيزر"]
+    columns = ["التاريخ","المقاس","اللون","عدد السيزر"]
 
 class PackagingSizerView(FilterableListView):
     template_name = "accessories/PackagingSizer.html"
@@ -197,7 +197,7 @@ class BagStockView(FilterableListView):
     template_name = "accessories/BagStock.html"
     model = BagStock
     filter_fields = ['bag_length', 'bag_width', 'weight']
-    columns = ["الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس"]
+    columns = ["التاريخ","الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس"]
 
 class PackagingBagView(FilterableListView):
     template_name = "accessories/PackagingBag.html"
@@ -222,7 +222,7 @@ class HangTagStockView(FilterableListView):
     template_name = "accessories/HangTagStock.html"
     model = HangTagStock
     filter_fields = ['type']
-    columns = ["النوع","العدد",]
+    columns = ["التاريخ","النوع","العدد",]
 
 class PackagingHangTagView(FilterableListView):
     template_name = "accessories/PackagingHangTag.html"
@@ -247,7 +247,7 @@ class HeatSealStockView(FilterableListView):
     template_name = "accessories/HeatSealStock.html"
     model = HeatSealStock
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","العدد"]
+    columns = ["التاريخ","النوع","المقاس","العدد"]
 
 class PackagingHeatSealView(FilterableListView):
     template_name = "accessories/PackagingHeatSeal.html"
@@ -272,7 +272,7 @@ class TicketSatanStockView(FilterableListView):
     template_name = "accessories/TicketSatanStock.html"
     model = TicketSatanStock
     filter_fields = ['model_number', 'size', 'upc_number']
-    columns = ["رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع"]
+    columns = ["التاريخ","رقم الموديل","المقاس","نسبة القطن","نسبة البوليستر","UPC Number","عدد القطع"]
 
 class PackagingTicketSatanView(FilterableListView):
     template_name = "accessories/PackagingTicketSatan.html"
@@ -297,7 +297,7 @@ class TicketStockView(FilterableListView):
     template_name = "accessories/TicketStock.html"
     model = TicketStock
     filter_fields = ['type', 'size']
-    columns = ["النوع","المقاس","عدد القطع"]
+    columns = ["التاريخ","النوع","المقاس","عدد القطع"]
 
 class PackagingTicketView(FilterableListView):
     template_name = "accessories/PackagingTicket.html"
@@ -322,7 +322,7 @@ class TicketPriceStockView(FilterableListView):
     template_name = "accessories/TicketPriceStock.html"
     model = TicketPriceStock
     filter_fields = ['model_number', 'size']
-    columns = ["الاجمالي","المقاس","رقم الموديل"]
+    columns = ["التاريخ","الاجمالي","المقاس","رقم الموديل"]
 
 class PackagingTicketPriceView(FilterableListView):
     template_name = "accessories/PackagingTicketPrice.html"
@@ -347,7 +347,7 @@ class KardonStockView(FilterableListView):
     template_name = "accessories/KardonStock.html"
     model = KardonStock
     filter_fields = ['color']
-    columns = ["عدد الامتار","اللون"]
+    columns = ["التاريخ","عدد الامتار","اللون"]
 
 class PackagingKardonView(FilterableListView):
     template_name = "accessories/PackagingKardon.html"
@@ -372,7 +372,7 @@ class RubberStockView(FilterableListView):
     template_name = "accessories/RubberStock.html"
     model = RubberStock
     filter_fields = ['width']
-    columns = ["الوزن الاجمالي","عرض الاستك"]
+    columns = ["التاريخ","الوزن الاجمالي","عرض الاستك"]
 
 class PackagingRubberView(FilterableListView):
     template_name = "accessories/PackagingRubber.html"
@@ -397,7 +397,7 @@ class ThreadStockView(FilterableListView):
     template_name = "accessories/ThreadStock.html"
     model = ThreadStock
     filter_fields = ['thread_code', 'color']
-    columns = ["عدد البكر","اللون","كود الخيط"]
+    columns = ["التاريخ","عدد البكر","اللون","كود الخيط"]
 
 
 class PackagingThreadView(FilterableListView):
@@ -418,7 +418,7 @@ class GlueStockView(FilterableListView):
     template_name = "accessories/GlueStock.html"
     model = GlueStock
     filter_fields = ['width']
-    columns = ["عدد الكراتين","عرض اللزق"]
+    columns = ["التاريخ","عدد الكراتين","عرض اللزق"]
 
 class PackagingGlueView(FilterableListView):
     template_name = "accessories/PackagingGlue.html"
