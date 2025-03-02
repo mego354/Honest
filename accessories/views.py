@@ -203,13 +203,13 @@ class PackagingBagView(FilterableListView):
     template_name = "accessories/PackagingBag.html"
     model = PackagingBag
     filter_fields = ['bag_length', 'bag_width', 'weight']
-    columns = ["التاريخ","المصنع","الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس"]
+    columns = ["التاريخ","المصنع","الطول","العرض","الوزن","عدد الاكياس"]
 
 class ReturnBagView(FilterableListView):
     template_name = "accessories/ReturnBag.html"
     model = ReturnBag
     filter_fields = ['bag_length', 'bag_width', 'weight']
-    columns = ["التاريخ","الطول","العرض","الوزن","الاكياس في الكيلو","عدد الاكياس"]
+    columns = ["التاريخ","الطول","العرض","الوزن","عدد الاكياس"]
 
 ###############################################################################################################################
 class HangTagSuppliesView(FilterableListView):
