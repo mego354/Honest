@@ -51,10 +51,12 @@ class Command(BaseCommand):
 def send_email_with_attachment():
     subject = "Daily Production Report"
     body = "Hello Ahmed,\n\nPlease find attached the daily production report.\n\nBest regards,\nMahmoud"
-    recipient = ["megomego354@gmail.com", "ahnabil148@gmail.com"]
-    # recipient = ["megomego354@gmail.com"]
+    recipient = ["ahnabil148@gmail.com"]
+    cc_recipients = ["megomego354@gmail.com", "mohamedelsaied1986@yahoo.com"]
+    # recipient = ["ahnabil148@gmail.com"]
+    # cc_recipients = ["megomego354@gmail.com", "mohamedelsaied1986@yahoo.com"]
 
-    email = EmailMessage(subject, body, settings.EMAIL_HOST_USER, recipient)
+    email = EmailMessage(subject, body, settings.EMAIL_HOST_USER, recipient, cc=cc_recipients)
 
     # Attach the file
     file_path = os.path.join(settings.MEDIA_ROOT, "reports", "production_report.pdf")

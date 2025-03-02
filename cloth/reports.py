@@ -190,38 +190,6 @@ def generate_production_report(cloth_operations, access_models, producion_models
     if not has_data:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
-
-    # ---------------------- تقرير الإنتاج (Production Report) ----------------------
-    pdf.add_section("تقرير الانتاج", [])
-    
-    if producion_models:
-        for model_data in producion_models:
-            if pdf.get_y() + 0 > 270:
-                pdf.add_page()
-
-            pdf.chapter_body([f"الموديل: {model_data['model']}"])
-            
-            headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
-            table_data = [
-                [p['type'], p['used_amount'], p['size'], p['factory'], p['created_at']]
-                for p in model_data["productions"]
-            ]
-            
-            pdf.add_table(headers, table_data)
-            pdf.ln(5)
-
-            if "totals" in model_data and model_data["totals"]:
-                pdf.chapter_body(["إجمالي الكمية لكل قطعة:"])
-                total_headers = ["القطعة", "إجمالي الكمية"]
-                total_data = [[t['type'], t['total_used_amount']] for t in model_data["totals"]]
-                pdf.add_table(total_headers, total_data)
-            
-            pdf.ln(10)
-    else:
-        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
-
-    pdf.ln(20)
-
     # ---------------------- تقرير الملحقات (Accessories Report) ----------------------
     def date_care_getattr(instant, op_field):
         value = getattr(instant, op_field, None)
@@ -262,6 +230,37 @@ def generate_production_report(cloth_operations, access_models, producion_models
                     pdf.add_table(headers, table_data)
                     pdf.ln(5)
 
+            
+            pdf.ln(10)
+    else:
+        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
+
+    pdf.ln(20)
+
+    # ---------------------- تقرير الإنتاج (Production Report) ----------------------
+    pdf.add_section("تقرير الانتاج", [])
+    
+    if producion_models:
+        for model_data in producion_models:
+            if pdf.get_y() + 0 > 270:
+                pdf.add_page()
+
+            pdf.chapter_body([f"الموديل: {model_data['model']}"])
+            
+            headers = ["القطعة", "الكمية", "المقاس", "المصنع", "التاريخ"]
+            table_data = [
+                [p['type'], p['used_amount'], p['size'], p['factory'], p['created_at']]
+                for p in model_data["productions"]
+            ]
+            
+            pdf.add_table(headers, table_data)
+            pdf.ln(5)
+
+            if "totals" in model_data and model_data["totals"]:
+                pdf.chapter_body(["إجمالي الكمية لكل قطعة:"])
+                total_headers = ["القطعة", "إجمالي الكمية"]
+                total_data = [[t['type'], t['total_used_amount']] for t in model_data["totals"]]
+                pdf.add_table(total_headers, total_data)
             
             pdf.ln(10)
     else:
