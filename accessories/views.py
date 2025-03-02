@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.db.models import Q
 from .models import (# 13 * 4 - 2 = 50
     CartonSupplies     , CartonStock     , PackagingCarton     , ReturnCarton,
@@ -24,6 +24,8 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from cloth.PDF import PDFTableGenerator
+
+from .utils import get_recent_access_models
 
 @csrf_exempt
 def generate_pdf(request):
@@ -427,3 +429,10 @@ class PackagingGlueView(FilterableListView):
     columns = ["التاريخ","اسم المصنع","عدد الكراتين","عرض اللزق"]
 
 ###############################################################################################################################
+class test(TemplateView):
+    template_name = "accessories/test.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["data"] = get_recent_access_models
+        return context

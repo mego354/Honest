@@ -1,160 +1,195 @@
-from datetime import datetime, timedelta
-from django.db.models import Q
+from django.utils.timezone import now
+from datetime import timedelta
+from django.db.models import Sum
 
 from .models import *
 
 
 def get_recent_access_models(days=1):
     """
-    Fetch and return access_models from the Statistics model where the date is within the last 'days' days.
+    Fetch and return aggregated access models for each category within the last 'days' days.
+    The operations are sorted by date (newest first).
 
     Args:
-        days (int): The number of days to go back (default is 1 day).
+        days (int): The number of days to look back (default is 1 day).
 
     Returns:
-        dict: A dictionary with sorted lists of operations (newest first).
+        dict: A dictionary where each key is a category (e.g., "الكرتون") and the value is
+              another dictionary with keys 'supply', 'package', and 'return' containing lists
+              of operations.
     """
-    today = datetime.today().date()
+    today = now().date()
     start_date = today - timedelta(days=days)
 
-    all_access_models = {"وارد": [], "قص": [], "مرتجع": []}
-
-    # Define operation headers and keys
     models_headers = {
         "الكرتون": {
-            "models": [CartonStock, CartonSupplies, PackagingCarton, ReturnCarton],
+            "models": [CartonSupplies, PackagingCarton, ReturnCarton],
             "uniqunes_fields": ['model_number', 'length', 'width', 'height'],
-            "sum_fields": ['total_quantity'],
+            "columns":[
+                ["التاريخ","اسم المورد","رقم الموديل", "الطول", "العرض", "الارتفاع", "العدد الإجمالي"],
+                ["التاريخ","المصنع","رقم الموديل", "العرض", "الارتفاع", "عدد الكرتون"],
+                ["التاريخ","رقم الموديل", "العرض", "الارتفاع", "عدد الكرتون"],
+                ], 
+            "sum_fields": [['total_quantity'], ['carton_count'], ['carton_count']],
         },
         "الشماعات": {
-            "models": [HangerStock, HangerSupplies, PackagingHanger, ReturnHanger],
+            "models": [HangerSupplies, PackagingHanger, ReturnHanger],
             "uniqunes_fields": ['hanger_number', 'color'],
-            "sum_fields": ['sets_count', 'hangers_count'],
+            "columns":[
+                ["التاريخ","اسم المورد","رقم الشماعة","اللون","عدد الدست","عدد الشماعات"],
+                ["التاريخ","المصنع","رقم الشماعة","اللون","عدد الدست","عدد الشماعات"],
+                ["التاريخ","رقم الشماعة","اللون","عدد الدست","عدد الشماعات"],
+                ], 
+            "sum_fields": [['sets_count', 'hangers_count'], ['sets_count', 'hangers_count'], ['sets_count', 'hangers_count']],
         },
         "السيزر": {
-            "models": [SizerStock, SizerSupplies, PackagingSizer, ReturnSizer],
+            "models": [SizerSupplies, PackagingSizer, ReturnSizer],
             "uniqunes_fields": ['size', 'color'],
-            "sum_fields": ['sizer_count'],
+            "columns":[
+                ["التاريخ","اسم المورد","المقاس","اللون","عدد السيزر"],
+                ["التاريخ","المصنع","المقاس","اللون","عدد السيزر"],
+                ["التاريخ","المقاس","اللون","عدد السيزر"],
+                ], 
+            "sum_fields": [['sizer_count'], ['sizer_count'], ['sizer_count']],
         },
         "الاكياس": {
-            "models": [BagStock, BagSupplies, PackagingBag, ReturnBag],
+            "models": [BagSupplies, PackagingBag, ReturnBag],
             "uniqunes_fields": ['bag_length', 'bag_width'],
-            "sum_fields": ['bags_quantity'],
+            "columns":[
+                ["التاريخ","اسم المورد","طول الكيس","العرض الكيس","الوزن","الاكياس في الكيلو","عدد الاكياس"],
+                ["التاريخ","المصنع","طول الكيس","العرض الكيس","الوزن","عدد الاكياس"],
+                ["التاريخ","طول الكيس","العرض الكيس","الوزن","عدد الاكياس"],
+                ], 
+            "sum_fields": [['bags_quantity'], ['bags_quantity'], ['bags_quantity']],
         },
         "هانج تاج": {
-            "models": [HangTagStock, HangTagSupplies, PackagingHangTag, ReturnHangTag],
+            "models": [HangTagSupplies, PackagingHangTag, ReturnHangTag],
             "uniqunes_fields": ['type'],
-            "sum_fields": ['quantity'],
+            "columns":[
+                ["التاريخ","اسم المورد","النوع","العدد"],
+                ["التاريخ","المصنع","النوع","العدد"],
+                ["التاريخ","النوع","العدد"],
+                ], 
+            "sum_fields": [['quantity'], ['quantity'], ['quantity']],
         },
         "هيت سيل": {
-            "models": [HeatSealStock, HeatSealSupplies, PackagingHeatSeal, ReturnHeatSeal],
+            "models": [HeatSealSupplies, PackagingHeatSeal, ReturnHeatSeal],
             "uniqunes_fields": ['type'],
-            "sum_fields": ['quantity'],
+            "columns":[
+                ["التاريخ","اسم المورد","النوع","المقاس","العدد"],
+                ["التاريخ","المصنع","النوع","المقاس","العدد"],
+                ["التاريخ","النوع","المقاس","العدد"],
+                ], 
+            "sum_fields": [['quantity'], ['quantity'], ['quantity']],
         },
         "تكت ستان": {
-            "models": [TicketSatanStock, TicketSatanSupplies, PackagingTicketSatan, ReturnTicketSatan],
+            "models": [TicketSatanSupplies, PackagingTicketSatan, ReturnTicketSatan],
             "uniqunes_fields": ['model_number', 'size', 'cotton_percentage', 'polyester_percentage', 'upc_number'],
-            "sum_fields": ['pieces_count'],
+            "columns":[
+                ["التاريخ","اسم المورد","رقم الموديل","المقاس","القطن","البوليستر","UPC Number","عدد القطع"],
+                ["التاريخ","المصنع","رقم الموديل","المقاس","القطن","البوليستر","UPC Number","عدد القطع"],
+                ["التاريخ","رقم الموديل","المقاس","القطن","البوليستر","UPC Number","عدد القطع"],
+                ], 
+            "sum_fields": [['pieces_count'], ['pieces_count'], ['pieces_count']],
         },
         "تكت رئيسي": {
-            "models": [TicketStock, TicketSupplies, PackagingTicket, ReturnTicket],
+            "models": [TicketSupplies, PackagingTicket, ReturnTicket],
             "uniqunes_fields": ['type', 'size'],
-            "sum_fields": ['pieces_count'],
+            "columns":[
+                ["التاريخ","اسم المورد","النوع","المقاس","عدد القطع"],
+                ["التاريخ","المصنع","النوع","المقاس","عدد القطع"],
+                ["التاريخ","النوع","المقاس","عدد القطع"],
+                ], 
+            "sum_fields": [['pieces_count'], ['pieces_count'], ['pieces_count']],
         },
         "تكت برايس": {
-            "models": [TicketPriceStock, TicketPriceSupplies, PackagingTicketPrice, ReturnTicketPrice],
+            "models": [TicketPriceSupplies, PackagingTicketPrice, ReturnTicketPrice],
             "uniqunes_fields": ['model_number'],
-            "sum_fields": ['total'],
+            "columns":[
+                ["التاريخ","اسم المورد","الاجمالي","المقاس","رقم الموديل"],
+                ["التاريخ","المصنع","الاجمالي","المقاس","رقم الموديل"],
+                ["التاريخ","الاجمالي","المقاس","رقم الموديل"],
+                ], 
+            "sum_fields": [['total'], ['total'], ['total']],
         },
         "كاردون": {
-            "models": [KardonStock, KardonSupplies, PackagingKardon, ReturnKardon],
+            "models": [KardonSupplies, PackagingKardon, ReturnKardon],
             "uniqunes_fields": ['color'],
-            "sum_fields": ['meters_count'],
+            "columns":[
+                ["التاريخ","اسم المورد","عدد الامتار","اللون"],
+                ["التاريخ","المصنع","عدد الامتار","اللون"],
+                ["التاريخ","عدد الامتار","اللون"],
+                ], 
+            "sum_fields": [['meters_count'], ['meters_count'], ['meters_count']],
         },
         "استك": {
-            "models": [RubberStock, RubberSupplies, PackagingRubber, ReturnRubber],
+            "models": [RubberSupplies, PackagingRubber, ReturnRubber],
             "uniqunes_fields": ['width'],
-            "sum_fields": ['total_weight'],
+            "columns":[
+                ["التاريخ","اسم المورد","الوزن الاجمالي","عرض الاستك"],
+                ["التاريخ","المصنع","الوزن الاجمالي","عرض الاستك"],
+                ["التاريخ","الوزن الاجمالي","عرض الاستك"],
+                ], 
+            "sum_fields": [['total_weight'], ['total_weight'], ['total_weight']],
         },
         "خيط": {
-            "models": [ThreadStock, ThreadSupplies, PackagingThread],
+            "models": [ThreadSupplies, PackagingThread],
             "uniqunes_fields": ['thread_code'],
-            "sum_fields": ['spools_count'],
+            "columns":[
+                ["التاريخ","اسم المورد","عدد البكر","اللون","كود الخيط"],
+                ["التاريخ","المصنع","عدد البكر","اللون","كود الخيط"],
+                ], 
+            "sum_fields": [['spools_count'], ['spools_count'], ['spools_count']],
         },
         "لزق": {
-            "models": [GlueStock, GlueSupplies, PackagingGlue],
+            "models": [GlueSupplies, PackagingGlue],
             "uniqunes_fields": ['width'],
-            "sum_fields": ['cartons_count'],
+            "columns":[
+                ["التاريخ","اسم المورد","عدد الكراتين","عرض اللزق"],
+                ["التاريخ","المصنع","عدد الكراتين","عرض اللزق"],
+                ], 
+            "sum_fields": [['cartons_count'], ['cartons_count'], ['cartons_count']],
         }
     }
-    operation_key = {
-        "كود الخامه": "fabric_code",
-        "اسم الخامه": "fabric_name",
-        "اللون": "color",
-        "عدد الاتواب": "roll",
-        "الوزن": "weight",
-        "التاريخ": "date",
-        "اسم المصبغة": "dyehouse_name",
-        "رقم الموديل": "model_number",
-    }
 
-    # Filter instances by date range
-    instances = Statistics.objects.filter(Q(date__isnull=False))
-    filtered_instances = [
-        obj for obj in instances if (parsed_date := parse_date(obj.date)) and start_date <= parsed_date <= today
-    ]
+    all_access_models = []
+    has_data = False
+    for category, value in models_headers.items():
+        access_model = {'model': category, 'models': value["models"], 'supply': {'operations': [], 'columns' : None}, 'package': {'operations': [], 'columns' : None}, 'return': {'operations': [], 'columns' : None}}
 
-    # Group instances by movement type
-    models = {
-        "وارد": [obj for obj in filtered_instances if obj.movement_type == "وارد"],
-        "قص": [obj for obj in filtered_instances if obj.movement_type == "قص"],
-        "مرتجع": [obj for obj in filtered_instances if obj.movement_type == "مرتجع"],
-    }
+        # Iterate over the supply, packaging, and return models (skipping the first model, e.g. Stock)
+        for index, model in enumerate(value["models"]):
+            all_queryset = model.objects.filter(date__gte=start_date)
 
-    for movement_type, objects in models.items():
-        if movement_type == "وارد":
-            model_list = []
-            unique_fabric_codes = set(obj.fabric_code for obj in objects)
-            for fabric_code in unique_fabric_codes:
-                fabric_code_models = [obj for obj in objects if obj.fabric_code == fabric_code]
-                fabric_operation = {
-                    "fabric_code": fabric_code,
-                    "fabric_name": fabric_code_models[0].fabric_name or "------",
-                    "detailed_level": len(fabric_code_models),
-                    "roll": sum(obj.roll for obj in fabric_code_models),
-                    "weight": sum(obj.weight for obj in fabric_code_models),
-                    "date":  "------",
-                    "operations": [
-                        {key: getattr(obj, operation_key[key], "") for key in operation_headers[movement_type]}
-                        for obj in fabric_code_models
-                    ]
-                }
-                model_list.append(fabric_operation)
-        else:
-            model_list = []
-            unique_model_fabric_pairs = set((obj.model_number, obj.fabric_code) for obj in objects)
+            # Use .values() instead of .distinct()
+            unique_queryset = all_queryset.values(*value["uniqunes_fields"]).annotate(total=Sum(value["sum_fields"][index][0]))
+            if not has_data:
+                has_data = len(unique_queryset) > 0
 
-            for model_number, fabric_code in unique_model_fabric_pairs:
-                fabric_code_models = [obj for obj in objects if obj.model_number == model_number and obj.fabric_code == fabric_code]
-                
-                fabric_operation = {
-                    "fabric_code": fabric_code or "------",
-                    "fabric_name": fabric_code_models[0].fabric_name or "------",
-                    "detailed_level": len(fabric_code_models),
-                    "roll": sum(obj.roll for obj in fabric_code_models),
-                    "weight": sum(obj.weight for obj in fabric_code_models),
-                    "date": "------",
-                    "operations": [
-                        {key: getattr(obj, operation_key[key], "") for key in operation_headers[movement_type]}
-                        for obj in fabric_code_models
-                    ]
-                }
-                model_list.append(fabric_operation)
 
-        all_access_models[movement_type].extend(model_list)
+            for instance in unique_queryset: 
+                filter_fields = {field: instance[field] for field in value["uniqunes_fields"]}
+                items = all_queryset.filter(**filter_fields)
 
-    # Sort each list by date (newest first)
-    for key in all_access_models:
-        all_access_models[key] = sorted(all_access_models[key], key=lambda obj: obj["date"], reverse=True)
+                if len(items) < 1 or not items:
+                    continue
+                elif len(items) == 1:
+                    operations = [items[0]]
+                else:
+                    operations = [{field: instance["total"] for field in value["sum_fields"][index]}]
+                    for item in items:
+                        operations.append(item)
 
-    return all_access_models
+                if index == 0:
+                    access_model['supply']['operations'] = operations
+                    access_model['supply']['columns'] = value["columns"][index]
+                elif index == 1:
+                    access_model['package']['operations'] = operations
+                    access_model['package']['columns'] = value["columns"][index]
+                elif index == 2:
+                    access_model['return']['operations'] = operations
+                    access_model['return']['columns'] = value["columns"][index]
+
+        all_access_models.append(access_model)
+
+    return all_access_models if has_data else None
