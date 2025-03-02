@@ -5,6 +5,7 @@ import arabic_reshaper
 from bidi.algorithm import get_display
 from django.utils.timezone import localtime, now
 
+import datetime
 def format_arabic_text(text):
     """
     Reshape and reorder Arabic text for proper RTL display.
@@ -66,6 +67,7 @@ class PDF(FPDF):
         # Auto-size columns to fit within the page width
         if col_widths is None:
             column_widths = {
+                "رقم الموديل": 20,
                 "كود الخامه": 20,
                 "اسم الخامه": 40,
                 "اللون": 40,
@@ -77,6 +79,15 @@ class PDF(FPDF):
                 "نوع الحركه": 25,
                 "مقاسات": 45,
                 "الكراتين": 45,
+                "عدد القطع": 20,
+                "عدد القطع": 20,
+                "القطن": 15,
+                "الطول": 15,
+                "العرض": 15,
+                "الارتفاع": 20,
+                "المقاس": 20,
+                "البوليستر": 20,
+                "UPC Number": 30,
             }
             col_widths = [column_widths.get(header, 30) for header in headers]  # Default width = 30
             
@@ -115,7 +126,7 @@ class PDF(FPDF):
         self.chapter_body(content)
 
 
-def generate_production_report(recent_cloth_operations, producion_models, packing_models, output_path):
+def generate_production_report(cloth_operations, access_models, producion_models, packing_models, output_path):
     footer = format_arabic_text(f"تقرير بتاريخ {localtime(now()).strftime('%Y/%m/%d')}")
     font_path = os.path.join(settings.STATIC_ROOT, "cloth", "arial.ttf")
 
@@ -141,7 +152,7 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
     }
     
     for op_type, headers in operation_headers.items():
-        operations = recent_cloth_operations.get(op_type, [])
+        operations = cloth_operations.get(op_type, [])
         if operations:
             has_data = True
 
@@ -179,6 +190,52 @@ def generate_production_report(recent_cloth_operations, producion_models, packin
     if not has_data:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
+    # ---------------------- تقرير الملحقات (Accessories Report) ----------------------
+    def date_care_getattr(instant, op_field):
+        value = getattr(instant, op_field, None)
+        if op_field == 'date' and isinstance(value, datetime.date) :
+            return value.strftime("%Y/%m/%d")
+        else:
+            return value
+        
+    verbose_field_map = {'المصنع': 'factory', 'supply': 'وارد', 'package': 'تحويل', 'return': 'مرتجع', 'القطن': 'cotton_percentage', 'البوليستر': 'polyester_percentage', 'عدد الكرتون': 'carton_count', 'الطول': 'length', 'العرض': 'width', 'الارتفاع': 'height', 'طول الكيس': 'bag_length', 'العرض الكيس': 'bag_width', 'الاكياس في الكيلو': 'bags_per_kilo'}
+    
+    pdf.add_section("تقرير الملحقات", [])
+
+    if access_models != None:
+        types = ['supply', 'package', 'return']
+        for model_data in access_models:
+            if pdf.get_y() + 0 > 270:
+                pdf.add_page()
+
+            for field in model_data["models"][0]._meta.fields:
+                verbose_field_map[field.verbose_name] = field.name
+
+            for type in types:
+                if model_data[type]['columns']:
+                    pdf.chapter_body([f"{verbose_field_map[type]}: {model_data['model']}"])
+
+                    operations = model_data[type]['operations']
+                    headers = model_data[type]['columns']
+                    table_data = []
+
+                    if len(operations) == 1:
+                        table_data += [[date_care_getattr(operations[0], verbose_field_map[op_field]) for op_field in headers]]
+                    else:
+                        table_data += [
+                            [date_care_getattr(operation, verbose_field_map[op_field]) for op_field in headers]
+                            for operation in operations[1:]
+                        ]
+                        
+                    pdf.add_table(headers, table_data)
+                    pdf.ln(5)
+
+            
+            pdf.ln(10)
+    else:
+        pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
+
+    pdf.ln(20)
 
     # ---------------------- تقرير الإنتاج (Production Report) ----------------------
     pdf.add_section("تقرير الانتاج", [])

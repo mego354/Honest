@@ -1,0 +1,17 @@
+{% extends "accessories/layout.html" %}
+{% load static %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'CartonSuppliesView' %}">HONEST ACCESSORIES</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "accessories/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% endblock %}
+
+{% block body %}
+{{data}}
+{% endblock body %}

@@ -53,7 +53,6 @@
                     <th style="position: sticky; top: 0;" >الطول</th>
                     <th style="position: sticky; top: 0;" >العرض</th>
                     <th style="position: sticky; top: 0;" >الوزن</th>
-                    <th style="position: sticky; top: 0;" >الاكياس في الكيلو</th>
                     <th style="position: sticky; top: 0;" >عدد الاكياس</th>
                 </tr>
             </thead>
@@ -64,12 +63,11 @@
                     <td>{{ model.bag_length }}</td>
                     <td>{{ model.bag_width }}</td>
                     <td>{{ model.weight }}</td>
-                    <td>{{ model.bags_per_kilo }}</td>
                     <td>{{ model.bags_quantity }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center">لا يوجد عناصر</td>
+                    <td colspan="5" class="text-center">لا يوجد عناصر</td>
                 </tr>
                 {% endfor %}
             </tbody>

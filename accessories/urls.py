@@ -4,7 +4,8 @@ from .api import PopulateModelsView_1,PopulateModelsView_2
 
 
 urlpatterns = [
-    path('', CartonSuppliesView.as_view(), name='CartonSuppliesView'),
+    # path('', CartonSuppliesView.as_view(), name='CartonSuppliesView'),
+    path('', test.as_view(), name='test'),
     path('CartonSupplies/', CartonSuppliesView.as_view(), name='CartonSuppliesView'),
     path('CartonStock/', CartonStockView.as_view(), name='CartonStockView'),
     path('PackagingCarton/', PackagingCartonView.as_view(), name='PackagingCartonView'),
