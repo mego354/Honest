@@ -173,7 +173,7 @@
         
                         // إنشاء عنصر select غير قابل للتحرير
                         const selectCol = document.createElement("div");
-                        selectCol.classList.add("col");
+                        selectCol.classList.add("col-8");
                         const select = document.createElement("select");
                         select.classList.add("form-control");
                         select.disabled = true;
@@ -182,7 +182,7 @@
         
                         // إنشاء input number
                         const inputCol = document.createElement("div");
-                        inputCol.classList.add("col");
+                        inputCol.classList.add("col-4");
                         const input = document.createElement("input");
                         input.type = "number";
                         input.classList.add("form-control");
@@ -194,7 +194,7 @@
 
                         // إنشاء input comment
                         const commentCol = document.createElement("div");
-                        commentCol.classList.add("col");
+                        commentCol.classList.add("col-12");
                         const comment_input = document.createElement("input");
                         comment_input.classList.add("form-control");
                         comment_input.name = `comment_${size.size.id}`;
