@@ -159,7 +159,7 @@ def get_recent_access_models(days=1):
 
         # Iterate over the supply, packaging, and return models (skipping the first model, e.g. Stock)
         for index, model in enumerate(value["models"]):
-            all_queryset = model.objects.filter(date__gte=start_date)
+            all_queryset = model.objects.filter(date__gte=start_date, date__lt=today)
 
             # Use .values() instead of .distinct()
             unique_queryset = all_queryset.values(*value["uniqunes_fields"]).annotate(total=Sum(value["sum_fields"][index][0]))

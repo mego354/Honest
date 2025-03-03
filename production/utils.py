@@ -11,6 +11,7 @@ def get_producion_models(days=1):
     """
     productions = ProductionPiece.objects.filter(
         created_at__gt=now() - timedelta(days=days)
+        , created_at__lt=now()
     )
 
     model_productions_map = defaultdict(list)
@@ -54,6 +55,7 @@ def get_packing_models(days=1):
     """
     packings = Packing_model.objects.filter(
         created_at__gt=now() - timedelta(days=days)
+        , created_at__lt=now()
     )
 
     model_packings_map = defaultdict(list)
