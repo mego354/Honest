@@ -385,7 +385,7 @@ body {
         margin-bottom: 10px;
     }
     .body-div {
-        background-color: var(--light-bg);
+        background-color: transparent;
 
     }
     body {
