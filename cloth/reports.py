@@ -222,6 +222,20 @@ def generate_production_report(cloth_operations, access_models, producion_models
                     if len(operations) == 1:
                         table_data += [[date_care_getattr(operations[0], verbose_field_map[op_field]) for op_field in headers]]
                     else:
+                        collection = ['---'] * len(headers)
+
+                        for key in operations[0].keys():
+                            arabic_key = next((arabic for arabic, value in verbose_field_map.items() if value == key), None)
+
+                            if arabic_key is not None and arabic_key in headers:
+                                index = headers.index(arabic_key)  # Find the correct index
+                                collection[index] = operations[0][key]  # Place the value at the right index
+
+                        if headers:
+                            collection[0] = 'تجميع'
+
+                        table_data.append(collection)
+
                         table_data += [
                             [date_care_getattr(operation, verbose_field_map[op_field]) for op_field in headers]
                             for operation in operations[1:]
