@@ -384,6 +384,17 @@ body {
         padding: 12px;
         margin-bottom: 10px;
     }
+    .body-div {
+        background-color: var(--light-bg);
+
+    }
+    body {
+        background-image: url('/static/cloth/r_bg1.jpg'); /* RAMADANBG */
+        background-size: contain; /* RAMADANBG */
+        background-position: center; /* RAMADANBG */
+        background-repeat: repeat-y; /* RAMADANBG */
+
+    }
 }
 
 @media (max-width: 576px) {
