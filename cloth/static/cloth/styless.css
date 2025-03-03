@@ -385,6 +385,7 @@ body {
         margin-bottom: 10px;
     }
     .body-div {
+        background: none;
         background-color: transparent;
 
     }
