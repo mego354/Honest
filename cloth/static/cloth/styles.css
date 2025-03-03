@@ -26,7 +26,6 @@ ul, div {
 
 body {
     background-color: var(--light-bg);
-    margin-top: 80px;
     margin-inline: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
@@ -35,12 +34,21 @@ body {
 
 /* Containers and Layout */
 .body-div {
+    background-image: url('/static/cloth/r_bg1.jpg'); /* RAMADANBG */
+    background-size: cover; /* RAMADANBG */
+    background-position: center; /* RAMADANBG */
+    background-repeat: no-repeat; /* RAMADANBG */
     margin: 2%;
-    margin-top: 8vh;
+    margin-top: 11vh; /* RAMADANBG 9vh*/ 
     max-width: 98%;
     min-height: 81vh;
 }
-
+.navbar-special-message{
+    color: #fad84e;
+    font-weight: 400;
+    font-style:oblique;
+    /* font-size: larger; */
+}
 /* Navbar */
 #navbar, #navbar-menu-body {
     background-color: var(--secondary-color) !important;
@@ -250,7 +258,8 @@ body {
     padding: 1rem;
     border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: #fff;
+    /* RAMADANBG */
+    /* background-color: #fff; */
     justify-content: space-between;
     column-gap: 2px;
     direction: rtl; /* Ensure right-to-left layout */
@@ -305,7 +314,8 @@ body {
 #order-form-wrapper {
     margin: auto;
     padding: 20px;
-    background-color: #ffffff;
+    /* RAMADANBG */
+    /* background-color: #fff; */
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

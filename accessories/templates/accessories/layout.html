@@ -11,9 +11,10 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
     <!-- Custom CSS -->
-    <link rel="stylesheet" href={% static "cloth/style.css" %}>
+    <link rel="stylesheet" href={% static "cloth/styles.css" %}>
 </head>
-<body style="margin-top: 110px;">
+{% comment %} 110 {% endcomment %}
+<body style="margin-top: 130px;"> 
     {% if messages %}
         <ul class="messages">
         {% for message in messages %}
@@ -48,9 +49,14 @@
             {% block home_page %}
             {% endblock %}
         </div>
+        
     </nav>
     <!-- Navbar For Model-->
     <nav id="navbar"  class="navbar bg-body-tertiary fixed-top" style="margin-top:50px; padding-block:0; z-index:1000;">
+        <div class=" pb-2 w-50 mx-auto text-center">
+            <h4 class="navbar-special-message m-0">🏮 رمضان كريم 🏮</h4>
+        </div>
+
         <div class="container-fluid">
             <!-- Normal navbar menu for Model -->
             <div class="d-flex mx-auto" style="padding-bottom:-5px">
