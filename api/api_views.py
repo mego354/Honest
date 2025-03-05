@@ -168,6 +168,7 @@ class AllDataAPIView(APIView):
             },
             "الإنتاج": {  # production app
                 "الموديلات": ModelSerializer(models, many=True).data,
+                "تفاصيل الموديلات": {model: model.get_model_usage() for model in models},
                 "كميات المقاسات": SizeAmountSerializer(size_amounts, many=True).data,
                 "القطع": PieceSerializer(pieces, many=True).data,
                 "قطع الإنتاج": ProductionPieceSerializer(production_pieces, many=True).data,
