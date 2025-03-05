@@ -34,12 +34,8 @@ body {
 
 /* Containers and Layout */
 .body-div {
-    background-image: url('/static/cloth/r_bg1.jpg'); /* RAMADANBG */
-    background-size: cover; /* RAMADANBG */
-    background-position: center; /* RAMADANBG */
-    background-repeat: no-repeat; /* RAMADANBG */
     margin: 2%;
-    margin-top: 11vh; /* RAMADANBG 9vh*/ 
+    margin-top: 9vh;
     max-width: 98%;
     min-height: 81vh;
 }
@@ -258,8 +254,7 @@ body {
     padding: 1rem;
     border: 1px solid #ccc;
     border-radius: 8px;
-    /* RAMADANBG */
-    /* background-color: #fff; */
+    background-color: #fff;
     justify-content: space-between;
     column-gap: 2px;
     direction: rtl; /* Ensure right-to-left layout */
@@ -314,8 +309,7 @@ body {
 #order-form-wrapper {
     margin: auto;
     padding: 20px;
-    /* RAMADANBG */
-    /* background-color: #fff; */
+    background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -383,18 +377,6 @@ body {
     .info-card {
         padding: 12px;
         margin-bottom: 10px;
-    }
-    .body-div {
-        background: none;
-        background-color: transparent;
-
-    }
-    body {
-        background-image: url('/static/cloth/r_bg1.jpg'); /* RAMADANBG */
-        background-size: contain; /* RAMADANBG */
-        background-position: center; /* RAMADANBG */
-        background-repeat: repeat-y; /* RAMADANBG */
-
     }
 }
 
