@@ -393,7 +393,7 @@ def load_pieces(request):
 
 def load_carton(request):
     model_id = request.GET.get('model_id')
-    cartons = Carton.objects.filter(model_id=model_id).values('id', 'length', 'width', 'height', 'type')
+    cartons = Carton.objects.filter(model_id=model_id).values('id', 'length', 'width', 'height', 'type', 'comment')
     return JsonResponse({'cartons': list(cartons)})
 
 

@@ -155,6 +155,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>---</td>
+                        <td>الاجمالي</td>
+                        <td>{{ model.get_total_used_cartons }} </td>
+                        <td>{{ model.get_total_available_carton }} </td>
+                        <td>---</td>
+                    </tr>
                     {% for carton in model.cartons.all %}
                     <tr>
                         <td>{{ carton.length }}</td>
