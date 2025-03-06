@@ -27,7 +27,7 @@ def get_producion_models(days=1):
             # "created_at": production.created_at.strftime("%p %I:%M %Y/%m/%d"),
             "created_at": production.created_at.strftime("%Y/%m/%d"),
             "used_amount": production.used_amount,
-            "factory": production.factory,
+            "factory": production.worked_factory.name,
         })
 
         # Accumulate the total used_amount for each type in each model
