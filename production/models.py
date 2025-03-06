@@ -188,11 +188,26 @@ class Piece(models.Model):
     def __str__(self):
         return f"{self.model.model_number} - Size: {self.size} - Type: {self.type}"
     
+class Factory(models.Model):
+    STATUE_CHOICES = [
+        (1, "يعمل"),
+        (2, "متوقف"),
+        (3, "منتهي"),
+    ]
+
+    name = models.CharField(max_length=50, verbose_name="اسم المصنع", blank=True)
+    statue = models.PositiveIntegerField(
+        verbose_name="الحاله", choices=STATUE_CHOICES, default=1
+    )
+
+    def __str__(self):
+        return f"{self.name} ({self.get_statue_display()})"
+
 class ProductionPiece(models.Model):
     piece = models.ForeignKey(Piece, verbose_name="القطعة", on_delete=models.CASCADE, related_name="productions")
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
     used_amount = models.IntegerField(verbose_name="الكمية للانتاج", default=0, blank=True)
-    factory = models.CharField(max_length=50, verbose_name="المصنع", blank=True)
+    worked_factory = models.ForeignKey(Factory, verbose_name="المصنع", on_delete=models.CASCADE, related_name="productions", null=True)
     comment = models.CharField(max_length=100, verbose_name="الملاحظات", blank=True)
 
     class Meta:

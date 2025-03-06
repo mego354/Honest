@@ -14,68 +14,20 @@
 {% endblock %}
 
 {% block body %}
-{% if data.recent_models %}
-{% for model in data.recent_models %}
-<h3>Model: {{ model.model }}</h3>
-<ul>
-    {% for production in model.productions %}
-    <li>Piece: {{ production.piece }} | Used Amount: {{ production.used_amount }}</li>
-    {% endfor %}
-</ul>
+
+{% for factory in factories %}
+<h3>factory: {{ factory }}</h3>
 {% endfor %}
-{% endif %}
 
-{% if data.recent_productions %}
+{% comment %} ['أم احمد', 'الدور الرابع', 'عثمان صلاح', 'أ_احمد النجار', 'ام احمد', ] {% endcomment %}
 
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>الرمز</th>
-            <th>كود الخامه</th>
-            <th>اسم الخامه</th>
-            <th>اللون</th>
-            <th>عدد الاتواب</th>
-            <th>الوزن</th>
-            <th>التاريخ</th>
-            <th>الموديل / المصبغة</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for obj in data.recent_productions %}
-            <tr>
-                <td>{{ obj.id }}</td>
-                <td>{{ obj.fabric_code|default:"-" }}</td>
-                <td>{{ obj.fabric_name|default:"-" }}</td>
-                <td>{{ obj.color|default:"-" }}</td>
-                <td>{{ obj.roll|default:"-" }}</td>
-                <td>{{ obj.weight|default:"-" }}</td>
-                <td>{{ obj.date }}</td>
-                <td>
-                    {% if obj.dyehouse_name %}
-                        {{ obj.dyehouse_name }}
-                    {% elif obj.model_number %}
-                        {{ obj.model_number }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="8" style="text-align: center;">لا توجد بيانات لليوم أو أمس</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endif %}
-
-{% if report_available %}
+{% comment %} {% if report_available %}
     <a href="{{ report_url }}" download class="btn btn-primary">
         تحميل تقرير الإنتاج 📄
     </a>
 {% else %}
     <p>التقرير غير متوفر حاليًا.</p>
-{% endif %}
+{% endif %} {% endcomment %}
 
 {% endblock body %}

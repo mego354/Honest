@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Model, SizeAmount, Piece, ProductionPiece, Carton, Packing
+from .models import Factory, Model, SizeAmount, Piece, ProductionPiece, Carton, Packing
 
 
 class SizeAmountInline(admin.TabularInline):
@@ -57,9 +57,9 @@ class PieceAdmin(admin.ModelAdmin):
 
 @admin.register(ProductionPiece)
 class ProductionPieceAdmin(admin.ModelAdmin):
-    list_display = ("piece", "used_amount", "factory", "comment", "created_at")
-    list_filter = ("created_at", "factory")
-    search_fields = ("piece__model__model_number", "factory")
+    list_display = ("piece", "used_amount", "worked_factory", "comment", "created_at")
+    list_filter = ("created_at", "worked_factory")
+    search_fields = ("piece__model__model_number", "worked_factory")
 
 
 @admin.register(Carton)
@@ -73,3 +73,9 @@ class PackingAdmin(admin.ModelAdmin):
     list_display = ("model", "carton", "used_carton", "created_at")
     list_filter = ("created_at",)
     search_fields = ("piece__model__model_number",)
+
+@admin.register(Factory)
+class FactoryAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "statue")
+    list_filter = ("statue",)
+    search_fields = ("name",)

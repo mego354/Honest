@@ -1,19 +1,16 @@
-import os
-from urllib.parse import urlencode
-from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView, TemplateView
 from django.forms import modelformset_factory
 
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404
 from django.utils.timezone import datetime, now, localtime
 from django.db import transaction
-from django.db.models import Q, Sum, F
+from django.db.models import Q, F
 from django.contrib import messages
 
-from .models import Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
+from .models import Factory, Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
 from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
 
 from django.utils.timezone import localtime, now
@@ -444,7 +441,7 @@ class ProductionListingView(ListView):
     template_name = "production/list_production.html"
     model = ProductionPiece
     paginate_by = 30
-    filter_fields = ["model_number", "type", "size", "start_date", "end_date", "factory"]
+    filter_fields = ["model_number", "type", "size", "start_date", "end_date", "worked_factory"]
 
     def parse_date(self, date_str):
         """
@@ -473,9 +470,9 @@ class ProductionListingView(ListView):
         if type:
             filters &= Q(piece__type__icontains=type)
 
-        factory = self.request.GET.get("factory")
-        if factory:
-            filters &= Q(factory__icontains=factory)
+        worked_factory = self.request.GET.get("worked_factory")
+        if worked_factory:
+            filters &= Q(worked_factory__name__icontains=worked_factory)
 
         start_date = self.parse_date(self.request.GET.get("start_date"))
         end_date = self.parse_date(self.request.GET.get("end_date"))
@@ -488,6 +485,15 @@ class ProductionListingView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        production_models = self.get_queryset()
+        worked_factory = self.request.GET.get("worked_factory", "")
+        total_production = None
+        first_date = None
+        last_date = None
+        if worked_factory and production_models:
+            total_production = sum(production_model.used_amount for production_model in production_models)
+            first_date = production_models.first().created_at
+            last_date  = production_models.last().created_at
 
         # Add filters to the context
         context["filter_fields"] = [
@@ -495,9 +501,11 @@ class ProductionListingView(ListView):
             {"field_name": "size", "verbose_name": "المقاس", "value": self.request.GET.get("size", "")},
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
             {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
-            {"field_name": "factory", "verbose_name": "المصنع", "value": self.request.GET.get("factory", "")},
+            {"field_name": "worked_factory", "verbose_name": "المصنع", "value": worked_factory, "options": Factory.objects.filter(statue__lt=3)},
         ]
-
+        context["total_production"] = total_production
+        context["first_date"] = first_date
+        context["last_date"] = last_date
         return context
 
 ###############################################################################################################################
@@ -704,11 +712,19 @@ class TestView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # for factory in ProductionPiece.objects.all():
+        #     factory_name = factory.factory
+        #     if factory_name in ['أم احمد', 'ام احمد']:
+        #         factory.worked_factory = Factory.objects.get(pk=1)
+        #     elif factory_name in ['الدور الرابع']:
+        #         factory.worked_factory = Factory.objects.get(pk=2)
+        #     elif factory_name in ['عثمان صلاح']:
+        #         factory.worked_factory = Factory.objects.get(pk=3)
+        #     elif factory_name in ['أ_احمد النجار']:
+        #         factory.worked_factory = Factory.objects.get(pk=4)
+        #     factory.save()
 
-        report_path = "reports/production_report.pdf"
-        full_path = os.path.join(settings.MEDIA_ROOT, report_path)
-
-        context["report_available"] = not os.path.exists(full_path)
-        context["report_url"] = settings.MEDIA_URL + report_path
-
+        factories_ids = ProductionPiece.objects.values_list('worked_factory', flat=True).distinct()
+        factories = Factory.objects.filter(id__in=factories_ids)  # Get the actual Factory instances
+        context["factories"] = factories
         return context

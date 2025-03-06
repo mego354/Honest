@@ -1,5 +1,5 @@
 from django import forms
-from .models import Model, SizeAmount, ProductionPiece, Carton, Packing
+from .models import Factory, Model, SizeAmount, ProductionPiece, Carton, Packing
 
 
 class ModelForm(forms.ModelForm):
@@ -23,12 +23,16 @@ class SizeAmountForm(forms.ModelForm):
 
 ###############################################################################################################################
 class ProductionPieceForm(forms.ModelForm):
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['worked_factory'].queryset = Factory.objects.filter(statue__lt=2)
+        
     class Meta:
         model = ProductionPiece
-        fields = ['used_amount', 'factory', 'comment']
+        fields = ['used_amount', 'worked_factory', 'comment']
         widgets = {
             'used_amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
-            'factory': forms.TextInput(attrs={'class': 'form-control'}),
+            'worked_factory': forms.Select(attrs={'class': 'form-control'}),
             'comment': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
@@ -45,10 +49,11 @@ class ProductionForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
-    factory = forms.CharField(
+    worked_factory = forms.ModelChoiceField(
+        queryset=Factory.objects.filter(statue__lt=2),
         label="اسم المصنع",
         required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     def __init__(self, *args, **kwargs):

@@ -25,13 +25,27 @@
         {% for filter_field in filter_fields %}
         <div class="form-group mb-3">
             <label for="filter_{{ forloop.counter }}" class="form-label">{{ filter_field.verbose_name }}</label>
-            <input 
-                type="{% if filter_field.field_name in 'start_date end_date' %}date{% else %}text{% endif %}" 
+            {% if filter_field.field_name in 'worked_factory' %}
+                <select
                 id="filter_{{ forloop.counter }}" 
                 name="{{ filter_field.field_name }}" 
                 placeholder="بحث ب {{ filter_field.verbose_name }}" 
                 class="form-control" 
-                value="{{ filter_field.value }}">
+                >
+                {% for option in filter_field.options %}
+                    <option value="{{ option.name }}" {% if option.name == filter_field.value %} selected {% endif %}>{{ option.name }}</option>
+                {% endfor %}
+                </select>
+
+            {% else %}
+                <input 
+                    type="{% if filter_field.field_name in 'start_date end_date' %}date{% else %}text{% endif %}" 
+                    id="filter_{{ forloop.counter }}" 
+                    name="{{ filter_field.field_name }}" 
+                    placeholder="بحث ب {{ filter_field.verbose_name }}" 
+                    class="form-control" 
+                    value="{{ filter_field.value }}">
+            {% endif %}
         </div>
         {% endfor %}
         <div class="submit-container">
@@ -55,6 +69,21 @@
                 </tr>
             </thead>
             <tbody>
+                {% if total_production %}
+                <tr>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>الاجمالي</td>
+                    <td>{{ total_production }}</td>
+                    <td>---</td>
+                    <td>{{ first_date|date:"Y/m/d" }} - {{ last_date|date:"Y/m/d" }}</td>
+                    <td>---</td>
+                    <td>---</td>
+
+                </tr>
+                {% endif %}
+    
                 {% for production_item in object_list %}
                 <tr class="clickable-row" data-detail_url="{% url 'model_detail_view' production_item.piece.model.id %}">
                     <td>
@@ -64,7 +93,7 @@
                     <td>{{ production_item.piece.type }}</td>
                     <td>{{ production_item.piece.size }}</td>
                     <td>{{ production_item.used_amount }}</td>
-                    <td>{{ production_item.factory }}</td>
+                    <td>{{ production_item.worked_factory }}</td>
                     <td dir="rtl">{{ production_item.created_at|date:"Y/m/d h:i A" }}</td>
                     <td style="overflow-x:auto; max-width:100px; ">{{ production_item.comment }}</td>
                     <td>
