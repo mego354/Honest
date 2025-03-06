@@ -488,23 +488,30 @@ class ProductionListingView(ListView):
         context = super().get_context_data(**kwargs)
         production_models = self.get_queryset()
         worked_factory = self.request.GET.get("worked_factory", "")
-        total_production = None
-        first_date = None
-        last_date = None
-        if worked_factory and production_models:
-            total_production = sum(production_model.used_amount for production_model in production_models)
+        model_number = self.request.GET.get("model_number", "")
+        pieces_total_production = first_date = last_date = None
+
+        if (worked_factory or model_number) and production_models:
             first_date = production_models.first().created_at
             last_date  = production_models.last().created_at
+            pieces_total_production = []
+            pieces_types = set(production_models.values_list("piece__type", flat=True))
+            print(pieces_types)
+            for pieces_type in pieces_types:
+                pieces_total_production.append({
+                    "type": pieces_type, 
+                    "total_production": sum(production_model.used_amount for production_model in production_models.filter(piece__type=pieces_type))
+                })
 
         # Add filters to the context
         context["filter_fields"] = [
-            {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": self.request.GET.get("model_number", "")},
+            {"field_name": "model_number", "verbose_name": "رقم الموديل", "value": model_number},
             {"field_name": "size", "verbose_name": "المقاس", "value": self.request.GET.get("size", "")},
             {"field_name": "start_date", "verbose_name": "تاريخ البداية", "value": self.request.GET.get("start_date", "")},
             {"field_name": "end_date", "verbose_name": "تاريخ النهاية", "value": self.request.GET.get("end_date", "")},
             {"field_name": "worked_factory", "verbose_name": "المصنع", "value": worked_factory, "options": Factory.objects.filter(statue__lt=3)},
         ]
-        context["total_production"] = total_production
+        context["pieces_total_production"] = pieces_total_production
         context["first_date"] = first_date
         context["last_date"] = last_date
         return context
