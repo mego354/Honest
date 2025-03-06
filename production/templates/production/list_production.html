@@ -70,20 +70,21 @@
                 </tr>
             </thead>
             <tbody>
-                {% if total_production %}
+                {% for piece_production in pieces_total_production %}
+
                 <tr>
                     <td>---</td>
                     <td>---</td>
-                    <td>---</td>
+                    <td>{{ piece_production.type }}</td>
                     <td>الاجمالي</td>
-                    <td>{{ total_production }}</td>
+                    <td>{{ piece_production.total_production }}</td>
                     <td>---</td>
                     <td>{{ first_date|date:"Y/m/d" }} - {{ last_date|date:"Y/m/d" }}</td>
                     <td>---</td>
                     <td>---</td>
 
                 </tr>
-                {% endif %}
+                {% endfor %}
     
                 {% for production_item in object_list %}
                 <tr class="clickable-row" data-detail_url="{% url 'model_detail_view' production_item.piece.model.id %}">
