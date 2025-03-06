@@ -54,6 +54,39 @@
         </div>
     </form>
         
+    {% if model_pieces_production %}
+    <div class="table-responsive">
+        <h3>الاجمالي</h3>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>رقم الموديل</th>
+                    <th>القطعة</th>
+                    <th>الاجمالي</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model_production in model_pieces_production %}
+                {% for pieces_production in model_production.pieces_total_production %}
+
+                <tr>
+                    <td>{{ model_production.model_number }}</td>
+                    <td>{{ pieces_production.type }}</td>
+                    <td>{{ pieces_production.total_production }}</td>
+                    <td>{{ first_date|date:"Y/m/d" }} - {{ last_date|date:"Y/m/d" }}</td>
+
+                </tr>
+                {% endfor %}
+                {% endfor %}
+    
+            </tbody>
+        </table>
+    </div>
+    <h3>السجل</h3>
+
+    {% endif %}
+
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead class="table-dark">
@@ -70,22 +103,6 @@
                 </tr>
             </thead>
             <tbody>
-                {% for piece_production in pieces_total_production %}
-
-                <tr>
-                    <td>---</td>
-                    <td>---</td>
-                    <td>{{ piece_production.type }}</td>
-                    <td>الاجمالي</td>
-                    <td>{{ piece_production.total_production }}</td>
-                    <td>---</td>
-                    <td>{{ first_date|date:"Y/m/d" }} - {{ last_date|date:"Y/m/d" }}</td>
-                    <td>---</td>
-                    <td>---</td>
-
-                </tr>
-                {% endfor %}
-    
                 {% for production_item in object_list %}
                 <tr class="clickable-row" data-detail_url="{% url 'model_detail_view' production_item.piece.model.id %}">
                     <td>
