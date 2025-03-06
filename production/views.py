@@ -161,6 +161,7 @@ class BaseModelListingView(ListView):
 
     def parse_date(self, date_str):
         """Parse a date string into a datetime object."""
+        print(date_str)
         try:
             normalized_date = date_str.replace("\\", "/")
             return datetime.strptime(normalized_date, "%Y-%m-%d")

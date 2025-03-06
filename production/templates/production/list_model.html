@@ -1,5 +1,6 @@
 {% extends "cloth/layout.html" %}
 {% load math_filters %}
+{% load static %}
 
 {% block home_page %}
 <a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
@@ -41,8 +42,10 @@
               id="filter_{{ forloop.counter }}" 
               name="{{ filter_field.field_name }}" 
               placeholder="بحث ب {{ filter_field.verbose_name }}" 
-              class="form-control">
-          </div>
+              class="form-control {% if filter_field.field_name in 'start_date end_date' %}filter_date{% endif %}" 
+              value="{{ filter_field.value }}"
+              >
+            </div>
         {% endfor %}
         <div class="submit-container">
             <button type="submit" class="btn btn-primary submit-btn">تنفيذ</button>
@@ -382,6 +385,13 @@
         });
     });
 </script> {% endcomment %}
+
+<!-- Include Flatpickr library -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+<script src="{% static 'cloth/js/filter_date.js' %}"></script>
+
 <script>
     function toggleProductionDetails(modelId) {
         let details = document.getElementById('details-production-' + modelId);
