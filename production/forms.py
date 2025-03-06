@@ -21,6 +21,14 @@ class SizeAmountForm(forms.ModelForm):
             'Packing_per_carton': forms.Select(attrs={'class': 'form-control'}), 
         }
 
+class FactoryForm(forms.ModelForm):
+    class Meta:
+        model = Factory
+        fields = ['name', 'statue']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'statue': forms.Select(attrs={'class': 'form-control'}),
+        }
 ###############################################################################################################################
 class ProductionPieceForm(forms.ModelForm):
     def __init__(self, *args, user=None, **kwargs):
@@ -119,3 +127,4 @@ class CartonForm(forms.ModelForm):
             'type': forms.Select(attrs={'class': 'form-control'}),
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
         }
+        

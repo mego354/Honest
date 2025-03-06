@@ -11,7 +11,7 @@ from django.db.models import Q, F
 from django.contrib import messages
 
 from .models import Factory, Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
-from .forms import ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
+from .forms import FactoryForm, ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
 
 from django.utils.timezone import localtime, now
 
@@ -161,7 +161,6 @@ class BaseModelListingView(ListView):
 
     def parse_date(self, date_str):
         """Parse a date string into a datetime object."""
-        print(date_str)
         try:
             normalized_date = date_str.replace("\\", "/")
             return datetime.strptime(normalized_date, "%Y-%m-%d")
@@ -496,7 +495,6 @@ class ProductionListingView(ListView):
             last_date  = production_models.last().created_at
             pieces_total_production = []
             pieces_types = set(production_models.values_list("piece__type", flat=True))
-            print(pieces_types)
             for pieces_type in pieces_types:
                 pieces_total_production.append({
                     "type": pieces_type, 
@@ -604,6 +602,44 @@ class CartonDeleteView(DeleteView):
         model = instance_carton.model
         messages.success(self.request, "تم حذف الكرتون بنجاح.")
         return reverse_lazy("model_detail_view", args=[model.id])
+
+###############################################################################################################################
+class FactoryListingView(ListView):
+    template_name = "production/list_factory.html"
+    model = Factory
+    paginate_by = 30
+
+class FactoryCreateView(CreateView):
+    model = Factory
+    form_class = FactoryForm
+    template_name = 'production/factory_form.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "تمت إضافة المصنع بنجاح.")
+        return reverse_lazy("factory_list_view")
+
+class FactoryEditView(UpdateView):
+    model = Factory
+    form_class = FactoryForm
+    template_name = 'production/factory_form.html'
+
+    def form_valid(self, form):
+        form.save()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        instance_factory = self.get_object()
+        
+        messages.success(self.request, "تم تعديل المصنع بنجاح.")
+        return reverse_lazy("factory_edit", args=[instance_factory.id])
+
+class FactoryDeleteView(DeleteView):
+    model = Factory
+    template_name = 'production/delete_factory.html'
+
+    def get_success_url(self):
+        messages.success(self.request, "تم حذف المصنع بنجاح.")
+        return reverse_lazy("factory_list_view")
 
 ###############################################################################################################################
 class PackingFormView(FormView):

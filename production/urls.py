@@ -28,6 +28,11 @@ urlpatterns = [
     path('carton/add/<int:model_id>/', CartonCreateView.as_view(), name='carton_add'),
     path('carton/<int:pk>/edit/', CartonEditView.as_view(), name='carton_edit'),
     path('carton/<int:pk>/delete/', CartonDeleteView.as_view(), name='carton_delete_view'),
+
+    path('factory-list/', FactoryListingView.as_view(), name='factory_list_view'),
+    path('factory/add/', FactoryCreateView.as_view(), name='factory_add'),
+    path('factory/<int:pk>/edit/', FactoryEditView.as_view(), name='factory_edit'),
+    path('factory/<int:pk>/delete/', FactoryDeleteView.as_view(), name='factory_delete_view'),
     
     path('packing/', PackingFormView.as_view(), name='packing_form'),
     path('packing-list', PackingListingView.as_view(), name='packing_list_view'),
