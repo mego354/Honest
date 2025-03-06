@@ -30,9 +30,9 @@
                 <select
                 id="filter_{{ forloop.counter }}" 
                 name="{{ filter_field.field_name }}" 
-                placeholder="بحث ب {{ filter_field.verbose_name }}" 
                 class="form-control" 
                 >
+                    <option value="">بحث ب {{ filter_field.verbose_name }}</option>
                 {% for option in filter_field.options %}
                     <option value="{{ option.name }}" {% if option.name == filter_field.value %} selected {% endif %}>{{ option.name }}</option>
                 {% endfor %}
