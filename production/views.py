@@ -317,7 +317,7 @@ class ProductionFormView(FormView):
     def form_valid(self, form):
         model = form.cleaned_data['model']
         piece_type = form.cleaned_data['piece']
-        factory = form.cleaned_data['factory']
+        worked_factory = form.cleaned_data['worked_factory']
 
         # Get all pieces of the selected type for the model
         pieces = Piece.objects.filter(model=model, type=piece_type)
@@ -340,7 +340,7 @@ class ProductionFormView(FormView):
                         ProductionPiece.objects.create(
                             piece=piece,
                             used_amount=quantity,
-                            factory=factory,
+                            worked_factory=worked_factory,
                             comment=comment
                         )
                 except (SizeAmount.DoesNotExist, ValueError):
