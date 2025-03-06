@@ -1,0 +1,125 @@
+{% extends "cloth/layout.html" %}
+{% load math_filters %}
+{% load static %}
+
+{% block home_page %}
+<a class="navbar-brand" href="{% url 'model_list_view' %}">HONEST PRODUCTION</a>
+{% endblock %}
+
+{% block navbar_links_large %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block navbar_links_small %}
+{% include "production/nav_links.html" %}
+{% endblock %}
+
+{% block body %}
+
+    <div class="pt-4 section-title d-flex justify-content-between align-items-center">
+            <h2>عرض المصانع</h2>
+        <div class="ps-2">
+            <a href="{% url 'factory_add' %}" class="px-2 btn btn-success">جديد</a>
+        </div>
+    </div>
+
+          
+<body class="bg-light">
+    <div class="container mt-4">
+        {% for factory in object_list %}
+
+        <div class="model-card">            
+            <div class="d-flex justify-content-end align-items-center pb-3 px-2" style="
+            {% if factory.statue == 1 %}
+                color: var(--success-color)
+            {% elif factory.statue == 2 %}
+                color: var(--warning-color)
+            {% else %}
+                color: var(--danger-color)
+            {% endif %}
+            ">
+                <p class="fw-bolder m-0 ms-2 mb-1">
+                    {{ factory.get_statue_display }}
+                </p>
+                <i class="fa-solid fa-circle fa-l"></i>
+            </div>
+
+            
+                
+            <div class="d-flex justify-content-between align-items-center pb-3">
+                <h5 class="mb-0">{{ factory.name }}</h5>
+                <div>
+                    <a class="me-1 btn btn-sm btn-primary" style="background-color: #3498db;" href="{% url 'factory_edit' factory.id %}">
+                        <i class="fa-solid fa-pen-to-square fa-lg" ></i>
+                    </a>
+                    <a class="me-1 btn btn-sm btn-danger" href="{% url 'factory_delete_view' factory.id %}">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-between">
+            <!-- Last Page Button -->
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                {% if page_obj.has_next %}
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="Last">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </span>
+                {% endif %}
+            </li>
+            <!-- Next Page Button -->
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                {% if page_obj.has_next %}
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="Next">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&laquo;</span>
+                </span>
+                {% endif %}
+            </li>
+
+            <!-- Current Page Info -->
+            <li class="page-item pagination_page_li">
+                <span class="page-link">الصفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            <!-- Previous Page Button -->
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                {% if page_obj.has_previous %}
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="Previous">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&raquo;</span>
+                </span>
+                {% endif %}
+            </li>
+            <!-- First Page Button -->            
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                {% if page_obj.has_previous %}
+                <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}" aria-label="First">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+                {% else %}
+                <span class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </span>
+                {% endif %}
+            </li>
+    </ul>
+</nav>
+    
+{% endblock body %}
