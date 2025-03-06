@@ -201,8 +201,9 @@ class Factory(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name} ({self.get_statue_display()})"
-
+        # return f"{self.name} ({self.get_statue_display()})"
+        return self.name
+        
 class ProductionPiece(models.Model):
     piece = models.ForeignKey(Piece, verbose_name="القطعة", on_delete=models.CASCADE, related_name="productions")
     created_at = models.DateTimeField(verbose_name="تاريخ الإنشاء", default=now)
