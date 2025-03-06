@@ -56,14 +56,13 @@
         
     {% if model_pieces_production %}
     <div class="table-responsive">
-        <h3>الاجمالي</h3>
+        <h3>الملخص من  {{ last_date|date:"Y/m/d" }} الي {{ first_date|date:"Y/m/d" }}</h3>
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
                     <th>رقم الموديل</th>
                     <th>القطعة</th>
                     <th>الاجمالي</th>
-                    <th>التاريخ</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,7 +73,6 @@
                     <td>{{ model_production.model_number }}</td>
                     <td>{{ pieces_production.type }}</td>
                     <td>{{ pieces_production.total_production }}</td>
-                    <td>{{ first_date|date:"Y/m/d" }} - {{ last_date|date:"Y/m/d" }}</td>
 
                 </tr>
                 {% endfor %}
