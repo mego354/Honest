@@ -150,7 +150,20 @@ class Model(models.Model):
             "packaging_percent": 0,
             "packaging_percent_style": "",
         }
-        
+    def _get_production_usage(self):
+        sizes = self.size_amounts.all()
+        pieces = self.pieces.all()
+        sizes_count = sizes.count()
+
+        if sizes_count == 0:
+            return self._get_empty_usage_stats()
+
+        pieces_count = pieces.count() / sizes_count
+        total_amount = sum(size.amount * pieces_count for size in sizes)
+        used_amount = sum(piece.used_amount for piece in pieces)
+        percent = (used_amount / total_amount * 100) if total_amount else 0
+        return percent
+
 class SizeAmount(models.Model):
     DOZENS_CHOICES = [
         (12, "12"),

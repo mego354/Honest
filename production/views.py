@@ -185,9 +185,9 @@ class BaseModelListingView(ListView):
         if end_date:
             filters &= Q(created_at__lte=end_date)
 
-        queryset = queryset.annotate(
-            total_production_pieces=Coalesce(Sum('pieces__productions__used_amount'), Value(0))
-        ).filter(filters).order_by('-total_production_pieces')
+        queryset = queryset.filter(filters)
+        queryset = list(queryset)
+        queryset.sort(key=lambda obj: obj._get_production_usage(), reverse=True)
 
         return queryset
     def get_context_data(self, **kwargs):
