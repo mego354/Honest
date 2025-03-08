@@ -46,7 +46,7 @@ urlpatterns = [
     path('load-pieces/', load_pieces, name='load_pieces'),
     path('load-carton/', load_carton, name='load_cartons'),
 
-    path('generate_pdf/', generate_pdf, name='generate_pdff'),
+    path('generate_pdf/', generate_pdf, name='generate_production_pdf'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
