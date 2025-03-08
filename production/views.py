@@ -14,7 +14,6 @@ from django.contrib import messages
 
 from .models import Factory, Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
 from .forms import FactoryForm, ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
-from .PDF import generate_production_record
 
 
 

@@ -10,11 +10,25 @@ import arabic_reshaper
 from bidi.algorithm import get_display
 from django.utils.timezone import localtime, now
 
+from .models import ProductionPiece
+from django.db.models import Q
+
 
 def format_arabic_text(text):
     """Reshape and reorder Arabic text for proper RTL display."""
     reshaped_text = arabic_reshaper.reshape(text)
     return get_display(reshaped_text)
+
+def parse_date(self, date_str):
+    """
+    Parse a date string into a datetime object.
+    If the format is invalid or the value is nonsensical, return datetime.min.
+    """
+    try:
+        normalized_date = date_str.replace("-", "/")
+        return datetime.strptime(date_str, "%Y-%m-%d")
+    except (ValueError, AttributeError):
+        return None
 
 
 @csrf_exempt
@@ -26,7 +40,7 @@ def generate_pdf(request):
             row_data_table = request_data.get('row_data_table', {})
             total_data_table = request_data.get('total_data_table', {})
             # Generate the PDF
-            pdf_path = generate_production_record(row_data_table, total_data_table)
+            pdf_path = generate_production_record(request, row_data_table, total_data_table)
 
             # Read the generated PDF file
             with open(pdf_path, 'rb') as pdf_file:
@@ -111,15 +125,15 @@ class PDF(FPDF):
 
         for row in data:
             self.set_x(margin_x)
-            with suppress(ValueError):
-                row[-1] = datetime.strptime(row[-1], "%Y/%m/%d %I:%M %p").strftime('%Y/%m/%d')
+            # with suppress(ValueError):
+                # row[-1] = datetime.strptime(row[-1], "%Y/%m/%d %I:%M %p").strftime('%Y/%m/%d')
             
             for i, item in enumerate(row):
                 self.cell(col_widths[i], 10, format_arabic_text(str(item)), border=1, align="C")
             self.ln()
 
 
-def generate_production_record(row_data_table, total_data_table):
+def generate_production_record(request, row_data_table, total_data_table):
     """Generates a production record PDF."""
     output_dir = os.path.join(settings.STATIC_ROOT, "cloth")
     os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
@@ -133,6 +147,44 @@ def generate_production_record(row_data_table, total_data_table):
 
     pdf = PDF(title="Honest Factory Production Record", footer=footer, font_path=font_path)
     pdf.add_page()
+
+    def get_queryset():
+        queryset = ProductionPiece.objects.all()
+        filters = Q()
+
+        model_number = request.GET.get("model_number")
+        if model_number:
+            filters &= Q(piece__model__model_number__icontains=model_number)
+
+        size = request.GET.get("size")
+        if size:
+            filters &= Q(piece__size__icontains=size)
+
+        type = request.GET.get("type")
+        if type:
+            filters &= Q(piece__type__icontains=type)
+
+        worked_factory = request.GET.get("worked_factory")
+        if worked_factory:
+            filters &= Q(worked_factory__name__icontains=worked_factory)
+
+        start_date = request.GET.get("start_date")
+        if start_date:
+            start_date = request.GET.get("start_date")
+            filters &= Q(created_at__gte=start_date)
+
+        end_date = request.GET.get("end_date")
+        if end_date:
+            end_date = request.GET.get("end_date")
+            filters &= Q(created_at__lte=end_date)
+
+        queryset =  queryset.filter(filters)
+        return [
+            [production_item.piece.model.model_number, production_item.piece.type, production_item.piece.size, production_item.used_amount, production_item.worked_factory, production_item.created_at.strftime('%Y/%m/%d'), ]
+            for production_item in queryset
+            
+        ]
+        # return queryset.values_list("piece__model__model_number", "piece__type", "piece__size", "used_amount", "worked_factory", "created_at")
 
     if total_data_table:
         pdf.chapter_title("ملخص تقرير الإنتاج")
@@ -148,6 +200,7 @@ def generate_production_record(row_data_table, total_data_table):
 
         headers = row_data_table.get('columns', [])
         table_data = row_data_table.get('data', [])
+        table_data = list(get_queryset())
 
         pdf.add_table(headers, table_data)
         pdf.ln(10)

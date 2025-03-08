@@ -280,7 +280,8 @@
         }
 
         try {
-            const response = await fetch("{% url 'generate_pdff' %}", {
+            console.log("{% url 'generate_production_pdf' %}" + window.location.search)
+            const response = await fetch("{% url 'generate_production_pdf' %}" + window.location.search, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
