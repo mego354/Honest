@@ -7,7 +7,8 @@ from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.timezone import datetime, now, localtime
 from django.db import transaction
-from django.db.models import Q, F
+from django.db.models import Q, F, Sum, Value
+from django.db.models.functions import Coalesce
 from django.contrib import messages
 
 from .models import Factory, Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
@@ -171,7 +172,7 @@ class BaseModelListingView(ListView):
         # for model in Model.objects.all():
         #     model.update_available_carton()
         queryset = super().get_queryset()
-        filters = Q(is_archive=self.is_archive)  # Use dynamic is_archive flag
+        filters = Q(is_archive=self.is_archive) 
 
         model_number = self.request.GET.get("model_number")
         if model_number:
@@ -184,8 +185,11 @@ class BaseModelListingView(ListView):
         if end_date:
             filters &= Q(created_at__lte=end_date)
 
-        return queryset.filter(filters)
+        queryset = queryset.annotate(
+            total_production_pieces=Coalesce(Sum('pieces__productions__used_amount'), Value(0))
+        ).filter(filters).order_by('-total_production_pieces')
 
+        return queryset
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["is_archive"] = self.is_archive  # Pass archive status to template
