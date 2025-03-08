@@ -167,3 +167,6 @@ class TestView(TemplateView):
         context["report_url"] = settings.MEDIA_URL + "reports/production_report.pdf"
 
         return context
+    
+class IndexView(TemplateView):
+    template_name = "cloth/index.html"

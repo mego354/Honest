@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصنع أونست</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2c3e50); /* ثيم داكن متدرج */
+            color: #ecf0f1;
+            text-align: center;
+            direction: rtl;
+            min-height: 100vh;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* تأثير توهج */
+            color: #ecf0f1;
+        }
+        .button {
+            display: block;
+            width: 85%;
+            max-width: 320px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #3498db, #8e44ad); /* تدرج لوني أسطوري */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 15px;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* ظل ثلاثي الأبعاد */
+            transform: perspective(500px) translateZ(0); /* تأثير 3D */
+            transition: all 0.4s ease;
+        }
+        .button:hover {
+            background: linear-gradient(45deg, #2980b9, #9b59b6);
+            transform: perspective(500px) translateZ(20px); /* ارتفاع 3D عند التمرير */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+        }
+        .button:active {
+            transform: perspective(500px) translateZ(10px); /* تأثير الضغط */
+        }
+        /* توافق مع الهواتف */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 26px;
+            }
+            .button {
+                font-size: 18px;
+                padding: 12px;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>مرحبًا بكم في مصنع أونست</h1>
+    <a href="https://www.honestfactory.top/cloth/" class="button">قسم القماش</a>
+    <a href="https://www.honestfactory.top/production/" class="button">قسم الإنتاج والتعبئة</a>
+    <a href="https://www.honestfactory.top/accessories/" class="button">قسم الإكسسوارات</a>
+</body>
+</html>
