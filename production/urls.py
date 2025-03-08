@@ -2,6 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from .views import *
+from .PDF import *
+
 
 urlpatterns = [
     path('', ModelListingView.as_view(), name='model_list_view'),
@@ -43,6 +45,8 @@ urlpatterns = [
     path('load-model-piece-types/', load_model_Pieces_types, name='load_model_piece_types'),
     path('load-pieces/', load_pieces, name='load_pieces'),
     path('load-carton/', load_carton, name='load_cartons'),
+
+    path('generate_pdf/', generate_pdf, name='generate_pdff'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

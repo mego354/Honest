@@ -1,22 +1,23 @@
-from django.http import JsonResponse
 from django.views import View
 from django.views.generic import FormView, CreateView, ListView, UpdateView, DetailView, DeleteView, TemplateView
-from django.forms import modelformset_factory
+from django.http import JsonResponse
 
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.timezone import datetime, now, localtime
+
+from django.forms import modelformset_factory
 from django.db import transaction
-from django.db.models import Q, F, Sum, Value
-from django.db.models.functions import Coalesce
+from django.db.models import Q, F
+
 from django.contrib import messages
 
 from .models import Factory, Model, Piece, SizeAmount, ProductionPiece, Carton, Packing
 from .forms import FactoryForm, ModelForm, ProductionForm, SizeAmountForm, ProductionPieceForm, CartonForm, PackingForm, PackingPieceForm
+from .PDF import generate_production_record
 
-from django.utils.timezone import localtime, now
 
-###############################################################################################################################
+
 class ModelCreationView(FormView):
     template_name = "production/create_model.html"
     form_class = ModelForm
@@ -526,6 +527,9 @@ class ProductionListingView(ListView):
         context["model_pieces_production"] = model_pieces_production
         context["first_date"] = first_date
         context["last_date"] = last_date
+        context["row_data_columns"] = ["رقم الموديل","القطعة","المقاس","الكمية","المصنع","التاريخ"]
+        context["total_data_columns"] = ["رقم الموديل","القطعة","الاجمالي"]
+    
         return context
 
 ###############################################################################################################################

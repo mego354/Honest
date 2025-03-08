@@ -1,12 +1,11 @@
 import os
-from urllib.parse import urljoin
 from django.conf import settings
 from django.views.generic import TemplateView, ListView
 from django.db.models import Q
 from .models import Fabric, CutTransfer, ReturnTransfer, Statistics, Updates
 
 from django.utils.timezone import localtime
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import json
 from django.http import HttpResponse, JsonResponse
