@@ -185,8 +185,8 @@ def generate_production_record(request, row_data_table, total_data_table):
         ]
         # return queryset.values_list("piece__model__model_number", "piece__type", "piece__size", "used_amount", "worked_factory", "created_at")
 
-    table_data = list(get_queryset())
-    query_date = f"من {table_data[-1][-1]} الي {table_data[0][-1]}"
+    production_table_data = list(get_queryset())
+    query_date = f"من {production_table_data[-1][-1]} الي {production_table_data[0][-1]}"
     if total_data_table:
         pdf.chapter_title("ملخص تقرير الإنتاج " + query_date)
 
@@ -200,6 +200,7 @@ def generate_production_record(request, row_data_table, total_data_table):
         pdf.chapter_title("تقرير الإنتاج " + query_date)
 
         headers = row_data_table.get('columns', [])
+        table_data = production_table_data
         # table_data = row_data_table.get('data', [])
 
         pdf.add_table(headers, table_data)
