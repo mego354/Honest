@@ -155,7 +155,7 @@ class ModelUpdateView(UpdateView):
 class BaseModelListingView(ListView):
     template_name = "production/list_model.html"
     model = Model
-    paginate_by = 20
+    paginate_by = 8
     filter_fields = ["model_number", "start_date", "end_date"]
     is_archive = False  # Default to non-archived models
 
