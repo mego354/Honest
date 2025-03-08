@@ -178,16 +178,17 @@ def generate_production_record(request, row_data_table, total_data_table):
             end_date = request.GET.get("end_date")
             filters &= Q(created_at__lte=end_date)
 
-        queryset =  queryset.filter(filters)
+        queryset = queryset.filter(filters)
         return [
             [production_item.piece.model.model_number, production_item.piece.type, production_item.piece.size, production_item.used_amount, production_item.worked_factory, production_item.created_at.strftime('%Y/%m/%d'), ]
             for production_item in queryset
-            
         ]
         # return queryset.values_list("piece__model__model_number", "piece__type", "piece__size", "used_amount", "worked_factory", "created_at")
 
+    table_data = list(get_queryset())
+    query_date = f"من {table_data[-1][-1]} الي {table_data[0][-1]}"
     if total_data_table:
-        pdf.chapter_title("ملخص تقرير الإنتاج")
+        pdf.chapter_title("ملخص تقرير الإنتاج " + query_date)
 
         headers = total_data_table.get('columns', [])
         table_data = total_data_table.get('data', [])
@@ -196,11 +197,10 @@ def generate_production_record(request, row_data_table, total_data_table):
         pdf.ln(10)
 
     if row_data_table:
-        pdf.chapter_title("تقرير الإنتاج")
+        pdf.chapter_title("تقرير الإنتاج " + query_date)
 
         headers = row_data_table.get('columns', [])
-        table_data = row_data_table.get('data', [])
-        table_data = list(get_queryset())
+        # table_data = row_data_table.get('data', [])
 
         pdf.add_table(headers, table_data)
         pdf.ln(10)
