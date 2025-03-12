@@ -108,17 +108,17 @@ class PopulateModelsView(APIView):
 
         # Process ReturnTransfer data
         for row in data.get('return_data', []):
-            instance = ReturnTransfer.objects.filter(fabric_code=row['fabric_code'], model_number=row['model_number']).first()
+            # instance = ReturnTransfer.objects.filter(fabric_code=row['fabric_code'], model_number=row['model_number']).first()
             try:
-                if instance:
-                    # Update the existing instance with new data
-                    for field, value in row.items():
-                        setattr(instance, field, value)
-                    instance.save()
-                else:
-                    # Create a new instance if it doesn't exist
-                    row['id'] = None
-                    instance = ReturnTransfer.objects.create(**row)
+                # if instance:
+                #     # Update the existing instance with new data
+                #     for field, value in row.items():
+                #         setattr(instance, field, value)
+                #     instance.save()
+                # else:
+                # Create a new instance if it doesn't exist
+                row['id'] = None
+                instance = ReturnTransfer.objects.create(**row)
 
                 results['return_transfer'].append({'updated': f"{instance.fabric_code} - {instance.model_number}"})
             except Exception as e:
