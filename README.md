@@ -1,6 +1,3 @@
-Here’s a comprehensive `README.md` file for your Django app, which is part of a larger factory system. This README provides an overview of the app, its functionality, setup instructions, and usage details.
-
-```markdown
 # Production and Packaging Management System
 
 This Django app is part of a larger factory management system and is responsible for managing production and packaging processes. It tracks models, sizes, pieces, cartons, and production details, providing a comprehensive overview of the production lifecycle.
@@ -85,7 +82,7 @@ The app includes the following URLs and views:
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone [repository-url](https://github.com/mego354/Honest.git)
+   git clone https://github.com/mego354/Honest.git
    cd Honest
    ```
 
@@ -156,4 +153,3 @@ Contributions are welcome! Please follow these steps:
 3. Submit a pull request.
 
 ---
-
