@@ -205,6 +205,7 @@ def generate_production_report(cloth_operations, access_models, producion_models
     if access_models != None:
         types = ['supply', 'package', 'return']
         for model_data in access_models:
+            model_data_used = False
             if pdf.get_y() + 0 > 270:
                 pdf.add_page()
 
@@ -243,14 +244,16 @@ def generate_production_report(cloth_operations, access_models, producion_models
                         
                     pdf.add_table(headers, table_data)
                     pdf.ln(5)
+                    model_data_used = True
 
             
-            pdf.ln(10)
+            if model_data_used:
+                pdf.ln(10)
     else:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
-    pdf.ln(20)
 
+    # pdf.ln(20)
     # ---------------------- تقرير الإنتاج (Production Report) ----------------------
     pdf.add_section("تقرير الانتاج", [])
     
@@ -280,8 +283,8 @@ def generate_production_report(cloth_operations, access_models, producion_models
     else:
         pdf.chapter_body(["لا يوجد بيانات متاحة لهذا التقرير."])
 
-    pdf.ln(20)
 
+    # pdf.ln(20)
     # ---------------------- تقرير التعبئة (Packing Report) ----------------------
     pdf.add_section("تقرير التعبئة", [])
 

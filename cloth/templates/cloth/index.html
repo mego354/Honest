@@ -59,8 +59,12 @@
 </head>
 <body>
     <h1>مرحبًا بكم في مصنع أونست</h1>
-    <a href="https://www.honestfactory.top/cloth/" class="button">قسم القماش</a>
+    {% comment %} <a href="https://www.honestfactory.top/cloth/" class="button">قسم القماش</a>
     <a href="https://www.honestfactory.top/production/" class="button">قسم الإنتاج والتعبئة</a>
-    <a href="https://www.honestfactory.top/accessories/" class="button">قسم الإكسسوارات</a>
+    <a href="https://www.honestfactory.top/accessories/" class="button">قسم الإكسسوارات</a> {% endcomment %}
+
+    <a href="{% url 'fabric_view' %}" class="button">قسم القماش</a>
+    <a href="{% url 'model_list_view' %}" class="button">قسم الإنتاج والتعبئة</a>
+    <a href="{% url 'CartonSuppliesView' %}" class="button">قسم الإكسسوارات</a>
 </body>
 </html>
