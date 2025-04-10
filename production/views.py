@@ -186,8 +186,13 @@ class BaseModelListingView(ListView):
             filters &= Q(created_at__lte=end_date)
 
         queryset = queryset.filter(filters)
-        queryset = list(queryset)
-        queryset.sort(key=lambda obj: obj._get_production_usage(), reverse=True)
+        print(queryset)
+        if self.is_archive:
+            queryset = queryset.order_by('is_shipped' ,'-shipped_at')
+            queryset = list(queryset)
+        else:
+            queryset = list(queryset)
+            queryset.sort(key=lambda obj: obj._get_production_usage(), reverse=True)
 
         return queryset
     def get_context_data(self, **kwargs):
@@ -215,7 +220,8 @@ class ToggleArchiveView(View):
         model_instance.save()
         if archive_mode:
             messages.success(self.request, f"تم اضافة المودبل {model_instance.model_number} للارشيف بنجاح")
-            return redirect(reverse_lazy("archived_model_list_view"))
+            # return redirect(reverse_lazy("archived_model_list_view"))
+            return redirect(reverse_lazy("model_list_view"))
 
         else:
             messages.success(self.request, f"تم ازالة المودبل {model_instance.model_number} من الارشيف بنجاح")
