@@ -176,7 +176,7 @@ def get_recent_access_models(days=1):
                 elif len(items) == 1:
                     operations = [items[0]]
                 else:
-                    operations = [{field: instance["total"] for field in value["sum_fields"][index]}]
+                    operations = [{field: round(instance["total"], 3) for field in value["sum_fields"][index]}]
                     for item in items:
                         operations.append(item)
 
